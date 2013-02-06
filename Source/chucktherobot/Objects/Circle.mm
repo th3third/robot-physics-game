@@ -158,12 +158,20 @@
 	if (!self.body)
 		return;
 	
-    if (!self.bodyVisible.parent)
+    if (!self.bodyVisible.parent || self.needToChangeTexture)
     {
+		if (self.bodyVisible.parent)
+			[self.bodyVisible removeFromParentAndCleanup: YES];
+		
 		self.dropShadow = [CCSprite spriteWithFile: @"Media/Objects/circle_drop_shadow.png"];
 		[self addChild: self.dropShadow];
 		
-		self.bodyVisible = [CCSprite spriteWithFile: @"Media/Objects/circle.png"];
+		if (self.restitution >= 0.5f)
+		{
+			self.bodyVisible = [CCSprite spriteWithFile: @"Media/Objects/circle_bouncy.png"];
+		}
+		else
+			self.bodyVisible = [CCSprite spriteWithFile: @"Media/Objects/circle.png"];
 		
 		self.needToChangeTexture = NO;
         self.bodyVisible.anchorPoint = ccp(0.5, 0.5);
