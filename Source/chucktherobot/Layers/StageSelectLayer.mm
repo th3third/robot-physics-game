@@ -39,6 +39,9 @@
 		
 		//Create the list of levels.
 		[self showLevelList];
+		
+		//Blank out the existing stage, since we're selecting a new one.
+		[Director shared].stage = nil;
 	}
 	return self;
 }

@@ -181,15 +181,18 @@ enum
 	else
 		[Director shared].paused = NO;
 	
-    if (![Director shared].stageName)
+    if (![Director shared].stageName && ![Director shared].stage)
     {
         [debug log: @"No stage name is present. Defaulting to blank in editor."];
         [Director shared].editing = YES;
 		[Director shared].paused = YES;
-        [Director shared].stageName = @"Untitled";
+		[[Director shared] loadBlankStage];
     }
+	else
+	{
+		[[Director shared] loadCurrentStage];
+	}
 	
-	[[Director shared] loadCurrentStage];
 	
     //Set the local chuck var that we check for the position.
 	//This should ALWAYS be the first object. If it isn't, the map was saved wrongly.
@@ -1176,18 +1179,10 @@ enum
 			}
         }
         
-        if (!selector)
-        {
-            selector = [CCSprite spriteWithFile: @"Media/Objects/selector.png"];
-            [self addChild: selector z: 8999];
-        }
-        
         Object *object = (Object *)selectedObject;
-        
-        if (selectedObject)
+        if (object)
         {
-            selector.position = object.centerPos;
-            selector.visible = YES;
+            [self sizeSelectorWithObject: object];
         }
     }
     //Since we're not in editing mode, we're playing the game.
@@ -1282,7 +1277,10 @@ enum
     }
     
     Object *object = (Object *)selectedObject;
-    selector.position = object.centerPos;
+	if (object)
+	{
+		[self sizeSelectorWithObject: object];
+	}
 }
 
 - (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -1385,15 +1383,39 @@ enum
 - (CGPoint) snapLocation: (CGPoint) location
 {
 	float gridSpacing = self.snapDivider;
-	float gridOffset = 0;
 	
 	location.x -= ((int)location.x % (int)gridSpacing);
 	location.y -= ((int)location.y % (int)gridSpacing);
 	
-	//location.x = nearbyintf((location.x - gridOffset) / gridSpacing) * gridSpacing + gridOffset;
-	//location.y = nearbyintf((location.y - gridOffset) / gridSpacing) * gridSpacing + gridOffset;
-	
 	return location;
+}
+
+- (void) flashObject: (Object *) object
+{
+	
+}
+
+- (void) sizeSelectorWithObject: (Object *) object
+{	
+	if (selector.parent)
+		[selector removeFromParentAndCleanup: YES];
+	
+	if ([object isMemberOfClass: [Rectangle class]])
+	{
+		selector = [CCSprite spriteWithFile: @"Media/Objects/rectangle_selector.png"];
+		selector.scaleX = (object.bodyVisible.contentSize.width * 1.10 * object.scaleX) / selector.contentSize.width;
+		selector.scaleY = (object.bodyVisible.contentSize.height * 1.10 * object.scaleY) / selector.contentSize.height;
+	}
+	else
+	{
+		selector = [CCSprite spriteWithFile: @"Media/Objects/circle_selector.png"];
+		selector.scaleX = ((object.bodyVisible.contentSize.width / 2) * object.scaleX) / selector.contentSize.width;
+		selector.scaleY = ((object.bodyVisible.contentSize.height / 2) * object.scaleY) / selector.contentSize.height;
+	}
+	
+	selector.position = object.centerPos;
+	selector.visible = YES;
+	[self addChild: selector z: object.z - 1];
 }
 
 #pragma mark GOTOS

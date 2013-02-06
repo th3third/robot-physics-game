@@ -71,6 +71,7 @@ enum DataState
 - (bool) saveLevelToServer;
 - (bool) getLevelFromServer;
 - (void) loadCurrentStage;
+- (void) loadBlankStage;
 - (NSArray *) onlineLevelsList: (int) number withSorting: (int) sorting;
 
 //Scaling

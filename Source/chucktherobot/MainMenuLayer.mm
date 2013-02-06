@@ -183,6 +183,8 @@
 - (void) goToStage
 {
 	[Director shared].editing = YES;
+	[Director shared].stage = nil;
+	[Director shared].stageName = nil;
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLayer scene]]];
 }
 

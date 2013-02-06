@@ -127,16 +127,16 @@
 	[menuItemFont setPosition: ccp((-s.width / 2), (s.height / 2) - s.height * .85)];
 	
 	//BACK BUTTON
-	menuItemFont = [CCMenuItemFont itemWithString: @"BACK" block:^(id sender) {
+	CCMenuItemFont *menuItemBack = [CCMenuItemFont itemWithString: @"BACK" block:^(id sender) {
 		//TODO: Check for overwrite.
 		[self goToStage];
 	}];
-	[menuItemFont setFontName: [Director shared].globalFont];
-	[menuItemFont setFontSize: TITLE_FONT_SIZE];
-	[menuItemFont setAnchorPoint: ccp(1, 0)];
-	[menuItemFont setPosition: ccp((s.width / 2), (s.height / 2) - s.height * .85)];
+	[menuItemBack setFontName: [Director shared].globalFont];
+	[menuItemBack setFontSize: TITLE_FONT_SIZE];
+	[menuItemBack setAnchorPoint: ccp(1, 0)];
+	[menuItemBack setPosition: ccp((s.width / 2), (s.height / 2) - s.height * .85)];
 	
-	menu = [CCMenu menuWithItems: menuItemFont, nil];
+	menu = [CCMenu menuWithItems: menuItemFont, menuItemBack, nil];
 	[self addChild: menu];
 }
 
@@ -175,7 +175,6 @@
 
 - (void) goToStage
 {
-	[Director shared].stageName = [Director shared].stage.name;
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInB transitionWithDuration: 0.5 scene: [StageLayer scene]]];
 }
 

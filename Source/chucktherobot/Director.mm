@@ -327,6 +327,13 @@ static Director *shared = nil;
 	return NO;
 }
 
+- (void) loadBlankStage
+{
+	[self initPhysics];
+	
+	[Director shared].stage = [[Stage alloc] init];
+}
+
 - (void) loadStageFromData: (NSData *) stageData
 {
 	[self initPhysics];
