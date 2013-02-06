@@ -7,6 +7,7 @@
 //
 
 #import "DialogLayer.h"
+#import "Director.h"
 
 #define DIALOG_FONT @"Verdana"
 #define DIALOG_FONT_SIZE 18
@@ -23,45 +24,19 @@
 	return [self initWithHeader: header andLine1: line1 target: callbackObjNew selector: selectorNew textField: doTextField andExistingText: @"" andCancelButton: NO];
 }
 
-- (id) initWithHeader:(NSString *)header andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField andExistingText: (NSString *) existingText andCancelButton: (bool) addCancelButton
+- (id) initWithHeader:(NSString *)headerIn andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField andExistingText: (NSString *) existingText andCancelButton: (bool) addCancelButton
 {
 	self.dialogType = 0;
 	
     if((self = [super init]))
     {
+        header = headerIn;
         callbackObj = callbackObjNew;
         selector = selectorNew;
         
-        CGSize screenSize = [CCDirector sharedDirector].winSize;
-		
-        CCSprite *background = [CCSprite node];
-        background = [background initWithFile:@"Media/Backgrounds/background_dialog.png"];
-		float scale = 1.00f;
-		if (background.contentSize.width > screenSize.width)
-		{
-			scale = screenSize.width * .75 / background.contentSize.width;
-		}
-		[background setScale: scale * 0.75];
-        [background setPosition:ccp(screenSize.width / 2, screenSize.height / 2)];
-        [self addChild:background z:-1];
+        CCSprite *background = [self createBackground];
         
-        float backgroundWidth = background.contentSize.width * background.scale;
-        float backgroundHeight = background.contentSize.height * background.scale;
-        
-        CCLabelTTF *headerShadow = [CCLabelTTF labelWithString:header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE];
-        headerShadow.color = ccBLACK;
-        headerShadow.opacity = 190;
-        [headerShadow setPosition:ccp(background.position.x - DIALOG_FONT_SHADOW_OFFSET, background.position.y + backgroundHeight / 2 - DIALOG_FONT_SIZE * 1.5 - DIALOG_FONT_SHADOW_OFFSET)];
-        [self addChild:headerShadow];
-        
-        CCLabelTTF *headerLabel = [CCLabelTTF labelWithString:header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE];
-        headerLabel.color = ccBLACK;
-        [headerLabel setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - DIALOG_FONT_SIZE * 1.5)];
-        [self addChild:headerLabel];
-        
-        //////////////////
-        
-        CCLabelTTF *line1Label = [CCLabelTTF labelWithString: line1 fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE];
+        CCLabelTTF *line1Label = [CCLabelTTF labelWithString: line1 fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
         line1Label.color = ccBLACK;
         line1Label.scale = 0.84f;
         line1Label.dimensions = CGSizeMake(backgroundWidth * 0.9, backgroundHeight * 0.75);
@@ -74,11 +49,13 @@
 		{
 			okButtonPosX += backgroundWidth / 4;
 			CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/CancelButton.png" selectedImage:@"Media/Buttons/general/CancelButtonSelected.png" target:self selector:@selector(cancelButtonPressed:)];
+			cancelButton.scale = (backgroundWidth * 0.2) / cancelButton.contentSize.width;
 			[cancelButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
 			[buttons addObject: cancelButton];
 		}
 		
 		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/OKButton.png" selectedImage:@"Media/Buttons/general/OKButtonSelected.png" target:self selector:@selector(okButtonPressed:)];
+		okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
         [okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
 		[buttons addObject: okButton];
         
@@ -103,41 +80,17 @@
     return self;
 }
 
-- (id) initLoginWithHeader:(NSString *)header target:(id)callbackObjNew selector:(SEL)selectorNew andExistingText: (NSString *) existingText
+- (id) initLoginWithHeader:(NSString *)headerIn target:(id)callbackObjNew selector:(SEL)selectorNew andExistingText: (NSString *) existingText
 {
 	self.dialogType = 1;
 	
 	if((self = [super init]))
     {
+		header = headerIn;
         callbackObj = callbackObjNew;
         selector = selectorNew;
         
-        CGSize screenSize = [CCDirector sharedDirector].winSize;
-		
-        CCSprite *background = [CCSprite node];
-        background = [background initWithFile:@"Media/Backgrounds/background_dialog.png"];
-		float scale = 1.00f;
-		if (background.contentSize.width > screenSize.width)
-		{
-			scale = screenSize.width * .75 / background.contentSize.width;
-		}
-		[background setScale: scale];
-        [background setPosition:ccp(screenSize.width / 2, screenSize.height / 2)];
-        [self addChild:background z:-1];
-        
-        float backgroundWidth = background.contentSize.width * background.scale;
-        float backgroundHeight = background.contentSize.height * background.scale;
-        
-        CCLabelTTF *headerShadow = [CCLabelTTF labelWithString:header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE];
-        headerShadow.color = ccBLACK;
-        headerShadow.opacity = 190;
-        [headerShadow setPosition:ccp(background.position.x - DIALOG_FONT_SHADOW_OFFSET, background.position.y + backgroundHeight / 2 - DIALOG_FONT_SIZE * 1.5 - DIALOG_FONT_SHADOW_OFFSET)];
-        [self addChild:headerShadow];
-        
-        CCLabelTTF *headerLabel = [CCLabelTTF labelWithString:header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE];
-        headerLabel.color = ccBLACK;
-        [headerLabel setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - DIALOG_FONT_SIZE * 1.5)];
-        [self addChild:headerLabel];
+        CCSprite *background = [self createBackground];
         
 		NSMutableArray *buttons = [NSMutableArray array];
 		float okButtonPosX = background.position.x;
@@ -182,6 +135,74 @@
     return self;
 }
 
+- (id) initWinnerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andTimeElapsed: (float) timeElapsed
+{
+	self.dialogType = 2;
+	
+    if((self = [super init]))
+    {
+        header = headerIn;
+        callbackObj = callbackObjNew;
+        selector = selectorNew;
+        
+        CCSprite *background = [self createBackground];
+        
+        CCLabelTTF *line1Label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"Time elapsed: %f", timeElapsed] fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
+        line1Label.color = ccBLACK;
+        line1Label.scale = 0.84f;
+        line1Label.dimensions = CGSizeMake(backgroundWidth * 0.9, backgroundHeight * 0.75);
+        [line1Label setPosition:ccp(background.position.x, background.position.y + DIALOG_FONT_OFFSET)];
+        [self addChild:line1Label];
+        
+		NSMutableArray *buttons = [NSMutableArray array];
+		float okButtonPosX = background.position.x;
+		okButtonPosX += backgroundWidth / 4;
+		CCMenuItemImage *retryButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/CancelButton.png" selectedImage:@"Media/Buttons/general/CancelButtonSelected.png" target:self selector:@selector(retryButtonPressed:)];
+		retryButton.scale = (backgroundWidth * 0.2) / retryButton.contentSize.width;
+		[retryButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
+		[buttons addObject: retryButton];
+		
+		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/OKButton.png" selectedImage:@"Media/Buttons/general/OKButtonSelected.png" target:self selector:@selector(nextStageButtonPressed:)];
+		okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+        [okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
+		[buttons addObject: okButton];
+        
+        CCMenu *menu = [CCMenu menuWithArray: buttons];
+        menu.position = ccp(0, -backgroundHeight / 6 + DIALOG_FONT_OFFSET);
+        [self addChild:menu];
+    }
+    
+    return self;
+}
+
+- (CCSprite *) createBackground
+{
+	CGSize screenSize = [CCDirector sharedDirector].winSize;
+	
+	CCSprite *background = [CCSprite node];
+	background = [background initWithFile:@"Media/Backgrounds/background_dialog.png"];
+	float scale = (screenSize.width * .75) / background.contentSize.width;
+	[background setScale: scale];
+	[background setPosition:ccp(screenSize.width / 2, screenSize.height / 2)];
+	[self addChild:background z:-1];
+	
+	backgroundWidth = background.contentSize.width * background.scale;
+	backgroundHeight = background.contentSize.height * background.scale;
+	
+	CCLabelTTF *headerShadow = [CCLabelTTF labelWithString: header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
+	headerShadow.color = ccBLACK;
+	headerShadow.opacity = 190;
+	[headerShadow setPosition:ccp(background.position.x - DIALOG_FONT_SHADOW_OFFSET, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5 - DIALOG_FONT_SHADOW_OFFSET) * [Director shared].scaleFactor.width)];
+	[self addChild:headerShadow];
+	
+	CCLabelTTF *headerLabel = [CCLabelTTF labelWithString: header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
+	headerLabel.color = ccBLACK;
+	[headerLabel setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5) * [Director shared].scaleFactor.width)];
+	[self addChild:headerLabel];
+	
+	return background;
+}
+
 - (BOOL) textFieldShouldReturn:(UITextField *)textField
 {
 	if (self.dialogType == 0)
@@ -190,6 +211,15 @@
 		[self loginButtonPressed: self];
 	
     return NO;
+}
+- (void) retryButtonPressed: (id) sender
+{
+	[callbackObj performSelector: selector withObject: [NSNumber numberWithBool: YES]];
+}
+
+- (void) nextStageButtonPressed: (id) sender
+{
+	[callbackObj performSelector: selector withObject: [NSNumber numberWithBool: NO]];
 }
 
 - (void) okButtonPressed:(id) sender

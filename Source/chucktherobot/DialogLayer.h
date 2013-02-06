@@ -11,7 +11,9 @@
 
 @interface DialogLayer : CCLayer <UITextFieldDelegate>
 {
-    
+    float backgroundWidth;
+	float backgroundHeight;
+	NSString *header;
 }
 
 @property id callbackObj;
@@ -23,7 +25,8 @@
 
 -(id) initWithHeader:(NSString *)header andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField;
 - (id) initWithHeader:(NSString *)header andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField andExistingText: (NSString *) existingText andCancelButton: (bool) addCancelButton;
-- (id) initLoginWithHeader:(NSString *)header target:(id)callbackObjNew selector:(SEL)selectorNew andExistingText: (NSString *) existingText;
+- (id) initLoginWithHeader:(NSString *)headerIn target:(id)callbackObjNew selector:(SEL)selectorNew andExistingText: (NSString *) existingText;
+- (id) initWinnerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andTimeElapsed: (float) timeElapsed;
 
 -(void) okButtonPressed:(id) sender;
 

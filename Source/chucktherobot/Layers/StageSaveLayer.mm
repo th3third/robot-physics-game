@@ -28,6 +28,14 @@
 		
 		self.isTouchEnabled = YES;
 		
+		CGSize size = [CCDirector sharedDirector].winSize;
+		
+		CCSprite *background = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Backgrounds/general/main_menu.jpg", [Director shared].stage.background]];
+		background.position = ccp(size.width / 2, size.height / 2);
+		background.scaleX = size.width / background.contentSize.width;
+		background.scaleY = size.height / background.contentSize.height;
+		[self addChild: background z: -2];
+		
 		[self createStageSaveInfo];
 	}
 	
@@ -50,7 +58,7 @@
 	label.position = ccp(0, s.height * .85);
 	
 	stageNameItem = [CCMenuItemFont itemWithString: [Director shared].stage.name block:^(id sender) {
-		DialogLayer *dialogLayer = [[DialogLayer alloc] initWithHeader: @"Enter New Name" andLine1: @"Please enter a name for your level. If you use the same name as a previous level it will be OVERWRITTEN." target: self selector: @selector(changeStageName:) textField: YES];
+		DialogLayer *dialogLayer = [[DialogLayer alloc] initWithHeader: @"Enter New Name" andLine1: @"Please enter a name for your level. If you use the same name as a previous level you have created it will be OVERWRITTEN." target: self selector: @selector(changeStageName:) textField: YES];
         [self addChild: dialogLayer z: 9000];
 	}];
 	[stageNameItem setFontName: [Director shared].globalFont];
@@ -117,6 +125,17 @@
 	[menuItemFont setFontSize: TITLE_FONT_SIZE];
 	[menuItemFont setAnchorPoint: ccp(0, 0)];
 	[menuItemFont setPosition: ccp((-s.width / 2), (s.height / 2) - s.height * .85)];
+	
+	//BACK BUTTON
+	menuItemFont = [CCMenuItemFont itemWithString: @"BACK" block:^(id sender) {
+		//TODO: Check for overwrite.
+		[self goToStage];
+	}];
+	[menuItemFont setFontName: [Director shared].globalFont];
+	[menuItemFont setFontSize: TITLE_FONT_SIZE];
+	[menuItemFont setAnchorPoint: ccp(1, 0)];
+	[menuItemFont setPosition: ccp((s.width / 2), (s.height / 2) - s.height * .85)];
+	
 	menu = [CCMenu menuWithItems: menuItemFont, nil];
 	[self addChild: menu];
 }
@@ -152,6 +171,12 @@
 	}
 	
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageSaveToFile scene]]];
+}
+
+- (void) goToStage
+{
+	[Director shared].stageName = [Director shared].stage.name;
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInB transitionWithDuration: 0.5 scene: [StageLayer scene]]];
 }
 
 @end

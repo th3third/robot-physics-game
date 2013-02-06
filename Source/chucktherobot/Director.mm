@@ -42,7 +42,7 @@ static Director *shared = nil;
 		self.listingsScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/listing.php", [self.levelsServerURL absoluteString]]];
 		self.objID = 0;
 		self.globalFont = @"Verdana";
-		self.drawDebugData = YES;
+		self.drawDebugData = NO;
 		[self calcNumOfBackgrounds];
 		
 		//Set up the scaling factor.

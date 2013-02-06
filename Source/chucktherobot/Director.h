@@ -39,6 +39,7 @@ enum DataState
 @property bool editing;
 @property bool online;
 @property bool drawDebugData;
+@property bool soundEnabled;
 @property (nonatomic) NSString *stageName;
 @property Stage *stage;
 @property b2World *world;

@@ -147,6 +147,22 @@
 {
 	if (self.alive)
 		[self createVisibleBody];
+	
+	if (self.body)
+	{
+		CGSize s = [CCDirector sharedDirector].winSize;
+		
+		if (self.body->GetPosition().y < -(s.height * 2) / PTM_RATIO ||
+			self.body->GetPosition().y > (s.height * 2) / PTM_RATIO ||
+			self.body->GetPosition().x < -(s.width * 2) / PTM_RATIO ||
+			self.body->GetPosition().x > (s.width * 2) / PTM_RATIO)
+		{
+			self.body->SetActive(NO);
+			self.bodyVisible.visible = NO;
+			self.alive = NO;
+			[debug log: [NSString stringWithFormat: @"Set %@ to inactive because it went too far off the screen.", self]];
+		}
+	}
 }
 
 - (void) attachObject:(Object *)object

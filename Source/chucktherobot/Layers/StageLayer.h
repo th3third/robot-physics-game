@@ -14,6 +14,8 @@
     NSMutableArray *stageObjects;
     id selectedObject;
     id selectedObject2;
+	float timeElapsedSinceStart;
+	bool levelCompleted;
     Chuck *chuck;
     CGPoint touchStart;
     NSMutableArray *drawPoints;
@@ -27,6 +29,7 @@
 	CCSprite *leftEditorBackground;
 	CCMenuItemSprite *gear;
     CCMenuItemFont *stageNameItem;
+	DialogLayer *winDialog;
 }
 
 typedef enum

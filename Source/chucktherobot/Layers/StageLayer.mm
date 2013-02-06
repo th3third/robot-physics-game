@@ -15,6 +15,7 @@
 #import "TouchEvent.h"
 #import "DialogLayer.h"
 #import "MToolsFileManager.h"
+#import "MToolsAppSettings.h"
 
 enum
 {
@@ -58,6 +59,9 @@ enum
 		self.motorSpeed = MOTOR_SPEED_SLOW;
 		self.motorDirection = MOTOR_DIRECTION_CW;
         
+		timeElapsedSinceStart = 0.0;
+		levelCompleted = NO;
+		
         [self loadStage];
         
 		// create reset button
@@ -96,35 +100,75 @@ enum
 
 -(void) createMenu
 {
+	CGSize s = [CCDirector sharedDirector].winSize;
+	
 	// Default font size will be 22 points.
 	[CCMenuItemFont setFontSize: 22];
 	
     CGSize size = [[CCDirector sharedDirector] winSize];
     float buttonSize = (size.width / 16);
     
+	//Background
+	CCSprite *topRightBackground = [CCSprite spriteWithFile: @"Media/Backgrounds/general/top-right_menu.png"];
+	[topRightBackground setScaleX: (s.width * 0.25) / topRightBackground.contentSize.width ];
+	[topRightBackground setScaleY: (s.height * 0.14) / topRightBackground.contentSize.height];
+	[topRightBackground setAnchorPoint: ccp(0.5, 0.5)];
+	[topRightBackground setPosition: ccp(s.width - (topRightBackground.contentSize.width * topRightBackground.scaleX) / 2, s.height - (topRightBackground.contentSize.height * topRightBackground.scaleY) / 2)];
+	[self addChild: topRightBackground z: 8999];
+	
     //Sound
-	CCMenuItem *sound = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_sound_toggle.png" selectedImage: @"Media/Buttons/general/button_sound_toggle.png" block:^(id sender) {
-        NSLog(@"Sound toggle.");
-        
+	NSString *pathToNormal;
+	NSString *pathToSelected;
+	if ([Director shared].soundEnabled)
+	{
+		pathToNormal = @"Media/Buttons/general/button_sound_toggle.png";
+		pathToNormal = @"Media/Buttons/general/button_sound_toggle_off.png";
+	}
+	else
+	{
+		pathToNormal = @"Media/Buttons/general/button_sound_toggle_off.png";
+		pathToNormal = @"Media/Buttons/general/button_sound_toggle.png";
+	}
+	
+	CCMenuItemImage *sound = [CCMenuItemImage itemWithNormalImage: pathToNormal  selectedImage: pathToSelected block:^(id sender) {
+        [Director shared].soundEnabled = ![Director shared].soundEnabled;
+		[MToolsAppSettings setValue: [NSNumber numberWithBool: [Director shared].soundEnabled] withName: @"soundEnabled"];
+		
+		/*id ni = [CCSprite spriteWithTexture:[(CCSprite*)sound.normalImage texture]];
+		id si = [CCSprite spriteWithTexture:[(CCSprite*)sound.selectedImage texture]];
+		[sound setNormalImage: si];
+		[sound setSelectedImage: ni];*/
     }];
-    sound.scale = buttonSize / sound.contentSize.width;
-    
+	if (sound.contentSize.width > sound.contentSize.height)
+		[sound setScale: buttonSize / sound.contentSize.width];
+	else
+		[sound setScale: buttonSize / sound.contentSize.height];
+	[sound setPosition: ccp(topRightBackground.position.x + buttonSize * 1.1, topRightBackground.position.y - 5)];
+
     //Reset
 	CCMenuItem *reset = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_restart.png" selectedImage: @"Media/Buttons/general/button_restart.png" block:^(id sender) {
         [self resetStage];
     }];
-    reset.scale = buttonSize / reset.contentSize.width;
+    if (reset.contentSize.width > reset.contentSize.height)
+		[reset setScale: buttonSize / reset.contentSize.width];
+	else
+		[reset setScale: buttonSize / reset.contentSize.height];
+	[reset setPosition: ccp(topRightBackground.position.x, topRightBackground.position.y - 5)];
     
     //Menu
 	CCMenuItem *pause = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_pause.png" selectedImage: @"Media/Buttons/general/button_pause.png" block:^(id sender) {
         [self scheduleOnce: @selector(goToMainMenu) delay: 0.0f];
     }];
-    pause.scale = buttonSize / pause.contentSize.width;
+    if (pause.contentSize.width > pause.contentSize.height)
+		[pause setScale: buttonSize / pause.contentSize.width];
+	else
+		[pause setScale: buttonSize / pause.contentSize.height];
+	[pause setPosition: ccp(topRightBackground.position.x - buttonSize * 1.1, topRightBackground.position.y - 5)];
 
 	CCMenuMT *menu = [CCMenuMT menuWithItems: sound, reset, pause, nil];
-    [menu alignItemsTopRightWithPadding: 10];
+	[menu setPosition: ccp(0, 0)];
 	
-	[self addChild: menu z: -1];
+	[self addChild: menu z: 9000];
 }
 
 //Creates the currently selected stage (by name). If there is no name, you get a blank stage.
@@ -174,11 +218,9 @@ enum
 }
 
 //Saves the current stage to the documents folder.
-//TODO: We're going to need to do stuff after it's done like ask to upload and junk.
 - (void) saveStage
 {
 	[self scheduleOnce:@selector(goToStageSave) delay:0];
-    //[[Director shared].stage saveToFile];
 }
 
 - (void) displayStageObjects
@@ -187,7 +229,13 @@ enum
     
     for (Object *object in [Director shared].stage.objects)
     {
-        [self addChild: object];
+		int z = 0;
+		
+		if (![object isKindOfClass: [Rope class]])
+			z = object.z;
+		
+			[self addChild: object z: z];
+		
 		[object display];
     }
 }
@@ -681,6 +729,8 @@ enum
 	// generally best to keep the time step and iterations fixed.
     if (![Director shared].paused)
     {
+		timeElapsedSinceStart += dt;
+		
         dt = 1.0 / 60.0;
         [self worldTick: dt];
     }
@@ -705,7 +755,7 @@ enum
         float yPos = chuck.body->GetTransform().p.y;
         float xPos = chuck.body->GetTransform().p.x;
         
-        if (yPos <= 0 || yPos > ([CCDirector sharedDirector].winSize.height + chuck->height) / PTM_RATIO || xPos <= 0 - chuck->height / PTM_RATIO || xPos >= ([CCDirector sharedDirector].winSize.width + chuck->height) / PTM_RATIO)
+        if (!levelCompleted && (yPos <= 0 || yPos > ([CCDirector sharedDirector].winSize.height + chuck->height) / PTM_RATIO || xPos <= 0 - chuck->height / PTM_RATIO || xPos >= ([CCDirector sharedDirector].winSize.width + chuck->height) / PTM_RATIO))
         {
             [self winStage];
         }
@@ -721,24 +771,35 @@ enum
 	}
 	else
 	{
+		levelCompleted = YES;
 		[self showWinScreen];
-		[Director shared].paused = YES;
 	}
 }
 
 - (void) showWinScreen
 {
-	DialogLayer *winDialog = [[DialogLayer alloc] initWithHeader: @"A WINNER IS YOU!" andLine1: @"Stage win message!" target: self selector: @selector(goToNextStage) textField: NO];
+	winDialog = [[DialogLayer alloc] initWinnerWithHeader: @"LEVEL COMPLETE" target: self selector: @selector(goToNextStage:) andTimeElapsed: timeElapsedSinceStart];
 	[self addChild: winDialog z: 9000];
 }
 
-- (void) goToNextStage
+- (void) goToNextStage: (NSNumber *) retry
 {
-	[self goToStageSelect];
+	if (![retry boolValue])
+		[self goToStageSelect];
+	else
+		[self resetStage];
 }
 
 - (void) resetStage
 {
+	timeElapsedSinceStart = 0.0;
+	levelCompleted = NO;
+	
+	if (winDialog)
+	{
+		[winDialog removeFromParentAndCleanup: YES];
+	}
+	
 	if ([Director shared].editing)
 	{
 		[Director shared].paused = YES;
@@ -818,7 +879,13 @@ enum
             
         //Pivot
         case DRAWING_MODE_PIVOT:
-        {            
+        {
+			if (!selectedObject)
+			{
+				[debug log: @"Did not find anything to pivot."];
+				return;
+			}
+			
             Object *obj = (Object *)selectedObject;
 			Pivot *pivot = [Pivot pivotWithBodyA: obj];
             selectedObject = nil;
