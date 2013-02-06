@@ -21,7 +21,7 @@
     {
         // Initialize main variables.
 		self.rotationForce = force;
-		self.radius = 5.0f;
+		self.radius = 5.0f * [Director shared].scaleFactor.width;
 		self.bodyA = bodyA;
 		self.movable = NO;
 	}

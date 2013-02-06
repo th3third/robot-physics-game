@@ -120,7 +120,7 @@
 
 - (void) goToStage
 {
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInL transitionWithDuration: 0.5 scene: [StageLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageLayer scene]]];
 }
 
 @end

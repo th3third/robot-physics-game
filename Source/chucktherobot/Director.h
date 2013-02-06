@@ -50,6 +50,7 @@ enum DataState
 @property (nonatomic) bool processingNetworkRequest;
 @property (nonatomic) NSArray *localLevelsList;
 @property (nonatomic) NSArray *defaultLevelsList;
+@property (nonatomic) CGSize scaleFactor;
 
 //Authentication stuff.
 @property NSString *username;
@@ -70,5 +71,8 @@ enum DataState
 - (bool) getLevelFromServer;
 - (void) loadCurrentStage;
 - (NSArray *) onlineLevelsList: (int) number withSorting: (int) sorting;
+
+//Scaling
+- (CGPoint) scalePoint:(CGPoint)point;
 
 @end

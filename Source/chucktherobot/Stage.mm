@@ -334,7 +334,8 @@
 	background = 1;
 	
     //We need to start with a spawning point, so this is always added in.
-    CGPoint startPoint = ccp(150, 150);
+	CGSize s = [CCDirector sharedDirector].winSize;
+    CGPoint startPoint = ccp(s.width / 2, s.height / 2);
     Chuck *chuck = [Chuck chuckWithPos: startPoint];
     [self addObject: chuck];
 }
@@ -342,11 +343,12 @@
 - (void) addObject: (Object *) object
 {
 	if (!object)
+	{
+		[debug log: @"Tried to add a null object to stage."];
 		return;
+	}
 	
     [self.objects addObject: object];
-    //[debug log: [NSString stringWithFormat: @"Adding %@", object]];
-	//NSLog(@"Objects: %d", [[Director shared].stage.objects count]);
 }
 
 - (void) removeObject: (Object *) object

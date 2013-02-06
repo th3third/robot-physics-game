@@ -240,18 +240,18 @@
 - (void) goToStage
 {
 	[Director shared].editing = NO;
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInR transitionWithDuration: 0.5 scene: [StageLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageLayer scene]]];
 }
 
 - (void) goToMainMenu
 {
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInR transitionWithDuration: 0.5 scene: [MainMenuLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [MainMenuLayer scene]]];
 }
 
 - (void) goToStageLoadingLevel
 {
 	[Director shared].editing = NO;
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInR transitionWithDuration: 0.5 scene: [StageLoadingLevel scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
 }
 
 @end

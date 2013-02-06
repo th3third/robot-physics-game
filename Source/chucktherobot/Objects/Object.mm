@@ -86,12 +86,12 @@
     
     //Starting position x
     [code appendString: @"\t<startPosX>"];
-    [code appendString: [NSString stringWithFormat: @"%f", self.curPos.x]];
+    [code appendString: [NSString stringWithFormat: @"%f", self.curPos.x / [Director shared].scaleFactor.width]];
     [code appendString: @"</startPosX>\n"];
     
     //Starting position y
     [code appendString: @"\t<startPosY>"];
-    [code appendString: [NSString stringWithFormat: @"%f", self.curPos.y]];
+    [code appendString: [NSString stringWithFormat: @"%f", self.curPos.y / [Director shared].scaleFactor.height]];
     [code appendString: @"</startPosY>\n"];
     
     //Rotation angle (in degrees)

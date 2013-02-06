@@ -93,7 +93,7 @@
     
     //Radius
     [code appendString: @"\t<radius>"];
-    [code appendString: [NSString stringWithFormat: @"%f", self.radius]];
+    [code appendString: [NSString stringWithFormat: @"%f", self.radius / [Director shared].scaleFactor.width]];
     [code appendString: @"</radius>\n"];
     
     return code;
@@ -101,7 +101,7 @@
 
 - (id) unserializeWithDict: (NSDictionary *) dict
 {
-	[self initWithStart: ccp([[dict objectForKey: @"startPosX"] floatValue], [[dict objectForKey: @"startPosY"] floatValue]) andRadius: [[dict objectForKey: @"radius"] floatValue]];
+	[self initWithStart: ccp([[dict objectForKey: @"startPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"startPosY"] floatValue] * [Director shared].scaleFactor.height) andRadius: [[dict objectForKey: @"radius"] floatValue] * [Director shared].scaleFactor.width];
 	[super unserializeWithDict: dict];
 	
 	return self;

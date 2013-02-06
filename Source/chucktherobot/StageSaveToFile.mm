@@ -131,7 +131,7 @@
 - (void) goToStage
 {
 	[Director shared].stageName = [Director shared].stage.name;
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInL transitionWithDuration: 0.5 scene: [StageLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInB transitionWithDuration: 0.5 scene: [StageLayer scene]]];
 }
 
 @end

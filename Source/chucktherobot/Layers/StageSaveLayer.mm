@@ -151,7 +151,7 @@
 		return;
 	}
 	
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInR transitionWithDuration: 0.5 scene: [StageSaveToFile scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageSaveToFile scene]]];
 }
 
 @end

@@ -25,7 +25,7 @@
 	if ((self = [super init]))
     {        
         // Initialize main variables.
-		self.radius = 5.0f;
+		self.radius = 5.0f * [Director shared].scaleFactor.width;
 		self.bodyA = bodyA;
 		self.movable = NO;
 		self.density = 1.0;

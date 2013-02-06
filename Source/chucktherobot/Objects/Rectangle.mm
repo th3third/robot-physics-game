@@ -56,12 +56,12 @@
     
     //Ending position x
     [code appendString: @"\t<endPosX>"];
-    [code appendString: [NSString stringWithFormat: @"%f", self.endPos.x]];
+    [code appendString: [NSString stringWithFormat: @"%f", self.endPos.x / [Director shared].scaleFactor.width]];
     [code appendString: @"</endPosX>\n"];
     
     //Ending position y
     [code appendString: @"\t<endPosY>"];
-    [code appendString: [NSString stringWithFormat: @"%f", self.endPos.y]];
+    [code appendString: [NSString stringWithFormat: @"%f", self.endPos.y / [Director shared].scaleFactor.height]];
     [code appendString: @"</endPosY>\n"];
     
     return code;
@@ -69,7 +69,7 @@
 
 - (id) unserializeWithDict: (NSDictionary *) dict
 {
-	[self initWithStart: ccp([[dict objectForKey: @"startPosX"] floatValue], [[dict objectForKey: @"startPosY"] floatValue]) andEnd: ccp([[dict objectForKey: @"endPosX"] floatValue], [[dict objectForKey: @"endPosY"] floatValue])];
+	[self initWithStart: ccp([[dict objectForKey: @"startPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"startPosY"] floatValue] * [Director shared].scaleFactor.height) andEnd: ccp([[dict objectForKey: @"endPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"endPosY"] floatValue] * [Director shared].scaleFactor.height)];
 	
 	[super unserializeWithDict: dict];
 	

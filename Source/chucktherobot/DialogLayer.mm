@@ -39,7 +39,7 @@
 		float scale = 1.00f;
 		if (background.contentSize.width > screenSize.width)
 		{
-			scale = screenSize.width / background.contentSize.width;
+			scale = screenSize.width * .75 / background.contentSize.width;
 		}
 		[background setScale: scale * 0.75];
         [background setPosition:ccp(screenSize.width / 2, screenSize.height / 2)];
@@ -119,9 +119,9 @@
 		float scale = 1.00f;
 		if (background.contentSize.width > screenSize.width)
 		{
-			scale = screenSize.width / background.contentSize.width;
+			scale = screenSize.width * .75 / background.contentSize.width;
 		}
-		[background setScale: scale * 0.75];
+		[background setScale: scale];
         [background setPosition:ccp(screenSize.width / 2, screenSize.height / 2)];
         [self addChild:background z:-1];
         

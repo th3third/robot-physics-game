@@ -177,13 +177,13 @@
 
 - (void) goToStageSelect
 {
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInL transitionWithDuration: 0.5 scene: [StageSelectLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageSelectLayer scene]]];
 }
 
 - (void) goToStage
 {
 	[Director shared].editing = YES;
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInL transitionWithDuration: 0.5 scene: [StageLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLayer scene]]];
 }
 
 #pragma mark GameKit delegate

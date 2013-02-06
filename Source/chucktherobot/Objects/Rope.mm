@@ -44,8 +44,8 @@
         }
 			
         // Initialize main variables.
-        ropeLength = 0.25;
-        ropeWidth = 0.05;
+        ropeLength = 0.25 * [Director shared].scaleFactor.width;
+        ropeWidth = 0.05 * [Director shared].scaleFactor.width;
         self.bodyA = bodyA;
         self.bodyB = bodyB;
         self.localAnchorA = b2Vec2(0, 0);

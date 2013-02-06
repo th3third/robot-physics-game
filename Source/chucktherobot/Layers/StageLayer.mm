@@ -677,8 +677,6 @@ enum
 	//You need to make an informed choice, the following URL is useful
 	//http://gafferongames.com/game-physics/fix-your-timestep/
 	
-	
-	
 	// Instruct the world to perform a single step of simulation. It is
 	// generally best to keep the time step and iterations fixed.
     if (![Director shared].paused)
@@ -1343,12 +1341,12 @@ enum
 {
 	[Director shared].stage = nil;
 	[Director shared].stageName = nil;
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInR transitionWithDuration: 0.5 scene: [MainMenuLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [MainMenuLayer scene]]];
 }
 
 - (void) goToStageSave
 {
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInL transitionWithDuration: 0.5 scene: [StageSaveLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInT transitionWithDuration: 0.5 scene: [StageSaveLayer scene]]];
 }
 
 - (void) goToStageSelect

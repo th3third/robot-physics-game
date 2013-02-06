@@ -24,12 +24,12 @@
     {
         // Initialize man variables
         self.startPos = pos;
-		self.curPos = pos;
+		self.curPos = self.startPos;
         
         //Widths and heights
         partScale = 1.0f;
-        width = 30;
-        height = 40;
+        width = 30 * [Director shared].scaleFactor.width;
+        height = 40 * [Director shared].scaleFactor.height;
         
         armWidth = width * 0.165;
         armHeight = height * 0.225;
@@ -48,7 +48,7 @@
 
 - (id) unserializeWithDict: (NSDictionary *) dict
 {
-	[self initWithPos: ccp([[dict objectForKey: @"startPosX"] floatValue], [[dict objectForKey: @"startPosY"] floatValue])];
+	[self initWithPos: ccp([[dict objectForKey: @"startPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"startPosY"] floatValue] * [Director shared].scaleFactor.height)];
 	[super unserializeWithDict: dict];
 	
 	return self;

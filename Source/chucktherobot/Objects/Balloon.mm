@@ -22,9 +22,8 @@
         // Initialize main variables.
         self.startPos = pos1;
         self.curPos = self.startPos;
-        self.radius = rad;
-        self.lift = 25;
-		self.radius = 20.0;
+        self.lift = 25 * [Director shared].scaleFactor.width * 1.8;
+		self.radius = 20.0 * [Director shared].scaleFactor.width;
         self.movable = YES;
 	}
     
@@ -56,8 +55,7 @@
 
 - (id) unserializeWithDict:(NSDictionary *)dict
 {
-	[self initWithStart: ccp([[dict objectForKey: @"startPosX"] floatValue], [[dict objectForKey: @"startPosY"] floatValue]) andRadius: [[dict objectForKey: @"radius"] floatValue]];
-	self.lift = [[dict objectForKey: @"lift"] floatValue];
+	[self initWithStart: ccp([[dict objectForKey: @"startPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"startPosY"] floatValue] * [Director shared].scaleFactor.height) andRadius: [[dict objectForKey: @"radius"] floatValue] * [Director shared].scaleFactor.width];
 	[super unserializeWithDict: dict];
 	
 	return self;

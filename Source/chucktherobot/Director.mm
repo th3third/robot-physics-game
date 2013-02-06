@@ -14,6 +14,10 @@
 
 @implementation Director
 
+static CGSize designSize = {480, 320};
+
+@synthesize scaleFactor;
+
 static Director *shared = nil;
 
 + (Director *) shared
@@ -40,6 +44,12 @@ static Director *shared = nil;
 		self.globalFont = @"Verdana";
 		self.drawDebugData = YES;
 		[self calcNumOfBackgrounds];
+		
+		//Set up the scaling factor.
+		CGSize winSize = [CCDirector sharedDirector].winSize;
+		scaleFactor = CGSizeMake(winSize.width / designSize.width,
+						  winSize.height / designSize.height);
+		NSLog(@"SCALING FACTOR: %f x %f", scaleFactor.width, scaleFactor.height);
 		
 		if ([MToolsAppSettings getValueWithName: @"username"])
 		{
@@ -589,6 +599,13 @@ static Director *shared = nil;
 	hash = [hash stringByReplacingOccurrencesOfString:@">" withString:@""];
 	
 	return hash;
+}
+
+#pragma mark SCALING
+
+- (CGPoint) scalePoint:(CGPoint)point
+{
+    return CGPointMake(point.x * scaleFactor.width, point.y * scaleFactor.height);
 }
 
 @end
