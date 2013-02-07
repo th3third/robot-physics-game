@@ -161,6 +161,7 @@
 - (void) createOnlineLevelList
 {	
     [CCMenuItemFont setFontSize: FONT_SIZE];
+	CGSize s = [CCDirector sharedDirector].winSize;
     
     NSMutableArray *menuItems = [NSMutableArray array];
     CCMenuItemLabel *menuItem;
@@ -185,19 +186,21 @@
 	{
 		NSString *levelName = [levelsList objectAtIndex: i];
 		//Level name
-		menuItem = [CCMenuItemFont itemWithString: [levelName stringByDeletingPathExtension] block:^(id sender){
+		CCLabelTTF *label = [CCLabelTTF labelWithString: [levelName stringByDeletingPathExtension] dimensions: CGSizeMake(s.width / 2, FONT_SIZE * 1.5) hAlignment: kCCTextAlignmentLeft fontName: [Director shared].globalFont fontSize: FONT_SIZE];
+		menuItem = [CCMenuItemFont itemWithLabel: label block:^(id sender){
 			[[Director shared] setStageName: [levelName stringByDeletingPathExtension]];
 			[self goToStageLoadingLevel];
 		}];
 		[menuItems addObject: menuItem];
-		[menuItem setAnchorPoint: ccp(0, 0)];
-		[menuItem setPosition: ccp(-[[CCDirector sharedDirector] winSize].width / 2, -i * 24)];
+		//[menuItem setAnchorPoint: ccp(0, 0)];
+		//[menuItem setPosition: ccp(-[[CCDirector sharedDirector] winSize].width / 2, -i * 24)];
 	}
 	
-	CCMenu *menu = [CCMenu menuWithArray: menuItems];
-	
-	CGSize size = [[CCDirector sharedDirector] winSize];
-	[menu setPosition:ccp( size.width/2, size.height/2)];
+	CCMenuAdvanced *menu = [CCMenuAdvanced menuWithArray: menuItems];
+	[menu alignItemsVerticallyWithPadding: 0 bottomToTop: YES];
+	[menu setBoundaryRect: CGRectMake(-s.width * 0.5, 24, s.width, s.height * 0.9)];
+	[menu fixPosition];
+	//[menu setPosition:ccp( size.width/2, size.height/2)];
 	
 	[self.selectionNode addChild: menu z:-1];
 }
@@ -233,7 +236,7 @@
 - (NSArray *) onlineLevelsList
 {
 	NSMutableArray *levelsList = [NSMutableArray array];
-	[levelsList addObjectsFromArray: [[Director shared] onlineLevelsList: 10 withSorting: 0]];
+	[levelsList addObjectsFromArray: [[Director shared] onlineLevelsList: 200 withSorting: 0]];
 	
 	return levelsList;
 }

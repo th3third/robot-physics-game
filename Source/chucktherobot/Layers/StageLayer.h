@@ -8,6 +8,7 @@
 
 #import "Layer.h"
 #import "Chuck.h"
+#import "CCMenuAdvanced.h"
 
 @interface StageLayer : Layer <CCStandardTouchDelegate, CCTargetedTouchDelegate>
 {
@@ -19,7 +20,9 @@
     Chuck *chuck;
     CGPoint touchStart;
     NSMutableArray *drawPoints;
+	CCSprite *buttonSelector;
     CCSprite *selector;
+	CCSprite *selector2;
 	CCSprite *editorBar;
 	CCSprite *editorBarBot;
 	CCSprite *editorBarLeft;
@@ -27,6 +30,7 @@
 	CCSprite *background;
 	CCSprite *botEditorBackground;
 	CCSprite *leftEditorBackground;
+	CCMenuAdvanced *helpMenu;
 	CCMenuItemSprite *gear;
     CCMenuItemFont *stageNameItem;
 	DialogLayer *winDialog;

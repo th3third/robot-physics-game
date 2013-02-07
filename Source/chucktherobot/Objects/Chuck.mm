@@ -500,6 +500,8 @@
     upperLegR->SetAwake(YES);
 }
 
+#pragma mark GETTERS/SETTERS
+
 - (void) setMovable:(bool)movable
 {
 	
@@ -514,6 +516,13 @@
 {
 	[self rotateAllPartsTo: rotationAngle];
 	[super setRotationAngle: rotationAngle];
+}
+
+- (CGPoint) centerPos
+{
+	CGPoint position = ccp(self.bodyVisible.position.x + (self.bodyVisible.contentSize.width / 2 * self.bodyVisible.scaleX), self.bodyVisible.position.y - (self.bodyVisible.contentSize.height / 2.75 * self.bodyVisible.scaleY));
+	
+	return position;
 }
 
 

@@ -405,7 +405,7 @@ static Director *shared = nil;
 {
 	if (![Director shared].stageName)
 	{
-		NSLog(@"CRITICAL ERROR: There is no stage name set and the Director is trying to load it!");
+		NSLog(@"There is no stage name set and the Director is trying to load it! Aborting the load of current stage.");
 		return;
 	}
 	

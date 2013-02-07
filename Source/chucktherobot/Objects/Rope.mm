@@ -149,7 +149,22 @@
 - (void) tick:(ccTime)dt
 {
 	if (self.alive)
+	{
+		CGFloat dx = (self.bodyA.body->GetPosition().x * PTM_RATIO) - (self.bodyB.body->GetPosition().x * PTM_RATIO);
+		CGFloat dy = (self.bodyA.body->GetPosition().y * PTM_RATIO) - (self.bodyB.body->GetPosition().y * PTM_RATIO);
+		float distance = sqrt(dx*dx + dy*dy);
+		
+		if (distance > self.maxLength * 2)
+		{
+			b2Vec2 aLinVel = self.bodyA.body->GetLinearVelocity();
+			b2Vec2 bLinVel = self.bodyB.body->GetLinearVelocity();
+			
+			self.bodyA.body->SetLinearVelocity(b2Vec2(-aLinVel.x * 0.5, -aLinVel.y * 0.5));
+			self.bodyB.body->SetLinearVelocity(b2Vec2(-bLinVel.x * 0.5, -bLinVel.y * 0.5));
+		}
+		
 		[self createVisibleBody];
+	}
 }
 
 - (void) display
@@ -325,7 +340,7 @@
     jointDef.bodyA = link;
     jointDef.bodyB = bodyB;
     jointDef.localAnchorB.Set(0, 0);
-    self.world->CreateJoint(&jointDef);
+    self.world->CreateJoint(&jointDef);	
 }
 
 - (void) createVisibleBody

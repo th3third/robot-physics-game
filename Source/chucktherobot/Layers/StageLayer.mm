@@ -16,6 +16,7 @@
 #import "DialogLayer.h"
 #import "MToolsFileManager.h"
 #import "MToolsAppSettings.h"
+#import "CCMenuAdvanced.h"
 
 enum
 {
@@ -188,7 +189,7 @@ enum
 		[Director shared].paused = YES;
 		[[Director shared] loadBlankStage];
     }
-	else
+	else if ([Director shared].stageName && ![Director shared].stage)
 	{
 		[[Director shared] loadCurrentStage];
 	}
@@ -253,8 +254,6 @@ enum
 	float editorButtonSize = s.width * 0.074;
 	float editorLeftButtonSize = s.height * 0.09;
 	float editorButtonPadding = 0;
-	float botEditorOffset = 12;
-	float leftEditorOffset = 10;
 	CGPoint startingPoint;
 	
 	if (editorBar)
@@ -305,8 +304,10 @@ enum
 	//-------//
 	
     //RECTANGLE TOOL
+	CGPoint menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_rectangle.png" selectedImage: @"Media/Buttons/general/button_editor_rectangle.png" block:^(id sender) {
 		[self setDrawingMode: DRAWING_MODE_RECTANGLE];
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
     }];
 	if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -314,12 +315,14 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
+	[menuItem setPosition: menuItemPos];
     [menuItems addObject: menuItem];
     
     //CIRCLE TOOL
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_circle.png" selectedImage: @"Media/Buttons/general/button_editor_circle.png" block:^(id sender) {
         [self setDrawingMode: DRAWING_MODE_CIRCLE];
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -327,12 +330,14 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //ROPE TOOL
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_rope.png" selectedImage: @"Media/Buttons/general/button_editor_rope.png" block:^(id sender) {
         [self setDrawingMode: DRAWING_MODE_ROPE];
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -340,12 +345,14 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //BALLOON TOOL
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_balloon.png" selectedImage: @"Media/Buttons/general/button_editor_balloon.png" block:^(id sender) {
         [self setDrawingMode: DRAWING_MODE_BALLOON];
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -353,12 +360,14 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //PIVOT TOOL
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_pivot.png" selectedImage: @"Media/Buttons/general/button_editor_pivot.png" block:^(id sender) {
         [self setDrawingMode: DRAWING_MODE_PIVOT];
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -366,12 +375,14 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //STATIC TOOL
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_static.png" selectedImage: @"Media/Buttons/general/button_editor_static.png" block:^(id sender) {
 		[self setDrawingMode: DRAWING_MODE_STATIC];
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -379,10 +390,11 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //MOTOR TOOL
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_motor.png" selectedImage: @"Media/Buttons/general/button_editor_motor.png" block:^(id sender) {
 		if (self.drawingMode != DRAWING_MODE_MOTOR)
 		{
@@ -403,6 +415,7 @@ enum
 			
 			[self drawMotorArrows];
 		}
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -411,12 +424,14 @@ enum
 	[menuItem setTag: 0];
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //WELD TOOL
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_weld.png" selectedImage: @"Media/Buttons/general/button_editor_weld.png" block:^(id sender) {
         [self setDrawingMode: DRAWING_MODE_WELD];
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -424,12 +439,14 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //POPPABLE TOOL
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_poppable.png" selectedImage: @"Media/Buttons/general/button_editor_poppable.png" block:^(id sender) {
         [self setDrawingMode: DRAWING_MODE_POPPABLE];
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -437,12 +454,14 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //BOUNCY TOOL
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_bouncy.png" selectedImage: @"Media/Buttons/general/button_editor_bouncy.png" block:^(id sender) {
 		[self setDrawingMode: DRAWING_MODE_BOUNCY];
+		[self moveButtonSelectorTo: menuItemPos inBar: 0];
 }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -450,12 +469,13 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //HELP
+	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_help.png" selectedImage: @"Media/Buttons/general/button_editor_help.png" block:^(id sender) {
-        //TODO: Make this pop up the help when hit.
+        [self showHelpMenu];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -463,8 +483,8 @@ enum
 		scale = editorButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y)];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     menu = [CCMenu menuWithArray: menuItems];
 	[menu setTag: 1];
@@ -482,6 +502,7 @@ enum
 	//startingPoint = ccp((-s.width / 2) + (gear.contentSize.width / 2) * gear.scale, (-s.height / 2) + ((gear.contentSize.height) * gear.scale));
 	
 	//PLAY
+	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_play.png" selectedImage: @"Media/Buttons/general/button_editor_play.png" block:^(id sender) {
 		[Director shared].paused = NO;
     }];
@@ -491,10 +512,11 @@ enum
 		scale = editorLeftButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]))];
+	[menuItem setPosition: menuItemPos];
     [menuItems addObject: menuItem];
 	
 	//SAVE
+	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_save.png" selectedImage: @"Media/Buttons/general/button_editor_save.png" block:^(id sender) {
 		[self saveStage];
     }];
@@ -504,10 +526,11 @@ enum
 		scale = editorLeftButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]))];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
 	
 	//BACKGROUND
+	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_grid.png" selectedImage: @"Media/Buttons/general/button_editor_grid.png" block:^(id sender) {
 		[self changeBackground];
     }];
@@ -517,12 +540,14 @@ enum
 		scale = editorLeftButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]))];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
 	
 	//ROTATE
+	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_rotate.png" selectedImage: @"Media/Buttons/general/button_editor_rotate.png" block:^(id sender) {
 		[self setDrawingMode: DRAWING_MODE_ROTATE];
+		[self moveButtonSelectorTo: menuItemPos inBar: 1];
     }];
 	if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorLeftButtonSize / menuItem.contentSize.width;
@@ -530,12 +555,14 @@ enum
 		scale = editorLeftButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]))];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
 	
 	//DELETE
+	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_trashcan.png" selectedImage: @"Media/Buttons/general/button_editor_trashcan.png" block:^(id sender) {
 		[self setDrawingMode: DRAWING_MODE_DELETE];
+		[self moveButtonSelectorTo: menuItemPos inBar: 1];
     }];
 	if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorLeftButtonSize / menuItem.contentSize.width;
@@ -543,12 +570,14 @@ enum
 		scale = editorLeftButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]))];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
 	
 	//COPY
+	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_plus.png" selectedImage: @"Media/Buttons/general/button_editor_plus.png" block:^(id sender) {
 		[self setDrawingMode: DRAWING_MODE_COPY];
+		[self moveButtonSelectorTo: menuItemPos inBar: 1];
     }];
 	if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorLeftButtonSize / menuItem.contentSize.width;
@@ -556,10 +585,11 @@ enum
 		scale = editorLeftButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]))];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
 	
 	//UNDO
+	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_undo.png" selectedImage: @"Media/Buttons/general/button_editor_undo.png" block:^(id sender) {
 		[self undoLastObject];
     }];
@@ -569,12 +599,14 @@ enum
 		scale = editorLeftButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]))];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
 	
 	//MOVE
+	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_select.png" selectedImage: @"Media/Buttons/general/button_editor_select.png" block:^(id sender) {
 		[self setDrawingMode: DRAWING_MODE_SELECTION];
+		[self moveButtonSelectorTo: menuItemPos inBar: 1];
     }];
 	if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorLeftButtonSize / menuItem.contentSize.width;
@@ -582,8 +614,8 @@ enum
 		scale = editorLeftButtonSize / menuItem.contentSize.height;
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]))];
-    [menuItems addObject: menuItem];
+	[menuItem setPosition: menuItemPos];
+	[menuItems addObject: menuItem];
     
     //Stage name.
     /*stageNameItem = [CCMenuItemFont itemWithString: [Director shared].stageName block:^(id sender) {
@@ -648,6 +680,41 @@ enum
 		editorBarLeftMoveTo = [CCMoveTo actionWithDuration: timeToToggle position: ccp(0, -s.height)];
 	}
 	[editorBarLeft runAction: editorBarLeftMoveTo];
+}
+
+- (void) moveButtonSelectorTo: (CGPoint) pos inBar: (int) bar
+{
+	CGSize s = [CCDirector sharedDirector].winSize;
+	float editorLeftButtonSize = s.height * 0.09;
+	float scale = 1.0;
+	
+	//Adjust the position for the menu anchor point.
+	pos.x += (s.width / 2);
+	pos.y += (s.height / 2);
+	
+	if (!buttonSelector)
+	{
+		buttonSelector = [CCSprite spriteWithFile: @"Media/Buttons/general/button_selector.png"];
+	}
+	
+	[buttonSelector removeFromParentAndCleanup: YES];
+	
+	if (buttonSelector.contentSize.width > buttonSelector.contentSize.height)
+		scale = editorLeftButtonSize / buttonSelector.contentSize.width;
+	else
+		scale = editorLeftButtonSize / buttonSelector.contentSize.height;
+	
+	if (bar == 0)
+	{
+		[editorBarBot addChild: buttonSelector z: 8998];
+	}
+	else
+	{
+		[editorBarLeft addChild: buttonSelector z: 8998];
+	}
+	
+	[buttonSelector setScale: scale];
+	[buttonSelector setPosition: pos];
 }
 
 - (void) drawMotorArrows
@@ -1182,7 +1249,7 @@ enum
         Object *object = (Object *)selectedObject;
         if (object)
         {
-            [self sizeSelectorWithObject: object];
+            selector = [self sizeSelector: selector WithObject: object];
         }
     }
     //Since we're not in editing mode, we're playing the game.
@@ -1217,6 +1284,8 @@ enum
             object.rotationAngle = angle;
             
             touchStart = location;
+			
+			selector = [self sizeSelector: selector WithObject: object];
             
             break;
         }
@@ -1260,9 +1329,21 @@ enum
             
         //Rope
         case DRAWING_MODE_ROPE:
+		case DRAWING_MODE_WELD:
         {
             //Add a new point to the touches array so we can track where the rope is going.            
             [drawPoints addObject: touch];
+			
+			selectedObject2 = [self getObjectAtTouch: touch];
+			if (selectedObject2)
+			{
+				Object *object = selectedObject2;
+				selector2 = [self sizeSelector: selector2 WithObject: object];
+			}
+			else
+			{
+				[selector2 removeFromParentAndCleanup: YES];
+			}
             
             break;
         }
@@ -1279,7 +1360,7 @@ enum
     Object *object = (Object *)selectedObject;
 	if (object)
 	{
-		[self sizeSelectorWithObject: object];
+		selector = [self sizeSelector: selector WithObject: object];
 	}
 }
 
@@ -1378,6 +1459,7 @@ enum
     selectedObject2 = nil;
     
     selector.visible = NO;
+	selector2.visible = NO;
 }
 
 - (CGPoint) snapLocation: (CGPoint) location
@@ -1395,27 +1477,76 @@ enum
 	
 }
 
-- (void) sizeSelectorWithObject: (Object *) object
-{	
-	if (selector.parent)
-		[selector removeFromParentAndCleanup: YES];
+- (CCSprite *) sizeSelector: (CCSprite *) selectorNum WithObject: (Object *) object
+{
+	[selectorNum removeFromParentAndCleanup: YES];
 	
-	if ([object isMemberOfClass: [Rectangle class]])
+	if ([object isKindOfClass: [Rectangle class]] ||
+		[object isKindOfClass: [Chuck class]])
 	{
-		selector = [CCSprite spriteWithFile: @"Media/Objects/rectangle_selector.png"];
-		selector.scaleX = (object.bodyVisible.contentSize.width * 1.10 * object.scaleX) / selector.contentSize.width;
-		selector.scaleY = (object.bodyVisible.contentSize.height * 1.10 * object.scaleY) / selector.contentSize.height;
+		selectorNum = [CCSprite spriteWithFile: @"Media/Objects/rectangle_selector.png"];
+		selectorNum.scaleX = (object.bodyVisible.contentSize.width * object.scaleX * 1.05) / selectorNum.contentSize.width;
+		selectorNum.scaleY = (object.bodyVisible.contentSize.height * object.scaleY * 1.05) / selectorNum.contentSize.height;
+	}
+	else if ([object isKindOfClass: [Circle class]] ||
+			 [object isKindOfClass: [Pivot class]] ||
+			 [object isKindOfClass: [Motor class]] ||
+			 [object isKindOfClass: [Balloon class]])
+	{
+		Circle *circle = object;
+		selectorNum = [CCSprite spriteWithFile: @"Media/Objects/circle_selector.png"];
+		selectorNum.scaleX = ((circle.radius * 2) * object.scaleX * 1.1) / selectorNum.contentSize.width;
+		selectorNum.scaleY = ((circle.radius * 2) * object.scaleY * 1.1) / selectorNum.contentSize.height;
 	}
 	else
 	{
-		selector = [CCSprite spriteWithFile: @"Media/Objects/circle_selector.png"];
-		selector.scaleX = ((object.bodyVisible.contentSize.width / 2) * object.scaleX) / selector.contentSize.width;
-		selector.scaleY = ((object.bodyVisible.contentSize.height / 2) * object.scaleY) / selector.contentSize.height;
+		return selectorNum;
 	}
 	
-	selector.position = object.centerPos;
-	selector.visible = YES;
-	[self addChild: selector z: object.z - 1];
+	selectorNum.position = object.centerPos;
+	selectorNum.visible = YES;
+	selectorNum.rotation = -CC_RADIANS_TO_DEGREES(object.rotationAngle);
+	[self addChild: selectorNum z: object.z + 1];
+	
+	return selectorNum;
+}
+
+#pragma mark HELP
+
+//Loads up the help popups.
+- (void) showHelpMenu
+{
+	if (helpMenu && helpMenu.parent)
+	{
+		[helpMenu removeFromParentAndCleanup: YES];
+		return;
+	}
+	else if (helpMenu && !helpMenu.parent)
+	{
+		[self addChild: helpMenu z: 9000];
+		return;
+	}
+	
+	NSMutableArray *helpList = [NSMutableArray array];
+	[helpList addObjectsFromArray: [[NSBundle mainBundle] pathsForResourcesOfType: @".png" inDirectory: @"Media/Backgrounds/general/help"]];
+	
+	CGSize s = [CCDirector sharedDirector].winSize;
+	NSMutableArray *menuItems = [NSMutableArray array];
+	for (NSString *helpFilePath in helpList)
+	{		
+		CCMenuItemImage *scrollableItem = [CCMenuItemImage itemWithNormalImage: helpFilePath selectedImage: helpFilePath];
+		[scrollableItem setScale: (s.width * 0.75) / scrollableItem.contentSize.width];
+		[menuItems addObject: scrollableItem];
+		//[helpFileSprite setAnchorPoint: ccp(0.5, 0.5)];
+		//[helpFileSprite setPosition: ccp(s.width / 2, s.height / 2)];
+		//[helpQueue addObject: helpFileSprite];
+	}
+	
+	helpMenu = [CCMenuAdvanced menuWithArray: menuItems];
+	[helpMenu alignItemsHorizontallyWithPadding: 10];
+	[helpMenu setBoundaryRect: CGRectMake(s.width * 0.125, s.height * 0.125, s.width * 0.75, s.height * 0.75)];
+	[helpMenu fixPosition];
+	[self addChild: helpMenu z: 9000];
 }
 
 #pragma mark GOTOS

@@ -610,15 +610,15 @@
 		CE8086F5169B80F10024C88A /* MToolsAlertViewManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MToolsAlertViewManager.mm; sourceTree = "<group>"; };
 		CE8086F6169B80F10024C88A /* MToolsAppSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MToolsAppSettings.h; sourceTree = "<group>"; };
 		CE8086F7169B80F10024C88A /* MToolsAppSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MToolsAppSettings.mm; sourceTree = "<group>"; };
-		CE8086F8169B80F10024C88A /* MToolsDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MToolsDebug.h; path = "../../../../../Volumes/Shared/XCode Projects/MTools/MToolsDebug.h"; sourceTree = "<group>"; };
+		CE8086F8169B80F10024C88A /* MToolsDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MToolsDebug.h; sourceTree = "<group>"; };
 		CE8086F9169B80F10024C88A /* MToolsDebug.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MToolsDebug.mm; sourceTree = "<group>"; };
-		CE8086FA169B80F10024C88A /* MToolsFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MToolsFileManager.h; path = "../../../../../Volumes/Shared/XCode Projects/MTools/MToolsFileManager.h"; sourceTree = "<group>"; };
+		CE8086FA169B80F10024C88A /* MToolsFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MToolsFileManager.h; sourceTree = "<group>"; };
 		CE8086FB169B80F10024C88A /* MToolsFileManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MToolsFileManager.mm; sourceTree = "<group>"; };
-		CE8086FC169B80F10024C88A /* MToolsNetworkAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MToolsNetworkAlert.h; path = "../../../../../Volumes/Shared/XCode Projects/MTools/MToolsNetworkAlert.h"; sourceTree = "<group>"; };
+		CE8086FC169B80F10024C88A /* MToolsNetworkAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MToolsNetworkAlert.h; sourceTree = "<group>"; };
 		CE8086FD169B80F10024C88A /* MToolsNetworkAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MToolsNetworkAlert.mm; sourceTree = "<group>"; };
-		CE8086FE169B80F10024C88A /* MToolsPurchaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MToolsPurchaseManager.h; path = "../../../../../Volumes/Shared/XCode Projects/MTools/MToolsPurchaseManager.h"; sourceTree = "<group>"; };
+		CE8086FE169B80F10024C88A /* MToolsPurchaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MToolsPurchaseManager.h; sourceTree = "<group>"; };
 		CE8086FF169B80F10024C88A /* MToolsPurchaseManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MToolsPurchaseManager.mm; sourceTree = "<group>"; };
-		CE808700169B80F10024C88A /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipArchive.h; path = "../../../../../Volumes/Shared/XCode Projects/MTools/ZipArchive.h"; sourceTree = "<group>"; };
+		CE808700169B80F10024C88A /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipArchive.h; sourceTree = "<group>"; };
 		CE808701169B80F10024C88A /* ZipArchive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZipArchive.mm; sourceTree = "<group>"; };
 		CE808709169B82EA0024C88A /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CE80870B169B943F0024C88A /* Rope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rope.h; sourceTree = "<group>"; };
@@ -1619,7 +1619,7 @@
 				CEE79402169B6D0D00046082 /* minizip */,
 			);
 			name = MTools;
-			path = ../../MTools;
+			path = chucktherobot/MTools;
 			sourceTree = "<group>";
 		};
 		CEE79402169B6D0D00046082 /* minizip */ = {
