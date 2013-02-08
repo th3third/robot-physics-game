@@ -34,6 +34,14 @@
 	return self;
 }
 
+- (void) remove
+{
+	if (self.joint)
+		self.world->DestroyJoint(self.joint);
+	
+	[super remove];
+}
+
 - (NSString *) serialize
 {
     NSMutableString *code = [NSMutableString string];
@@ -103,7 +111,7 @@
 	revoluteJointDef.bodyB = self.bodyA.body;
 	revoluteJointDef.localAnchorA.Set(0, 0);
 	revoluteJointDef.localAnchorB.Set(0, 0);
-	self.world->CreateJoint(&revoluteJointDef);
+	self.joint = self.world->CreateJoint(&revoluteJointDef);
 	
 	[self.bodyA attachObject: self];
     [self attachObject: self.bodyA];

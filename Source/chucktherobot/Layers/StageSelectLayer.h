@@ -10,7 +10,8 @@
 
 @interface StageSelectLayer : Layer
 {
-    
+    int totalMenuItems;
+	int menuItemsPerPage;
 }
 
 typedef enum
@@ -21,5 +22,6 @@ typedef enum
 
 @property int selectType;
 @property CCNode *selectionNode;
+@property CCMenu *pageMenu;
 
 @end

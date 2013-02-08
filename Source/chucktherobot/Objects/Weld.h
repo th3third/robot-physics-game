@@ -12,6 +12,7 @@
 
 @property Object *bodyA;
 @property Object *bodyB;
+@property b2Joint *joint;
 @property b2Vec2 localAnchorA;
 @property b2Vec2 localAnchorB;
 @property bool welded;

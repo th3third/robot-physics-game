@@ -34,6 +34,7 @@ enum DataState
 @property NSURL *saveLevelScriptURL;
 @property NSURL *loadLevelScriptURL;
 @property NSURL *listingsScriptURL;
+@property NSURL *flagLevelScriptURL;
 @property NSURLConnection *connection;
 @property (nonatomic) bool paused;
 @property bool editing;
@@ -47,6 +48,7 @@ enum DataState
 @property NSString *globalFont;
 @property int numOfBackgrounds;
 @property int dataState;
+@property int levelSelectPageNum;
 @property (nonatomic) bool loggedIn;
 @property (nonatomic) bool processingNetworkRequest;
 @property (nonatomic) NSArray *localLevelsList;
@@ -72,6 +74,7 @@ enum DataState
 - (bool) getLevelFromServer;
 - (void) loadCurrentStage;
 - (void) loadBlankStage;
+- (void) flagLevel: (NSString *) name;
 - (NSArray *) onlineLevelsList: (int) number withSorting: (int) sorting;
 
 //Scaling

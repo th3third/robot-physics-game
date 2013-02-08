@@ -251,6 +251,15 @@
 					[objectsToRemove addObject: motor];
 			}
 		}
+		
+		//Go through and remove this object from the movement groups.
+		if ([object.groups count] > 0)
+		{
+			for (Group *objectGroup in object.groups)
+			{
+				[objectGroup removeObject: self];
+			}
+		}
     }
 	
 	for (Object *object in objectsToRemove)

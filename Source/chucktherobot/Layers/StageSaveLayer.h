@@ -11,6 +11,8 @@
 @interface StageSaveLayer : Layer <UITextFieldDelegate>
 {
 	CCMenuItemFont *stageNameItem;
+	NSMutableArray *currentTags;
+	NSMutableArray *tagNames;
 }
 
 @end

@@ -48,7 +48,7 @@
 
 - (id) unserializeWithDict: (NSDictionary *) dict
 {
-	[self initWithPos: ccp([[dict objectForKey: @"startPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"startPosY"] floatValue] * [Director shared].scaleFactor.height)];
+	[self initWithPos: ccp([[dict objectForKey: @"startPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"startPosY"] floatValue] * [Director shared].scaleFactor.width)];
 	[super unserializeWithDict: dict];
 	
 	return self;

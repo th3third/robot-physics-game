@@ -75,11 +75,6 @@
     //Update the last modified value.
     lastModified = [NSDate date];
     
-    //Update the creator to the currently logged in user.
-    //If they're not logged in, this defaults to Anonymous.
-    //TODO: Put in the checking for this when the log in system is implemented.
-    creator = @"Anonymous";
-    
 	//Stage opening tag.
 	[code appendString: @"<stage>"];
 	
@@ -89,6 +84,7 @@
     [code appendString: @"</name>\n"];
     
     //Stage creator
+	creator = [Director shared].username;
     [code appendString: @"<creator>"];
     [code appendString: creator];
     [code appendString: @"</creator>\n"];

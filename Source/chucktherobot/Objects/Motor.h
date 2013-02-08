@@ -11,6 +11,7 @@
 @interface Motor : Circle
 
 @property Object *bodyA;
+@property b2Joint *joint;
 @property b2Vec2 localAnchorA;
 @property bool attached;
 

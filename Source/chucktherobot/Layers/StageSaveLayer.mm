@@ -24,7 +24,16 @@
 {
 	if( (self = [super init]))
     {
-		// enable events
+		//Create all the tag names.
+		tagNames = [NSMutableArray array];
+		[tagNames addObject: @"destructive"];
+		[tagNames addObject: @"crazy"];
+		[tagNames addObject: @"hard"];
+		[tagNames addObject: @"bouncy"];
+		[tagNames addObject: @"short"];
+		[tagNames addObject: @"puzzle"];
+		[tagNames addObject: @"artistic"];
+		[tagNames addObject: @"timing"];
 		
 		self.isTouchEnabled = YES;
 		
@@ -47,7 +56,7 @@
 	CGSize s = [CCDirector sharedDirector].winSize;
 	
 	CCMenu *menu;
-	CCMenuItemSprite *menuItem;
+	CCMenuItemToggle *menuItem;
 	CCLabelTTF *label;
 	
 	//NAME
@@ -89,23 +98,45 @@
 	label.position = ccp(0, s.height * .55);
 	
 	NSMutableArray *menuItems = [NSMutableArray array];
-	int numberOfTags = 12;
-	
-	for (int i = 0; i < numberOfTags; i++)
+	float rowStart = (s.height / 2) - label.position.y;
+	int row = 0;
+	int col = 0;
+	for (int i = 0; i < [tagNames count]; i++)
 	{
-		CCSprite *tagSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_tag.png"];
-		CCSprite *tagSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_tag_selected.png"];
-		menuItem = [CCMenuItemSprite itemWithNormalSprite: tagSpriteNormal selectedSprite: tagSpriteSelected block:^(id sender)
-		{
-			
+		NSString *tagFileName = [NSString stringWithFormat: @"Media/Buttons/general/tags/tag_%@.png", [tagNames objectAtIndex: i]];
+		NSString *tagSelectedFileName = [NSString stringWithFormat: @"Media/Buttons/general/tags/tag_%@_selected.png", [tagNames objectAtIndex: i]];
+		CCMenuItem *menuItemOn = [CCMenuItemImage itemWithNormalImage: tagFileName selectedImage: tagFileName];
+		CCMenuItem *menuItemOff = [CCMenuItemImage itemWithNormalImage: tagSelectedFileName selectedImage: tagSelectedFileName];
+		NSArray *toggleItems = [NSArray arrayWithObjects: menuItemOff, menuItemOn, nil];
+		
+		menuItem = [CCMenuItemToggle itemWithItems: toggleItems block:^(id sender) {
+			[self toggleTag: [tagNames objectAtIndex: i]];
 		}];
-				  
+		float scale = ((s.width / ([tagNames count] / 2)) * 0.75) / menuItem.contentSize.width;
+		[menuItem setScale: scale];
+		
+		if ((i * 2) >= (row + 1) * [tagNames count])
+		{
+			row++;
+			col = 0;
+		}
+		
+		[menuItem setPosition: ccp(s.width * 0.1 + (s.width / ([tagNames count] / 2)) * col, (row * s.height * 0.15))];
+		col++;
+		
+		for (NSString *tag in [Director shared].stage.tags)
+		{
+			if ([tag isEqualToString: [tagNames objectAtIndex: i]])
+			{
+				[menuItem activate];
+			}
+		}
+		
 		[menuItems addObject: menuItem];
 	}
 	
 	menu = [CCMenu menuWithArray: menuItems];
-	[menu setPosition: ccp(s.width / 2, s.height / 2 - 30)];
-	[menu alignItemsInColumns: [NSNumber numberWithInt: 6], [NSNumber numberWithInt: 6], nil];
+	[menu setPosition: ccp(0, s.height * 0.325)];
 	[self addChild: menu];
 	
 	//SAVE TO FILE BUTTON
@@ -140,6 +171,31 @@
 	[self addChild: menu];
 }
 
+- (void) toggleTag: (NSString *) tagString
+{
+	NSLog(@"Toggled %@", tagString);
+	if (!currentTags)
+		currentTags = [NSMutableArray array];
+	
+	id tagToRemove;
+	for (NSString *tag in currentTags)
+	{
+		if ([tag isEqualToString: tagString])
+		{
+			tagToRemove = tag;
+		}
+	}
+	
+	if (tagToRemove)
+	{
+		[currentTags removeObject: tagToRemove];
+	}
+	else
+	{
+		[currentTags addObject: tagString];
+	}
+}
+
 - (void) changeStageName: (DialogLayer *) diaglayer
 {
 	if (!diaglayer.textField.text || [diaglayer.textField.text isEqualToString: @"Untitled"])
@@ -169,6 +225,9 @@
 		[self addChild: [[Director shared] createLogInDialog] z: 9000];
 		return;
 	}
+	
+	//Add in the tags to the level.
+	[Director shared].stage.tags = currentTags;
 	
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageSaveToFile scene]]];
 }

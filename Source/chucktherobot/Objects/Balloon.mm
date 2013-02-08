@@ -22,7 +22,7 @@
         // Initialize main variables.
         self.startPos = pos1;
         self.curPos = self.startPos;
-        self.lift = 25;
+        self.lift = 25 * [Director shared].scaleFactor.height;
 		self.radius = 20.0 * [Director shared].scaleFactor.width;
         self.movable = YES;
 	}

@@ -183,6 +183,10 @@
 		CE808708169B80F10024C88A /* ZipArchive.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE808701169B80F10024C88A /* ZipArchive.mm */; };
 		CE80870A169B82EA0024C88A /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE808709169B82EA0024C88A /* StoreKit.framework */; };
 		CE80870D169B943F0024C88A /* Rope.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE80870C169B943F0024C88A /* Rope.mm */; };
+		CE87525016C4545200FB0879 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CE87524F16C4545200FB0879 /* Default@2x.png */; };
+		CE87525216C4545400FB0879 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = CE87525116C4545400FB0879 /* Default.png */; };
+		CE87525416C4545C00FB0879 /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = CE87525316C4545B00FB0879 /* Default-Landscape@2x~ipad.png */; };
+		CE87525516C45F8F00FB0879 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CE87524C16C4545000FB0879 /* Default-568h@2x.png */; };
 		CE91207816B6E1960032186E /* CCAnimate+SequenceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = CE91203816B6E1960032186E /* CCAnimate+SequenceLoader.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CE91207916B6E1960032186E /* CCAnimation+SequenceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = CE91203A16B6E1960032186E /* CCAnimation+SequenceLoader.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CE91207A16B6E1960032186E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = CE91203B16B6E1960032186E /* README.md */; };
@@ -624,6 +628,10 @@
 		CE80870B169B943F0024C88A /* Rope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rope.h; sourceTree = "<group>"; };
 		CE80870C169B943F0024C88A /* Rope.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Rope.mm; sourceTree = "<group>"; };
 		CE80870E169B9FC70024C88A /* Objects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Objects.h; sourceTree = "<group>"; };
+		CE87524C16C4545000FB0879 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		CE87524F16C4545200FB0879 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		CE87525116C4545400FB0879 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		CE87525316C4545B00FB0879 /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x~ipad.png"; sourceTree = "<group>"; };
 		CE91203716B6E1960032186E /* CCAnimate+SequenceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CCAnimate+SequenceLoader.h"; sourceTree = "<group>"; };
 		CE91203816B6E1960032186E /* CCAnimate+SequenceLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CCAnimate+SequenceLoader.m"; sourceTree = "<group>"; };
 		CE91203916B6E1960032186E /* CCAnimation+SequenceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CCAnimation+SequenceLoader.h"; sourceTree = "<group>"; };
@@ -1481,6 +1489,10 @@
 		CEE02BC9169640BA00264586 = {
 			isa = PBXGroup;
 			children = (
+				CE87525316C4545B00FB0879 /* Default-Landscape@2x~ipad.png */,
+				CE87525116C4545400FB0879 /* Default.png */,
+				CE87524F16C4545200FB0879 /* Default@2x.png */,
+				CE87524C16C4545000FB0879 /* Default-568h@2x.png */,
 				CE15F03816BB1DA00066B5DF /* levels */,
 				CE7F6CC716B9A3C80025A3E3 /* Security.framework */,
 				CE91203616B6E1960032186E /* CCAnimate-SpriteSequenceLoader-master */,
@@ -1712,6 +1724,10 @@
 				CE91209216B6E1960032186E /* README.md in Resources */,
 				CE91209616B6E1960032186E /* README.md in Resources */,
 				CE15F03E16BB457B0066B5DF /* defaults in Resources */,
+				CE87525016C4545200FB0879 /* Default@2x.png in Resources */,
+				CE87525216C4545400FB0879 /* Default.png in Resources */,
+				CE87525416C4545C00FB0879 /* Default-Landscape@2x~ipad.png in Resources */,
+				CE87525516C45F8F00FB0879 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

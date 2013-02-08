@@ -43,6 +43,14 @@
 	return self;
 }
 
+- (void) remove
+{
+	if (self.joint)
+		self.world->DestroyJoint(self.joint);
+	
+	[super remove];
+}
+
 - (NSString *) serialize
 {
     NSMutableString *code = [NSMutableString string];
@@ -137,7 +145,7 @@
     
     b2WeldJointDef weldJointDef;
     weldJointDef.Initialize(self.bodyA.body, self.bodyB.body, self.bodyA.body->GetWorldCenter());
-    self.world->CreateJoint(&weldJointDef);
+    self.joint = self.world->CreateJoint(&weldJointDef);
     
     self.welded = YES;
 }

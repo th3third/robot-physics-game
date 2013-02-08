@@ -24,14 +24,18 @@
 		self.radius = 5.0f * [Director shared].scaleFactor.width;
 		self.bodyA = bodyA;
 		self.movable = NO;
+		self.density = 1.0;
 	}
     
 	return self;
 }
 
-- (void) tick:(ccTime)dt
+- (void) remove
 {
-    [super tick: dt];
+	if (self.joint)
+		self.world->DestroyJoint(self.joint);
+	
+	[super remove];
 }
 
 - (NSString *) serialize
@@ -106,7 +110,7 @@
 	revoluteJointDef.bodyB = self.bodyA.body;
 	revoluteJointDef.localAnchorA.Set(0, 0);
 	revoluteJointDef.localAnchorB.Set(0, 0);
-	self.world->CreateJoint(&revoluteJointDef);
+	self.joint = self.world->CreateJoint(&revoluteJointDef);
 	
 	[self.bodyA attachObject: self];
     [self attachObject: self.bodyA];

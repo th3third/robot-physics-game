@@ -8,6 +8,7 @@
 
 #import "DialogLayer.h"
 #import "Director.h"
+#import "Layers.h"
 
 #define DIALOG_FONT @"Verdana"
 #define DIALOG_FONT_SIZE 18
@@ -135,6 +136,92 @@
     return self;
 }
 
+- (id) initStageMenuWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	self.dialogType = 2;
+	
+    if((self = [super init]))
+    {
+        header = headerIn;
+        callbackObj = callbackObjNew;
+        selector = selectorNew;
+        
+        CCSprite *background = [self createBackground];
+        
+		if ([Director shared].editing)
+		{			
+			CCLabelTTF *line1Label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"Are you sure you want to exit to the main menu and abandon your level? If you have not saved your level it will be lost."] fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
+			line1Label.color = ccBLACK;
+			line1Label.scale = 0.84f;
+			line1Label.dimensions = CGSizeMake(backgroundWidth * 0.9, backgroundHeight * 0.75);
+			[line1Label setPosition:ccp(background.position.x, background.position.y + DIALOG_FONT_OFFSET)];
+			[self addChild:line1Label];
+		}
+		else
+		{
+			CCLabelTTF *line1Label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"You are playing %@\n\nWhat would you like to do?", [Director shared].stage.name] fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
+			line1Label.color = ccBLACK;
+			line1Label.scale = 0.84f;
+			line1Label.dimensions = CGSizeMake(backgroundWidth * 0.9, backgroundHeight * 0.75);
+			[line1Label setPosition:ccp(background.position.x, background.position.y + DIALOG_FONT_OFFSET)];
+			[self addChild:line1Label];
+		}
+        
+		NSMutableArray *buttons = [NSMutableArray array];
+		float okButtonPosX = background.position.x;
+		okButtonPosX += backgroundWidth / 4;
+		
+			CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
+			cancelButton.scale = (backgroundWidth * 0.2) / cancelButton.contentSize.width;
+			[cancelButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
+			[buttons addObject: cancelButton];
+		
+		if ([Director shared].online && ![Director shared].editing)
+		{
+			CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_levels.png" selectedImage:@"Media/Buttons/general/button_dialog_levels.png" target:self selector:@selector(nextStageButtonPressed:)];
+			okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+			[okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
+			[buttons addObject: okButton];
+		
+			NSLog(@"Compare: %@ with %@", [Director shared].stage.creator, [Director shared].username);
+			if ([[Director shared].stage.creator isEqualToString: [Director shared].username])
+			{
+				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_edit.png" selectedImage:@"Media/Buttons/general/button_dialog_edit.png" target:self selector:@selector(editButtonPressed:)];
+				flagButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+				[flagButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight / 5)];
+				[buttons addObject: flagButton];
+			}
+			else
+			{
+				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_flag.png" selectedImage:@"Media/Buttons/general/button_dialog_flag.png" target:self selector:@selector(flagButtonPressed:)];
+				flagButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+				[flagButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight / 5)];
+				[buttons addObject: flagButton];
+			}
+		}
+		else if ([Director shared].editing)
+		{
+			CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(okButtonPressed:)];
+			okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+			[okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
+			[buttons addObject: okButton];
+		}
+		else
+		{
+			CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_levels.png" selectedImage:@"Media/Buttons/general/button_dialog_levels.png" target:self selector:@selector(nextStageButtonPressed:)];
+			okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+			[okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
+			[buttons addObject: okButton];
+		}
+        
+        CCMenu *menu = [CCMenu menuWithArray: buttons];
+        menu.position = ccp(0, -backgroundHeight / 6 + DIALOG_FONT_OFFSET);
+        [self addChild:menu];
+    }
+    
+    return self;
+}
+
 - (id) initWinnerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andTimeElapsed: (float) timeElapsed
 {
 	self.dialogType = 2;
@@ -147,7 +234,7 @@
         
         CCSprite *background = [self createBackground];
         
-        CCLabelTTF *line1Label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"Time elapsed: %f", timeElapsed] fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
+        CCLabelTTF *line1Label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"Level completed! Your total time elapsed was: %f seconds. What would you like to do next?", timeElapsed] fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
         line1Label.color = ccBLACK;
         line1Label.scale = 0.84f;
         line1Label.dimensions = CGSizeMake(backgroundWidth * 0.9, backgroundHeight * 0.75);
@@ -157,15 +244,88 @@
 		NSMutableArray *buttons = [NSMutableArray array];
 		float okButtonPosX = background.position.x;
 		okButtonPosX += backgroundWidth / 4;
-		CCMenuItemImage *retryButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/CancelButton.png" selectedImage:@"Media/Buttons/general/CancelButtonSelected.png" target:self selector:@selector(retryButtonPressed:)];
+		CCMenuItemImage *retryButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_restart.png" selectedImage:@"Media/Buttons/general/button_dialog_restart.png" target:self selector:@selector(retryButtonPressed:)];
 		retryButton.scale = (backgroundWidth * 0.2) / retryButton.contentSize.width;
 		[retryButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
 		[buttons addObject: retryButton];
 		
-		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/OKButton.png" selectedImage:@"Media/Buttons/general/OKButtonSelected.png" target:self selector:@selector(nextStageButtonPressed:)];
-		okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
-        [okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
-		[buttons addObject: okButton];
+		if ([Director shared].online)
+		{
+			CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_levels.png" selectedImage:@"Media/Buttons/general/button_dialog_levels.png" target:self selector:@selector(nextStageButtonPressed:)];
+			okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+			[okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
+			[buttons addObject: okButton];
+		}
+		else
+		{
+			CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(nextStageButtonPressed:)];
+			okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+			[okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
+			[buttons addObject: okButton];
+		}
+		
+		if ([Director shared].online)
+		{
+			NSLog(@"Compare: %@ with %@", [Director shared].stage.creator, [Director shared].username);
+			if ([[Director shared].stage.creator isEqualToString: [Director shared].username])
+			{
+				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_edit.png" selectedImage:@"Media/Buttons/general/button_dialog_edit.png" target:self selector:@selector(editButtonPressed:)];
+				flagButton.scale = (backgroundWidth * 0.2) / flagButton.contentSize.width;
+				[flagButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight / 5)];
+				[buttons addObject: flagButton];
+			}
+			else
+			{
+				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_flag.png" selectedImage:@"Media/Buttons/general/button_dialog_flag.png" target:self selector:@selector(flagButtonPressed:)];
+				flagButton.scale = (backgroundWidth * 0.2) / flagButton.contentSize.width;
+				[flagButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight / 5)];
+				[buttons addObject: flagButton];
+			}
+		}
+
+        
+        CCMenu *menu = [CCMenu menuWithArray: buttons];
+        menu.position = ccp(0, -backgroundHeight / 6 + DIALOG_FONT_OFFSET);
+        [self addChild:menu];
+    }
+    
+    return self;
+}
+
+- (id) initFlaggerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andLevelName: (NSString *) levelName
+{
+	self.dialogType = 2;
+	
+    if((self = [super init]))
+    {
+        header = headerIn;
+        callbackObj = callbackObjNew;
+        selector = selectorNew;
+        
+        CCSprite *background = [self createBackground];
+        
+        CCLabelTTF *line1Label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"You are about to flag %@ for inappropriate content. Are you sure you wish to do this?", levelName] fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
+        line1Label.color = ccBLACK;
+        line1Label.scale = 0.84f;
+        line1Label.dimensions = CGSizeMake(backgroundWidth * 0.9, backgroundHeight * 0.75);
+        [line1Label setPosition:ccp(background.position.x, background.position.y + DIALOG_FONT_OFFSET)];
+        [self addChild:line1Label];
+        
+		NSMutableArray *buttons = [NSMutableArray array];
+		float okButtonPosX = background.position.x;
+		okButtonPosX += backgroundWidth / 4;
+		
+		CCMenuItemImage *noButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_no.png" selectedImage:@"Media/Buttons/general/button_dialog_no.png" target:self selector:@selector(cancelButtonPressed:)];
+		noButton.scale = (backgroundWidth * 0.2) / noButton.contentSize.width;
+		[noButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
+		[buttons addObject: noButton];
+		
+		CCMenuItemImage *yesButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_dialog_yes.png" selectedImage: @"Media/Buttons/general/button_dialog_yes.png" block:^(id sender) {
+			[self flagConfirmButtonPressed: nil];
+		}];
+		yesButton.scale = (backgroundWidth * 0.2) / noButton.contentSize.width;
+		[yesButton setPosition: ccp(background.position.x + backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
+		[buttons addObject: yesButton];
         
         CCMenu *menu = [CCMenu menuWithArray: buttons];
         menu.position = ccp(0, -backgroundHeight / 6 + DIALOG_FONT_OFFSET);
@@ -212,13 +372,38 @@
 	
     return NO;
 }
+
+- (void) flagButtonPressed: (id) sender
+{
+	[self playButtonSound];
+	
+	DialogLayer *flagConfirmDialog = [[DialogLayer alloc] initFlaggerWithHeader: @"CONFIRM FLAG" target: self selector: @selector(flagConfirmButtonPressed:) andLevelName: [Director shared].stage.name];
+	[self.parent addChild: flagConfirmDialog z: 9100];
+	[self removeFromParentAndCleanup: YES];
+}
+
+- (void) flagConfirmButtonPressed: (id) sender
+{
+	[self playButtonSound];
+	
+	[[Director shared] flagLevel: [Director shared].stage.name];
+	DialogLayer *thankYouDialog = [[DialogLayer alloc] initWithHeader: @"THANK YOU" andLine1: @"Thank you for your report. We will investigate the level you have flagged and take the appropriate action." target: self selector: @selector(cancelButtonPressed:) textField: NO];
+	[self.parent addChild: thankYouDialog z: 9100];
+	[self removeFromParentAndCleanup: YES];
+}
+
+
 - (void) retryButtonPressed: (id) sender
 {
+	[self playButtonSound];
+	
 	[callbackObj performSelector: selector withObject: [NSNumber numberWithBool: YES]];
 }
 
 - (void) nextStageButtonPressed: (id) sender
 {
+	[self playButtonSound];
+	
 	[callbackObj performSelector: selector withObject: [NSNumber numberWithBool: NO]];
 }
 
@@ -227,6 +412,14 @@
     [self playButtonSound];
     
     [callbackObj performSelector: selector withObject: self];
+    
+    [self.textField removeFromSuperview];
+    [self removeFromParentAndCleanup:YES];
+}
+
+- (void) cancelButtonPressed:(id) sender
+{
+    [self playButtonSound];
     
     [self.textField removeFromSuperview];
     [self removeFromParentAndCleanup:YES];
@@ -245,12 +438,12 @@
     [self removeFromParentAndCleanup:YES];
 }
 
-- (void) cancelButtonPressed:(id) sender
+- (void) editButtonPressed: (id) sender
 {
-    [self playButtonSound];
-    
-    [self.textField removeFromSuperview];
-    [self removeFromParentAndCleanup:YES];
+	[self playButtonSound];
+	
+	[Director shared].editing = YES;
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
 }
 
 - (void) playButtonSound

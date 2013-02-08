@@ -798,11 +798,19 @@ enum
 	// Instruct the world to perform a single step of simulation. It is
 	// generally best to keep the time step and iterations fixed.
     if (![Director shared].paused)
-    {
+    {		
 		timeElapsedSinceStart += dt;
-		
         dt = 1.0 / 60.0;
+		
+		for (Object *object in [[Director shared].stage objects])
+		{
+			if (object.alive)
+				[object tick: dt];
+		}
+		
         [self worldTick: dt];
+		
+		
     }
 }
 
@@ -812,12 +820,6 @@ enum
     int32 positionIterations = 1;
     
     [Director shared].world->Step(dt, velocityIterations, positionIterations);
-    
-    for (Object *object in [[Director shared].stage objects])
-    {
-        if (object.alive)
-            [object tick: dt];
-    }
     
     //Check and see if Chuck has dropped out of the stage. If so, reset or win.
     if (chuck.body)
@@ -957,6 +959,13 @@ enum
 			}
 			
             Object *obj = (Object *)selectedObject;
+			
+			if ([obj isKindOfClass: [Chuck class]])
+			{
+				[debug log: @"Tried to attach a pivot to Chuck - you can't do that."];
+				return;
+			}
+			
 			Pivot *pivot = [Pivot pivotWithBodyA: obj];
             selectedObject = nil;
             selectedObject2 = nil;
@@ -1014,6 +1023,13 @@ enum
 			}
 			
             Object *obj = (Object *)selectedObject2;
+			
+			if ([obj isKindOfClass: [Chuck class]])
+			{
+				[debug log: @"Tried to attach a motor to Chuck - you can't do that."];
+				return;
+			}
+			
 			Motor *motor = [Motor motorWithBody: obj andForce: force];
             selectedObject = nil;
             selectedObject2 = nil;
@@ -1553,7 +1569,7 @@ enum
 
 - (void) goToMainMenu
 {
-	DialogLayer *quitConfirm = [[DialogLayer alloc] initWithHeader: @"Confirm" andLine1: @"Are you sure you want to exit to the main menu?" target: self selector: @selector(quitConfirm) textField: NO andExistingText: @"" andCancelButton: YES];
+	DialogLayer *quitConfirm = [[DialogLayer alloc] initStageMenuWithHeader: @"PAUSED" target: self selector: @selector(quitConfirm)];
 	[self addChild: quitConfirm z: 9000];
 }
 
@@ -1561,7 +1577,15 @@ enum
 {
 	[Director shared].stage = nil;
 	[Director shared].stageName = nil;
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [MainMenuLayer scene]]];
+	
+	if ([Director shared].editing)
+	{
+		[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [MainMenuLayer scene]]];
+	}
+	else
+	{
+		[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageSelectLayer scene]]];
+	}
 }
 
 - (void) goToStageSave

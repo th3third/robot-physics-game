@@ -40,9 +40,11 @@ static Director *shared = nil;
 		self.saveLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/save_level.php", [self.levelsServerURL absoluteString]]];
 		self.loadLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/load_level.php", [self.levelsServerURL absoluteString]]];
 		self.listingsScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/listing.php", [self.levelsServerURL absoluteString]]];
+		self.flagLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/flag.php", [self.levelsServerURL absoluteString]]];
 		self.objID = 0;
 		self.globalFont = @"Verdana";
 		self.drawDebugData = NO;
+		self.levelSelectPageNum = 0;
 		[self calcNumOfBackgrounds];
 		
 		//Set up the scaling factor.
@@ -298,7 +300,8 @@ static Director *shared = nil;
 	self.dataState = DATA_STATE_SAVING_LEVEL;
 	self.processingNetworkRequest = YES;
 	
-	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@&value4=%@", self.hashedPassword, self.username, [Director shared].stage.serialized, [Director shared].stage.name];
+	NSString *compiledTags = [[[Director shared].stage.tags valueForKey: @"description"] componentsJoinedByString: @","];
+	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@&value4=%@&value5=%@", self.hashedPassword, self.username, [Director shared].stage.serialized, [Director shared].stage.name, compiledTags];
 	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
 	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.saveLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
@@ -427,6 +430,49 @@ static Director *shared = nil;
 	 //Go ahead and load the stage from the local file.
 	 NSData *stageData = [NSData dataWithContentsOfFile: stagePath];
 	[self loadStageFromData: stageData];
+}
+
+- (void) removeLocalLevel: (NSString *) name
+{
+	NSFileManager *fm = [NSFileManager defaultManager];
+	NSString *stagePath = [NSString stringWithFormat: @"%@/levels/%@.ctr", [MToolsFileManager applicationDocumentsDirectory], [Director shared].stageName];
+	[debug log: [NSString stringWithFormat: @"Deleting file %@", stagePath]];
+	if ([fm fileExistsAtPath: stagePath])
+	{
+		[debug log: @"Found the stage in the local documents."];
+		[fm removeItemAtPath: stagePath error: nil];
+	}
+	else
+	{
+		[debug log: @"Did not find the stage in the local documents."];
+	}
+}
+
+- (void) flagLevel:(NSString *)name
+{
+	if (!name)
+		return;
+	NSLog(@"Sending flag for %@", name);
+	self.dataState = DATA_STATE_SAVING_LEVEL;
+	self.processingNetworkRequest = YES;
+	
+	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@", self.hashedPassword, self.username, name];
+	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
+	
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.flagLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
+	[request setHTTPMethod: @"POST"];
+	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+	[request setHTTPBody: requestData];
+	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+	
+	NSURLResponse *response = [[NSURLResponse alloc] init];
+	NSString *responseString;
+	NSError *error;
+	NSData *returnData = [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
+	responseString = [[NSString alloc] initWithData: returnData encoding: NSUTF8StringEncoding];
+	[self cleanupConnection];
+	
+	[self removeLocalLevel: name];
 }
 
 - (void) connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response

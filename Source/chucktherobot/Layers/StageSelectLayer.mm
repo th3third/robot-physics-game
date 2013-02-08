@@ -1,9 +1,12 @@
 #import "Layers.h"
+#import "MToolsAppSettings.h"
 
 #define FONT_SIZE 24
 #define TITLE_FONT_SIZE 32
 
 @implementation StageSelectLayer
+
+@synthesize pageMenu;
 
 + (CCScene *) scene
 {
@@ -26,6 +29,10 @@
     {
 		// enable events
 		self.isTouchEnabled = YES;
+		
+		//Defaults
+		menuItemsPerPage = 18;
+		totalMenuItems = 0;
 		
 		CGSize s = [CCDirector sharedDirector].winSize;
 		
@@ -71,6 +78,8 @@
 
 - (void) showLevelList
 {
+	CGSize size = [CCDirector sharedDirector].winSize;
+	
 	if (self.selectionNode)
 	{
 		[self.selectionNode removeAllChildrenWithCleanup: YES];
@@ -86,6 +95,8 @@
 		[self createLocalLevelList];
 	}
 	
+	[self.selectionNode setPosition: ccp((-[Director shared].levelSelectPageNum * size.width), 0)];
+	
 	[self addChild: self.selectionNode];
 }
 
@@ -94,6 +105,7 @@
 	
     [CCMenuItemFont setFontSize: FONT_SIZE];
     
+	CGSize s = [CCDirector sharedDirector].winSize;
     NSMutableArray *menuItems = [NSMutableArray array];
     CCMenuItemSprite *menuItem;
     
@@ -113,9 +125,15 @@
 		}
     }
 
-	int totalMenuItems = 18;
-	int enabledMenuItems = 0;
-	for (int i = 0; i < [levelsList count]; i++)
+	totalMenuItems = [levelsList count];
+	int enabledMenuItems = [[MToolsAppSettings getValueWithName: @"maxLevelReached"] intValue];
+	//TODO: Remove this before live to test out unlocking levels.
+	enabledMenuItems = totalMenuItems;
+	
+	if (!enabledMenuItems || enabledMenuItems <= 1)
+		enabledMenuItems = 2;
+	
+	for (int i = 0; i < enabledMenuItems; i++)
 	{
 		NSString *levelName = [levelsList objectAtIndex: i];
 		
@@ -129,13 +147,13 @@
 		
 		menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender)
 		{
+			[Director shared].online = NO;
 			[[Director shared] setStageName: [NSString stringWithFormat: @"defaults/%@", [levelName stringByDeletingPathExtension]]];
 			[self goToStage];
 		}];
 		[menuItems addObject: menuItem];
 		//[menuItem setAnchorPoint: ccp(0, 0)];
-		//[menuItem setPosition: ccp(-[[CCDirector sharedDirector] winSize].width / 2, i * 24)];
-		enabledMenuItems++;
+		//[menuItem setPosition: ccp(-[[CCDirector sharedDirector] winSize].width / 2, i * 24)];z
 	}
 	
 	for (int i = enabledMenuItems; i < totalMenuItems; i++)
@@ -149,13 +167,19 @@
 		[menuItems addObject: menuItem];
 	}
 	
-	CCMenu *menu = [CCMenu menuWithArray: menuItems];
-	[menu alignItemsInColumns: [NSNumber numberWithInt: 6], [NSNumber numberWithInt: 6], [NSNumber numberWithInt: 6], nil];
+	for (int j = 0; j < MAX(1, round(totalMenuItems / menuItemsPerPage)); j++)
+	{
+		NSArray *newMenuItems = [menuItems subarrayWithRange: NSMakeRange((j * menuItemsPerPage), menuItemsPerPage)];
+		CCMenu *menu = [CCMenu menuWithArray: newMenuItems];
+		[menu alignItemsInColumns: [NSNumber numberWithInt: [newMenuItems count] / 3], [NSNumber numberWithInt: [newMenuItems count] / 3], [NSNumber numberWithInt: [newMenuItems count] / 3], nil];
+		
+		CGSize size = [[CCDirector sharedDirector] winSize];
+		[menu setPosition:ccp( size.width/2 + (size.width * j), size.height/2)];
+		
+		[self.selectionNode addChild: menu z:-1];
+	}
 	
-	CGSize size = [[CCDirector sharedDirector] winSize];
-	[menu setPosition:ccp( size.width/2, size.height/2)];
-	
-	[self.selectionNode addChild: menu z:-1];
+	[self createPageTurners];
 }
 
 - (void) createOnlineLevelList
@@ -188,6 +212,7 @@
 		//Level name
 		CCLabelTTF *label = [CCLabelTTF labelWithString: [levelName stringByDeletingPathExtension] dimensions: CGSizeMake(s.width / 2, FONT_SIZE * 1.5) hAlignment: kCCTextAlignmentLeft fontName: [Director shared].globalFont fontSize: FONT_SIZE];
 		menuItem = [CCMenuItemFont itemWithLabel: label block:^(id sender){
+			[Director shared].online = YES;
 			[[Director shared] setStageName: [levelName stringByDeletingPathExtension]];
 			[self goToStageLoadingLevel];
 		}];
@@ -203,6 +228,45 @@
 	//[menu setPosition:ccp( size.width/2, size.height/2)];
 	
 	[self.selectionNode addChild: menu z:-1];
+}
+
+- (void) createPageTurners
+{
+	//Create the arrows to flip back and forth through the menus.
+	CGSize s = [CCDirector sharedDirector].winSize;
+	NSMutableArray *menuItems = [NSMutableArray array];
+	CCMenuItemSprite *menuItem;
+	CCSprite *menuItemSprite;
+	CCSprite *menuItemSpriteSelected;
+	
+	menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+	menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[self goToPreviousPage: menuItem];
+	}];
+	[menuItem setTag: 0];
+	if ([Director shared].levelSelectPageNum <= 0)
+	{
+		[menuItem setVisible: NO];
+	}
+	[menuItems addObject: menuItem];
+	
+	menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+	menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[self goToNextPage: menuItem];
+	}];
+	[menuItem setTag: 1];
+	if ([Director shared].levelSelectPageNum >= totalMenuItems / menuItemsPerPage)
+	{
+		[menuItem setVisible: NO];
+	}
+	[menuItems addObject: menuItem];
+	
+	pageMenu = [CCMenu menuWithArray: menuItems];
+	[pageMenu alignItemsInRows: [NSNumber numberWithInt: 1], [NSNumber numberWithInt: 1], nil];
+	[pageMenu setPosition: ccp(s.width / 2, s.height * 0.15)];
+	[self addChild: pageMenu z: 8999];
 }
 
 - (NSArray *) localLevelsList
@@ -239,6 +303,49 @@
 	[levelsList addObjectsFromArray: [[Director shared] onlineLevelsList: 200 withSorting: 0]];
 	
 	return levelsList;
+}
+
+#pragma mark PAGE CONTROLS
+- (void) goToPreviousPage: (id) caller
+{	
+	[Director shared].levelSelectPageNum--;
+	[[pageMenu getChildByTag: 1] setVisible: YES];
+	
+	if ([Director shared].levelSelectPageNum <= 0)
+	{
+		[[pageMenu getChildByTag: 0] setVisible: NO];
+	}
+	else
+	{
+		[[pageMenu getChildByTag: 0] setVisible: YES];
+	}
+	
+	[self movePage];
+}
+
+- (void) goToNextPage: (id) caller
+{	
+	[Director shared].levelSelectPageNum++;
+	[[pageMenu getChildByTag: 0] setVisible: YES];
+	
+	if ([Director shared].levelSelectPageNum >= totalMenuItems / menuItemsPerPage)
+	{
+		[[pageMenu getChildByTag: 1] setVisible: NO];
+	}
+	else
+	{
+		[[pageMenu getChildByTag: 1] setVisible: YES];
+	}
+	
+	[self movePage];
+}
+
+- (void) movePage
+{
+	CGSize s = [CCDirector sharedDirector].winSize;
+	CCMoveTo *action = [CCMoveTo actionWithDuration: 0.5 position: ccp((-[Director shared].levelSelectPageNum * s.width), self.selectionNode.position.y)];
+	[self.selectionNode stopAllActions];
+	[self.selectionNode runAction: action];
 }
 
 #pragma mark GOTOS

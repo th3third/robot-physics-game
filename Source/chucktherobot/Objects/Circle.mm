@@ -101,7 +101,7 @@
 
 - (id) unserializeWithDict: (NSDictionary *) dict
 {
-	[self initWithStart: ccp([[dict objectForKey: @"startPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"startPosY"] floatValue] * [Director shared].scaleFactor.height) andRadius: [[dict objectForKey: @"radius"] floatValue] * [Director shared].scaleFactor.width];
+	[self initWithStart: ccp([[dict objectForKey: @"startPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"startPosY"] floatValue] * [Director shared].scaleFactor.width) andRadius: [[dict objectForKey: @"radius"] floatValue] * [Director shared].scaleFactor.width];
 	[super unserializeWithDict: dict];
 	
 	return self;

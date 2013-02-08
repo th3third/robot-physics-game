@@ -154,12 +154,12 @@
 		CGFloat dy = (self.bodyA.body->GetPosition().y * PTM_RATIO) - (self.bodyB.body->GetPosition().y * PTM_RATIO);
 		float distance = sqrt(dx*dx + dy*dy);
 		
-		if (distance > self.maxLength * 2)
+		if (distance > self.maxLength * 3)
 		{
 			b2Vec2 aLinVel = self.bodyA.body->GetLinearVelocity();
 			b2Vec2 bLinVel = self.bodyB.body->GetLinearVelocity();
 			
-			self.bodyA.body->SetLinearVelocity(b2Vec2(-aLinVel.x * 0.5, -aLinVel.y * 0.5));
+			self.bodyA.body->SetLinearVelocity(b2Vec2((-aLinVel.x * 0.5), -aLinVel.y * 0.5));
 			self.bodyB.body->SetLinearVelocity(b2Vec2(-bLinVel.x * 0.5, -bLinVel.y * 0.5));
 		}
 		
@@ -206,8 +206,14 @@
 {
     for (RopeSegment *seg in segments)
     {
-        self.world->DestroyBody(seg.body);
-        [seg.bodyVisible removeFromParentAndCleanup: YES];
+		if (seg.body)
+			self.world->DestroyBody(seg.body);
+		
+		if (seg.joint)
+			self.world->DestroyJoint(seg.joint);
+        
+		if (self.bodyVisible)
+			[seg.bodyVisible removeFromParentAndCleanup: YES];
     }
     
 	[[Director shared].stage.objects removeObject: self];
@@ -331,7 +337,8 @@
         
         newLink = [self createSegment: bodyDef withFixtureDef: fixtureDef];
         jointDef.bodyB = newLink;
-        self.world->CreateJoint(&jointDef);
+		RopeSegment *seg = [segments objectAtIndex: i];
+        seg.joint = self.world->CreateJoint(&jointDef);
         
         link = newLink;
     }
@@ -340,7 +347,8 @@
     jointDef.bodyA = link;
     jointDef.bodyB = bodyB;
     jointDef.localAnchorB.Set(0, 0);
-    self.world->CreateJoint(&jointDef);	
+    RopeSegment *seg = [segments objectAtIndex: [segments count] - 1];
+	seg.joint = self.world->CreateJoint(&jointDef);
 }
 
 - (void) createVisibleBody

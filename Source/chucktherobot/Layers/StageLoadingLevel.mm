@@ -66,7 +66,7 @@
 
 - (void) failedLoading
 {
-	DialogLayer *errorDialog = [[DialogLayer alloc] initWithHeader: @"Server Error" andLine1: @"There was an error loading the level from the server. This could mean the server is currently too busy, a firewall is blocking the connection, the file is corrupt, or some other insane reason. Sorry about that!" target: self selector: @selector(goToStage) textField: NO];
+	DialogLayer *errorDialog = [[DialogLayer alloc] initWithHeader: @"Server Error" andLine1: @"There was an error loading the level from the server. This could mean the server is currently too busy, a firewall is blocking the connection, the file is corrupt, or some other insane reason. Sorry about that!" target: self selector: @selector(goToStageSelect) textField: NO];
 	[self addChild: errorDialog z: 9000];
 }
 
@@ -121,6 +121,11 @@
 - (void) goToStage
 {
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageLayer scene]]];
+}
+
+- (void) goToStageSelect
+{
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageSelectLayer scene]]];
 }
 
 @end

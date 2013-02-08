@@ -14,6 +14,7 @@
 
 @property float angle;
 @property b2Body *body;
+@property b2Joint *joint;
 @property CCSprite *bodyVisible;
 @property CGPoint startPos;
 
