@@ -312,6 +312,11 @@ CGFloat	__ccContentScaleFactor = 1;
 -(void) reshapeProjection:(CGSize)size
 {
 	winSizeInPoints_ = [view_ bounds].size;
+	
+	//THIS MEANS WE'RE ON AN IPHONE 5
+	if (winSizeInPoints_.width == 568 && winSizeInPoints_.height == 320)
+		isWidescreen_ = YES;
+	
 	winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * __ccContentScaleFactor, winSizeInPoints_.height *__ccContentScaleFactor);
 
 	[self setProjection:projection_];
