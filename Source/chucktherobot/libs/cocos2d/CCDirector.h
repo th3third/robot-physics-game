@@ -152,6 +152,9 @@ and when to execute the Scenes.
 	
 	/*  OpenGLView. On iOS it is a copy of self.view */
 	CCGLView		*view_;
+	
+	/* Is this widescreen (iPhone 5)? */
+	BOOL isWidescreen_;
 }
 
 /** returns the cocos2d thread.
@@ -222,6 +225,8 @@ and when to execute the Scenes.
  On Mac winSize and winSizeInPixels return the same value.
  */
 - (CGSize) winSizeInPixels;
+
+- (BOOL) isWidescreen;
 
 /** changes the projection size */
 -(void) reshapeProjection:(CGSize)newWindowSize;

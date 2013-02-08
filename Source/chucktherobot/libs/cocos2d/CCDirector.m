@@ -356,6 +356,11 @@ static CCDirector *_sharedDirector = nil;
 	return winSizeInPixels_;
 }
 
+-(BOOL)isWidescreen
+{
+	return isWidescreen_;
+}
+
 -(void) reshapeProjection:(CGSize)newWindowSize
 {
 	winSizeInPixels_ = winSizeInPoints_ = newWindowSize;
