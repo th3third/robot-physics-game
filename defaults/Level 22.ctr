@@ -1,0 +1,712 @@
+<stage><name>Level 22</name>
+<creator>Anonymous</creator>
+<lastModified>2013-02-07 16:04:11 +0000</lastModified>
+<background>5</background>
+<objects>
+<object>
+<type>Chuck</type>
+	<cfid>4B2350FC-B104-4232-9075-5F32C764A2BF</cfid>
+	<startPosX>220.000000</startPosX>
+	<startPosY>187.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>0</z>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>98730AB2-6C0C-4E77-A6D5-77E81A28BE2C</cfid>
+	<startPosX>209.000000</startPosX>
+	<startPosY>147.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>2</z>
+	<endPosX>258.500000</endPosX>
+	<endPosY>151.500000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>A74F5F5A-DE3F-4ECB-A539-B43029E7FC78</cfid>
+	<startPosX>328.000000</startPosX>
+	<startPosY>92.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>1</poppable>
+	<z>3</z>
+	<endPosX>434.500000</endPosX>
+	<endPosY>106.000000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>186BE133-B39E-477F-9160-6DF7473FC832</cfid>
+	<startPosX>323.500000</startPosX>
+	<startPosY>93.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>4</z>
+	<endPosX>333.000000</endPosX>
+	<endPosY>105.000000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>0756FB9C-6D1A-419F-9743-B8ED23B70FEE</cfid>
+	<startPosX>429.000000</startPosX>
+	<startPosY>93.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>5</z>
+	<endPosX>438.500000</endPosX>
+	<endPosY>105.000000</endPosY>
+</object>
+<object>
+<type>Circle</type>
+	<cfid>1F7C16C2-378A-46A8-8D2C-785E48A98854</cfid>
+	<startPosX>309.000000</startPosX>
+	<startPosY>100.500000</startPosY>
+	<rotationAngle>-3.140000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>8</z>
+	<radius>12.000000</radius>
+</object>
+<object>
+<type>Circle</type>
+	<cfid>CB75B5C7-D0CE-431A-9FFD-0B7F4E19784B</cfid>
+	<startPosX>454.000000</startPosX>
+	<startPosY>99.000000</startPosY>
+	<rotationAngle>-3.140000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>9</z>
+	<radius>12.000000</radius>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>80D3DCE9-31B1-4786-B7A7-12EEEB90C737</cfid>
+	<startPosX>328.000000</startPosX>
+	<startPosY>222.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>1</poppable>
+	<z>13</z>
+	<endPosX>434.500000</endPosX>
+	<endPosY>236.500000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>41ED2B3A-4F57-4BB9-9AAD-A003B610806B</cfid>
+	<startPosX>324.000000</startPosX>
+	<startPosY>223.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>14</z>
+	<endPosX>333.500000</endPosX>
+	<endPosY>235.000000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>58C428B4-8C90-42D9-A198-62DE219CEF3D</cfid>
+	<startPosX>429.000000</startPosX>
+	<startPosY>223.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>15</z>
+	<endPosX>438.500000</endPosX>
+	<endPosY>235.000000</endPosY>
+</object>
+<object>
+<type>Circle</type>
+	<cfid>AE630BF0-EA32-4B94-ADD4-B3155731B8AF</cfid>
+	<startPosX>310.500000</startPosX>
+	<startPosY>229.500000</startPosY>
+	<rotationAngle>-3.140000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>18</z>
+	<radius>12.000000</radius>
+</object>
+<object>
+<type>Circle</type>
+	<cfid>B53FDF14-4E80-4500-A094-B6B14252EECC</cfid>
+	<startPosX>452.500000</startPosX>
+	<startPosY>229.000000</startPosY>
+	<rotationAngle>-3.140000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>19</z>
+	<radius>12.000000</radius>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>4F1E5DAC-CB75-4887-93DF-E38832C84B9A</cfid>
+	<startPosX>57.500000</startPosX>
+	<startPosY>92.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>1</poppable>
+	<z>23</z>
+	<endPosX>164.000000</endPosX>
+	<endPosY>106.500000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>FC4176CA-CB3D-4CE3-B08A-644DE99504E2</cfid>
+	<startPosX>55.000000</startPosX>
+	<startPosY>225.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>1</poppable>
+	<z>24</z>
+	<endPosX>161.500000</endPosX>
+	<endPosY>239.500000</endPosY>
+</object>
+<object>
+<type>Circle</type>
+	<cfid>A5E5B74E-DD81-403C-A101-82678C0F8E5B</cfid>
+	<startPosX>39.000000</startPosX>
+	<startPosY>100.500000</startPosY>
+	<rotationAngle>-3.140000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>25</z>
+	<radius>12.000000</radius>
+</object>
+<object>
+<type>Circle</type>
+	<cfid>AE5F249D-8A87-402E-8F16-CF64BCB1780C</cfid>
+	<startPosX>183.000000</startPosX>
+	<startPosY>100.000000</startPosY>
+	<rotationAngle>-3.140000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>26</z>
+	<radius>12.000000</radius>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>D105A489-F191-4AE9-B24A-A1AAFE06BC8E</cfid>
+	<startPosX>53.000000</startPosX>
+	<startPosY>94.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>27</z>
+	<endPosX>62.500000</endPosX>
+	<endPosY>106.000000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>E86777F2-966C-46F5-926F-0B03C410C2F1</cfid>
+	<startPosX>159.500000</startPosX>
+	<startPosY>94.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>28</z>
+	<endPosX>169.000000</endPosX>
+	<endPosY>106.000000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>0666B07B-D5B1-47E3-BD9C-D6DD35CE5862</cfid>
+	<startPosX>50.500000</startPosX>
+	<startPosY>227.500000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>34</z>
+	<endPosX>60.000000</endPosX>
+	<endPosY>239.000000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>30E232E9-5B40-42D7-A1AC-C5F20D8E748C</cfid>
+	<startPosX>155.500000</startPosX>
+	<startPosY>227.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>35</z>
+	<endPosX>165.000000</endPosX>
+	<endPosY>238.500000</endPosY>
+</object>
+<object>
+<type>Circle</type>
+	<cfid>90B6E0F9-1B16-46E1-90AB-75D859DE9C46</cfid>
+	<startPosX>36.500000</startPosX>
+	<startPosY>233.500000</startPosY>
+	<rotationAngle>-3.140000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>36</z>
+	<radius>12.000000</radius>
+</object>
+<object>
+<type>Circle</type>
+	<cfid>9E0BF2DE-C659-459E-88E6-5AB3AF07B5B3</cfid>
+	<startPosX>178.000000</startPosX>
+	<startPosY>233.000000</startPosY>
+	<rotationAngle>-3.140000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>37</z>
+	<radius>12.000000</radius>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>C465B973-5DF6-402E-AC7F-CB3A40768673</cfid>
+	<startPosX>475.500000</startPosX>
+	<startPosY>4.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>43</z>
+	<endPosX>501.500000</endPosX>
+	<endPosY>316.500000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>97BAB047-7236-4D16-BCAF-24DB740CCE20</cfid>
+	<startPosX>-21.000000</startPosX>
+	<startPosY>4.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>44</z>
+	<endPosX>5.000000</endPosX>
+	<endPosY>316.500000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>74E5445E-CBDB-4E1D-9FD6-B345980FE793</cfid>
+	<startPosX>-10.000000</startPosX>
+	<startPosY>314.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>45</z>
+	<endPosX>465.500000</endPosX>
+	<endPosY>400.000000</endPosY>
+</object>
+<object>
+<type>Rectangle</type>
+	<cfid>93321C94-4421-4431-870B-E6988B6F04FD</cfid>
+	<startPosX>90.500000</startPosX>
+	<startPosY>314.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>46</z>
+	<endPosX>566.000000</endPosX>
+	<endPosY>400.000000</endPosY>
+</object>
+<object>
+<type>Motor</type>
+	<cfid>223D55AE-9195-4358-8AEB-32BCF5C0DC3A</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>60.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>12</z>
+	<radius>5.000000</radius>
+	<bodyA>A74F5F5A-DE3F-4ECB-A539-B43029E7FC78</bodyA>
+</object>
+<object>
+<type>Motor</type>
+	<cfid>F3190370-9E95-4F8E-8953-315F809DF5CA</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>-60.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>22</z>
+	<radius>5.000000</radius>
+	<bodyA>80D3DCE9-31B1-4786-B7A7-12EEEB90C737</bodyA>
+</object>
+<object>
+<type>Motor</type>
+	<cfid>6F0EEDF1-E0A1-45DE-8ACF-1F57A48CD92D</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>-60.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>41</z>
+	<radius>5.000000</radius>
+	<bodyA>4F1E5DAC-CB75-4887-93DF-E38832C84B9A</bodyA>
+</object>
+<object>
+<type>Motor</type>
+	<cfid>720A58BA-C1A5-42BF-B80B-5C4032F7AEEA</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>60.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>0</movable>
+	<poppable>0</poppable>
+	<z>42</z>
+	<radius>5.000000</radius>
+	<bodyA>FC4176CA-CB3D-4CE3-B08A-644DE99504E2</bodyA>
+</object>
+<object>
+<type>Weld</type>
+	<cfid>27FDF3A7-FB48-411A-BAC2-B79E5BF584A4</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>31</z>
+	<bodyA>186BE133-B39E-477F-9160-6DF7473FC832</bodyA>
+	<bodyB>A74F5F5A-DE3F-4ECB-A539-B43029E7FC78</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+</object>
+<object>
+<type>Weld</type>
+	<cfid>37C0144A-EEF8-41F5-A7CC-4552419EAE24</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>32</z>
+	<bodyA>0756FB9C-6D1A-419F-9743-B8ED23B70FEE</bodyA>
+	<bodyB>A74F5F5A-DE3F-4ECB-A539-B43029E7FC78</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+</object>
+<object>
+<type>Weld</type>
+	<cfid>3EDE57B0-E4EA-4823-85EA-502B15C30ADF</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>33</z>
+	<bodyA>41ED2B3A-4F57-4BB9-9AAD-A003B610806B</bodyA>
+	<bodyB>80D3DCE9-31B1-4786-B7A7-12EEEB90C737</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+</object>
+<object>
+<type>Weld</type>
+	<cfid>720945A1-A998-49FC-8CFF-4B1727D18C7D</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>34</z>
+	<bodyA>58C428B4-8C90-42D9-A198-62DE219CEF3D</bodyA>
+	<bodyB>80D3DCE9-31B1-4786-B7A7-12EEEB90C737</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+</object>
+<object>
+<type>Weld</type>
+	<cfid>AE98823E-27EC-4835-BC4F-1057C4F4E5F6</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>35</z>
+	<bodyA>E86777F2-966C-46F5-926F-0B03C410C2F1</bodyA>
+	<bodyB>4F1E5DAC-CB75-4887-93DF-E38832C84B9A</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+</object>
+<object>
+<type>Weld</type>
+	<cfid>C290BC24-C3F8-4ED4-AEA3-FB7150BFCC35</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>36</z>
+	<bodyA>D105A489-F191-4AE9-B24A-A1AAFE06BC8E</bodyA>
+	<bodyB>4F1E5DAC-CB75-4887-93DF-E38832C84B9A</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+</object>
+<object>
+<type>Weld</type>
+	<cfid>B6D0A43B-FDEB-44D1-9B2F-4D0741393536</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>37</z>
+	<bodyA>30E232E9-5B40-42D7-A1AC-C5F20D8E748C</bodyA>
+	<bodyB>FC4176CA-CB3D-4CE3-B08A-644DE99504E2</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+</object>
+<object>
+<type>Weld</type>
+	<cfid>A863F703-D133-4F92-A64C-65FD6934A7AF</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>38</z>
+	<bodyA>0666B07B-D5B1-47E3-BD9C-D6DD35CE5862</bodyA>
+	<bodyB>FC4176CA-CB3D-4CE3-B08A-644DE99504E2</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+</object>
+<object>
+<type>Rope</type>
+	<cfid>FA269832-1574-42C2-8D0E-7DD5872727F4</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>39</z>
+	<bodyA>1F7C16C2-378A-46A8-8D2C-785E48A98854</bodyA>
+	<bodyB>186BE133-B39E-477F-9160-6DF7473FC832</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+	<maxLength>9.529559</maxLength>
+</object>
+<object>
+<type>Rope</type>
+	<cfid>D2A4547B-BAAA-451A-A106-85BABEF75D2C</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>40</z>
+	<bodyA>CB75B5C7-D0CE-431A-9FFD-0B7F4E19784B</bodyA>
+	<bodyB>0756FB9C-6D1A-419F-9743-B8ED23B70FEE</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+	<maxLength>10.250000</maxLength>
+</object>
+<object>
+<type>Rope</type>
+	<cfid>B6F4AB0B-1ACB-40C6-A45C-4D78C4F6FB23</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>41</z>
+	<bodyA>AE630BF0-EA32-4B94-ADD4-B3155731B8AF</bodyA>
+	<bodyB>41ED2B3A-4F57-4BB9-9AAD-A003B610806B</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+	<maxLength>9.003471</maxLength>
+</object>
+<object>
+<type>Rope</type>
+	<cfid>955466F2-9BB5-419D-AD1A-A438DCCFA9C7</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>42</z>
+	<bodyA>B53FDF14-4E80-4500-A094-B6B14252EECC</bodyA>
+	<bodyB>58C428B4-8C90-42D9-A198-62DE219CEF3D</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+	<maxLength>9.500000</maxLength>
+</object>
+<object>
+<type>Rope</type>
+	<cfid>57C2ED28-2CD2-417C-8703-96E340C07B83</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>43</z>
+	<bodyA>AE5F249D-8A87-402E-8F16-CF64BCB1780C</bodyA>
+	<bodyB>E86777F2-966C-46F5-926F-0B03C410C2F1</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+	<maxLength>9.500000</maxLength>
+</object>
+<object>
+<type>Rope</type>
+	<cfid>6BB0FC67-2BE0-49FB-BCE5-E840342B92A6</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>44</z>
+	<bodyA>A5E5B74E-DD81-403C-A101-82678C0F8E5B</bodyA>
+	<bodyB>D105A489-F191-4AE9-B24A-A1AAFE06BC8E</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+	<maxLength>9.253378</maxLength>
+</object>
+<object>
+<type>Rope</type>
+	<cfid>51C56220-1B1C-4B00-A694-92FDDEDD2C9F</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>45</z>
+	<bodyA>90B6E0F9-1B16-46E1-90AB-75D859DE9C46</bodyA>
+	<bodyB>0666B07B-D5B1-47E3-BD9C-D6DD35CE5862</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+	<maxLength>9.253378</maxLength>
+</object>
+<object>
+<type>Rope</type>
+	<cfid>80418B1D-CE32-4CCE-AEC5-67B072F33658</cfid>
+	<startPosX>0.000000</startPosX>
+	<startPosY>0.000000</startPosY>
+	<rotationAngle>0.000000</rotationAngle>
+	<rotationForce>0.000000</rotationForce>
+	<restitution>0.200000</restitution>
+	<movable>1</movable>
+	<poppable>0</poppable>
+	<z>46</z>
+	<bodyA>9E0BF2DE-C659-459E-88E6-5AB3AF07B5B3</bodyA>
+	<bodyB>30E232E9-5B40-42D7-A1AC-C5F20D8E748C</bodyB>
+	<localAnchorAX>0.000000</localAnchorAX>
+	<localAnchorAY>0.000000</localAnchorAY>
+	<localAnchorBX>0.000000</localAnchorBX>
+	<localAnchorBY>0.000000</localAnchorBY>
+	<maxLength>9.003471</maxLength>
+</object>
+</objects></stage>
