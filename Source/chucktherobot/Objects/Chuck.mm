@@ -71,12 +71,21 @@
 	//[self remove];
 	[self moveToPoint: self.startPos];
     
+	self.body->SetLinearVelocity(b2Vec2(0, 0));
+	
     head->SetLinearVelocity(b2Vec2(0, 0));
     torso1->SetLinearVelocity(b2Vec2(0, 0));
     upperArmL->SetLinearVelocity(b2Vec2(0, 0));
     upperArmR->SetLinearVelocity(b2Vec2(0, 0));
     upperLegL->SetLinearVelocity(b2Vec2(0, 0));
     upperLegR->SetLinearVelocity(b2Vec2(0, 0));
+	
+	head->SetAngularVelocity(0);
+	torso1->SetAngularVelocity(0);
+	upperArmL->SetAngularVelocity(0);
+	upperArmR->SetAngularVelocity(0);
+	upperLegL->SetAngularVelocity(0);
+	upperLegR->SetAngularVelocity(0);
 	
 	self.alive = YES;
     [self createVisibleBody];
@@ -167,10 +176,12 @@
 
 		if (part.body)
 		{
-			body->SetTransform(b2Vec2((part.startPos.x + x) / PTM_RATIO, (part.startPos.y + y) / PTM_RATIO), self.rotationAngle);
+			body->SetTransform(b2Vec2((part.startPos.x + x) / PTM_RATIO, (part.startPos.y + y) / PTM_RATIO), 0);
 			part.startPos = ccp(part.startPos.x + x, part.startPos.y + y);
 		}
 	}
+	
+	//[self rotateAllPartsTo: self.rotationAngle];
 	
 	[self createVisibleBody];
 }
@@ -196,22 +207,34 @@
 			{
 				nx = cos(angle + CC_DEGREES_TO_RADIANS(90)) * distance;
 				ny = sin(angle + CC_DEGREES_TO_RADIANS(90)) * distance;
+				part.startPos = ccp((nx + torsoPos.x) * PTM_RATIO, (ny + torsoPos.y) * PTM_RATIO);
+				body->SetTransform(b2Vec2((part.startPos.x) / PTM_RATIO, (part.startPos.y) / PTM_RATIO), self.rotationAngle);
 			}
 			else if (part.body == upperArmL || part.body == upperArmR)
 			{
 				nx = cos(angle) * distance;
 				ny = sin(angle) * distance;
+				part.startPos = ccp((nx + torsoPos.x) * PTM_RATIO, (ny + torsoPos.y) * PTM_RATIO);
+				body->SetTransform(b2Vec2((part.startPos.x) / PTM_RATIO, (part.startPos.y) / PTM_RATIO), self.rotationAngle);
 			}
 			
-			else if (part.body == upperLegL || part.body == upperLegR)
+			else if (part.body == upperLegL)
 			{
-				nx = cos(angle) * distance;
-				ny = sin(angle) * distance;
+				//distance += ((torsoWidth * 1.5) / PTM_RATIO);
+				//nx = cos(angle + CC_DEGREES_TO_RADIANS(90)) * distance;
+				//ny = sin(angle + CC_DEGREES_TO_RADIANS(90)) * distance;
+				part.startPos = ccp((torsoPos.x + (legWidth / PTM_RATIO)) * PTM_RATIO, (torsoPos.y + (torsoHeight * 2) / PTM_RATIO) * PTM_RATIO);
+				body->SetTransform(b2Vec2((part.startPos.x) / PTM_RATIO, (part.startPos.y) / PTM_RATIO), self.rotationAngle);
 			}
-			
-			part.startPos = ccp((nx + torsoPos.x) * PTM_RATIO, (ny + torsoPos.y) * PTM_RATIO);
-			body->SetTransform(b2Vec2((part.startPos.x) / PTM_RATIO, (part.startPos.y) / PTM_RATIO), self.rotationAngle);
-			
+			else if (part.body == upperLegR)
+			{
+				//distance += ((torsoWidth * 1.5) / PTM_RATIO);
+				//nx = cos(angle + CC_DEGREES_TO_RADIANS(90)) * distance;
+				//ny = sin(angle + CC_DEGREES_TO_RADIANS(90)) * distance;
+				part.startPos = ccp((torsoPos.x  - (legWidth / PTM_RATIO)) * PTM_RATIO, (torsoPos.y + (torsoHeight * 2) / PTM_RATIO) * PTM_RATIO);
+				body->SetTransform(b2Vec2((part.startPos.x) / PTM_RATIO, (part.startPos.y) / PTM_RATIO), self.rotationAngle);
+			}
+
 			/*float cosMulti = cos(angle);
 			float sinMulti = sin(angle);
 			

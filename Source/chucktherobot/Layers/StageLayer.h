@@ -9,6 +9,7 @@
 #import "Layer.h"
 #import "Chuck.h"
 #import "CCMenuAdvanced.h"
+#import "MyContactListener.h"
 
 @interface StageLayer : Layer <CCStandardTouchDelegate, CCTargetedTouchDelegate>
 {
@@ -16,6 +17,7 @@
     id selectedObject;
     id selectedObject2;
 	float timeElapsedSinceStart;
+	int score;
 	bool levelCompleted;
     Chuck *chuck;
     CGPoint touchStart;

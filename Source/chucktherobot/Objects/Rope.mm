@@ -208,11 +208,8 @@
     {
 		if (seg.body)
 			self.world->DestroyBody(seg.body);
-		
-		if (seg.joint)
-			self.world->DestroyJoint(seg.joint);
         
-		if (self.bodyVisible)
+		if (seg.bodyVisible)
 			[seg.bodyVisible removeFromParentAndCleanup: YES];
     }
     

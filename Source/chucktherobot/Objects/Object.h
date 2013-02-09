@@ -9,6 +9,12 @@
 #import "cocos2d.h"
 #import "Box2D.h"
 #import "Director.h"
+#import "SimpleAudioEngine.h"
+
+struct ObjectUserData
+{
+	id objectID;
+};
 
 @interface Object : CCNode
 
@@ -34,6 +40,10 @@
 @property (nonatomic) float heightAbs;
 @property (nonatomic) bool needToChangeTexture;
 @property (nonatomic) float minimumSize;
+@property NSString *idleSound;
+@property NSString *hitSound;
+@property ALuint hitSoundPlaying;
+@property ALuint idleSoundPlaying;
 
 + (Object *) object;
 
@@ -43,6 +53,7 @@
 
 - (void) createBox2DBody;
 - (void) createVisibleBody;
+- (void) createObjectUserData;
 
 - (void) tick: (ccTime) dt;
 - (void) attachObject: (Object *) object;
@@ -56,6 +67,8 @@
 - (void) wakeUp;
 - (void) display;
 - (void) tint;
+- (void) hit;
+- (void) hitWithForce: (float) force;
 
 - (NSString *) serialize;
 - (id) unserializeWithDict: (NSDictionary *) dict;

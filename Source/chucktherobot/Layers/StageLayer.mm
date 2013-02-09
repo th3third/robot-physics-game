@@ -115,6 +115,7 @@ enum
 	[topRightBackground setScaleY: (s.height * 0.14) / topRightBackground.contentSize.height];
 	[topRightBackground setAnchorPoint: ccp(0.5, 0.5)];
 	[topRightBackground setPosition: ccp(s.width - (topRightBackground.contentSize.width * topRightBackground.scaleX) / 2, s.height - (topRightBackground.contentSize.height * topRightBackground.scaleY) / 2)];
+	[topRightBackground setOpacity: 200];
 	[self addChild: topRightBackground z: 8999];
 	
     //Sound
@@ -167,6 +168,7 @@ enum
 	[pause setPosition: ccp(topRightBackground.position.x - buttonSize * 1.1, topRightBackground.position.y - 5)];
 
 	CCMenuMT *menu = [CCMenuMT menuWithItems: sound, reset, pause, nil];
+	[menu setOpacity: 200];
 	[menu setPosition: ccp(0, 0)];
 	
 	[self addChild: menu z: 9000];
@@ -832,7 +834,6 @@ enum
             [self winStage];
         }
     }
-    //NSLog(@"%f of %f", chuck.curPos.y, self.boundingBox.size.height);
 }
 
 - (void) winStage
@@ -843,6 +844,32 @@ enum
 	}
 	else
 	{
+		if (![Director shared].online)
+		{
+			float maxTime = [[Director shared] getScoreForLevel: [NSString stringWithFormat: @"%@.ctr", [Director shared].stage.name]];
+
+			if (timeElapsedSinceStart < maxTime)
+			{
+				score = 3;
+			}
+			else if (timeElapsedSinceStart < maxTime * 1.5)
+			{
+				score = 2;
+			}
+			else
+			{
+				score = 1;
+			}
+			
+			NSMutableDictionary *levelProgress = [NSMutableDictionary dictionaryWithDictionary: [MToolsAppSettings getValueWithName: @"levelProgress"]];
+			if (score > [[levelProgress objectForKey: [NSString stringWithFormat: @"%@.ctr", [Director shared].stage.name]] intValue])
+			{
+				[levelProgress setObject: [NSNumber numberWithInt: score] forKey: [NSString stringWithFormat: @"%@.ctr", [Director shared].stage.name]];
+				[MToolsAppSettings setValue: levelProgress withName: @"levelProgress"];
+				[debug log: @"Saving score..."];
+			}
+		}
+		
 		levelCompleted = YES;
 		[self showWinScreen];
 	}
@@ -850,7 +877,7 @@ enum
 
 - (void) showWinScreen
 {
-	winDialog = [[DialogLayer alloc] initWinnerWithHeader: @"LEVEL COMPLETE" target: self selector: @selector(goToNextStage:) andTimeElapsed: timeElapsedSinceStart];
+	winDialog = [[DialogLayer alloc] initWinnerWithHeader: @"LEVEL COMPLETE" target: self selector: @selector(goToNextStage:) andTimeElapsed: timeElapsedSinceStart andScore: score];
 	[self addChild: winDialog z: 9000];
 }
 

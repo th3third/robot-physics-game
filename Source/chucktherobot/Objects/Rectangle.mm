@@ -192,6 +192,10 @@
     fixtureDef.density = 1.0f;
     fixtureDef.friction = 0.3f;
 	fixtureDef.restitution = self.restitution;
+	
+	ObjectUserData *newUserData = new ObjectUserData;
+	newUserData->objectID = self;
+	fixtureDef.userData = newUserData;
     
     self.body->CreateFixture(&fixtureDef);
 }

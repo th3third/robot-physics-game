@@ -10,7 +10,7 @@
 #import "Director.h"
 #import "Layers.h"
 
-#define DIALOG_FONT @"Verdana"
+#define DIALOG_FONT @"Segoe Print"
 #define DIALOG_FONT_SIZE 18
 #define DIALOG_FONT_SHADOW_OFFSET 0.5
 #define DIALOG_FONT_OFFSET 5
@@ -49,13 +49,13 @@
 		if (addCancelButton)
 		{
 			okButtonPosX += backgroundWidth / 4;
-			CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/CancelButton.png" selectedImage:@"Media/Buttons/general/CancelButtonSelected.png" target:self selector:@selector(cancelButtonPressed:)];
+			CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
 			cancelButton.scale = (backgroundWidth * 0.2) / cancelButton.contentSize.width;
 			[cancelButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
 			[buttons addObject: cancelButton];
 		}
 		
-		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/OKButton.png" selectedImage:@"Media/Buttons/general/OKButtonSelected.png" target:self selector:@selector(okButtonPressed:)];
+		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(okButtonPressed:)];
 		okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
         [okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
 		[buttons addObject: okButton];
@@ -66,7 +66,7 @@
 		
         if (doTextField)
         {
-            self.textField = [[UITextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24)];
+            self.textField = [[UITextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24 * [Director shared].scaleFactor.height)];
             self.textField.borderStyle = UITextBorderStyleRoundedRect;
             self.textField.center = ccp([[CCDirector sharedDirector] view].center.x , [[CCDirector sharedDirector] view].center.y - backgroundHeight / 4);
             self.textField.delegate = self;
@@ -98,12 +98,12 @@
 
 		//Cancel button.
 		okButtonPosX += backgroundWidth / 4;
-		CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/CancelButton.png" selectedImage:@"Media/Buttons/general/CancelButtonSelected.png" target:self selector:@selector(cancelButtonPressed:)];
+		CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
 		[buttons addObject: cancelButton];
 		
 		//OK button.
-		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/OKButton.png" selectedImage:@"Media/Buttons/general/OKButtonSelected.png" target:self selector:@selector(loginButtonPressed:)];
+		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(loginButtonPressed:)];
         [okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
 		[buttons addObject: okButton];
         
@@ -113,7 +113,7 @@
 		
 		//Text fields.
 		//Username
-		self.textField = [[UITextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24)];
+		self.textField = [[UITextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24 * [Director shared].scaleFactor.height)];
 		self.textField.borderStyle = UITextBorderStyleRoundedRect;
 		self.textField.center = ccp([[CCDirector sharedDirector] view].center.x , [[CCDirector sharedDirector] view].center.y - backgroundHeight / 4);
 		self.textField.delegate = self;
@@ -123,7 +123,7 @@
 		[[[CCDirector sharedDirector] view] addSubview: self.textField];
 		
 		//Password
-		self.textField2 = [[UITextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24)];
+		self.textField2 = [[UITextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24 * [Director shared].scaleFactor.height)];
 		self.textField2.borderStyle = UITextBorderStyleRoundedRect;
 		self.textField2.center = ccp([[CCDirector sharedDirector] view].center.x , self.textField.center.y + 29);
 		self.textField2.delegate = self;
@@ -222,7 +222,7 @@
     return self;
 }
 
-- (id) initWinnerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andTimeElapsed: (float) timeElapsed
+- (id) initWinnerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andTimeElapsed: (float) timeElapsed andScore:(int)score
 {
 	self.dialogType = 2;
 	
@@ -234,7 +234,7 @@
         
         CCSprite *background = [self createBackground];
         
-        CCLabelTTF *line1Label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"Level completed! Your total time elapsed was: %f seconds. What would you like to do next?", timeElapsed] fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
+        CCLabelTTF *line1Label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"Level completed! Your total time elapsed was: %f seconds. Your score was %d. What would you like to do next?", timeElapsed, score] fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
         line1Label.color = ccBLACK;
         line1Label.scale = 0.84f;
         line1Label.dimensions = CGSizeMake(backgroundWidth * 0.9, backgroundHeight * 0.75);
@@ -255,6 +255,19 @@
 			okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
 			[okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
 			[buttons addObject: okButton];
+			
+			if (![[Director shared].stage.name isEqualToString: [Director shared].username])
+			{
+				CCMenuItemImage *likeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_like.png" selectedImage:@"Media/Buttons/general/button_dialog_levels.png" target:self selector:@selector(likeButtonPressed:)];
+				likeButton.scale = (backgroundWidth * 0.2) / likeButton.contentSize.width;
+				[likeButton setPosition: ccp(okButtonPosX + backgroundWidth / 8, background.position.y)];
+				[buttons addObject: likeButton];
+				
+				CCMenuItemImage *dislikeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_like.png" selectedImage:@"Media/Buttons/general/button_dialog_levels.png" target:self selector:@selector(dislikeButtonPressed:)];
+				dislikeButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+				[dislikeButton setPosition: ccp(okButtonPosX - backgroundWidth / 8, background.position.y)];
+				[buttons addObject: dislikeButton];
+			}			
 		}
 		else
 		{
@@ -373,6 +386,23 @@
     return NO;
 }
 
+- (void) likeButtonPressed: (id) sender
+{
+	[[Director shared] rateLevel: [Director shared].stage.name withRating: 1];
+	DialogLayer *thanksDialog = [[DialogLayer alloc] initWithHeader: @"THANKS!" andLine1: @"Thank you for submitting your rating of this level!" target: self selector: @selector(submittedRating:) textField: NO];
+	[self.parent addChild: thanksDialog z: 9100];
+}
+
+- (void) submittedRating: (id) sender
+{
+	[self removeFromParentAndCleanup: YES];
+}
+
+- (void) dislikeButtonPressed: (id) sender
+{
+	[[Director shared] rateLevel: [Director shared].stage.name withRating: -1];
+}
+
 - (void) flagButtonPressed: (id) sender
 {
 	[self playButtonSound];
@@ -422,6 +452,7 @@
     [self playButtonSound];
     
     [self.textField removeFromSuperview];
+	[self.textField2 removeFromSuperview];
     [self removeFromParentAndCleanup:YES];
 }
 

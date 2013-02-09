@@ -12,6 +12,7 @@
 {
     int totalMenuItems;
 	int menuItemsPerPage;
+	bool pageTurning;
 }
 
 typedef enum

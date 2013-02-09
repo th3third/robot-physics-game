@@ -16,7 +16,7 @@
 
 static CGSize designSize = {480, 320};
 
-@synthesize scaleFactor;
+@synthesize scaleFactor, presetScores, _contactListener;
 
 static Director *shared = nil;
 
@@ -33,7 +33,71 @@ static Director *shared = nil;
 - (id) init
 {
 	if (self = [super init])
-	{	
+	{
+		//Set up the preset scores.
+		presetScores = [NSDictionary dictionaryWithObjectsAndKeys:
+						[NSNumber numberWithFloat: 10.0f], @"Level 01.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 02.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 03.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 04.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 05.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 06.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 07.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 08.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 09.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 10.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 11.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 12.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 13.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 14.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 15.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 16.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 17.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 18.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 19.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 20.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 21.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 22.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 23.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 24.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 25.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 26.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 27.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 28.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 29.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 30.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 31.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 32.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 33.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 34.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 35.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 36.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 37.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 38.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 39.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 40.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 41.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 42.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 43.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 44.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 45.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 46.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 47.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 48.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 49.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 50.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 51.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 52.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 53.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 54.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 55.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 56.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 57.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 58.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 59.ctr",
+						[NSNumber numberWithFloat: 10.0f], @"Level 60.ctr",
+						nil];
+		
 		self.levelsServerURL = [NSURL URLWithString: @"http://gearsprout.com/content/com.gearsprout.chucktherobot/levels"];
 		self.loginScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/auth_user.php", [self.levelsServerURL absoluteString]]];
 		self.createUserScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/new_user.php", [self.levelsServerURL absoluteString]]];
@@ -41,8 +105,9 @@ static Director *shared = nil;
 		self.loadLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/load_level.php", [self.levelsServerURL absoluteString]]];
 		self.listingsScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/listing.php", [self.levelsServerURL absoluteString]]];
 		self.flagLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/flag.php", [self.levelsServerURL absoluteString]]];
+		self.rateLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/rate.php", [self.levelsServerURL absoluteString]]];
 		self.objID = 0;
-		self.globalFont = @"Verdana";
+		self.globalFont = @"Segoe Print";
 		self.drawDebugData = NO;
 		self.levelSelectPageNum = 0;
 		[self calcNumOfBackgrounds];
@@ -87,6 +152,10 @@ static Director *shared = nil;
 	self.world->SetAllowSleeping(false);
 	
 	self.world->SetContinuousPhysics(true);
+	
+	//Set up the contact listener.
+	_contactListener = new MyContactListener();
+	self.world->SetContactListener(_contactListener);
 	
 	m_debugDraw = new GLESDebugDraw(PTM_RATIO);
 	m_debugDraw->SetFlags(b2Draw::e_jointBit); 
@@ -404,6 +473,16 @@ static Director *shared = nil;
 	return false;
 }
 
+- (int) getScoreForLevel: (NSString *) name
+{
+	int time = [[presetScores objectForKey: name] intValue];
+	
+	if (time <= 0)
+		time = 10;
+		
+	return time;
+}
+
 - (void) loadCurrentStage
 {
 	if (![Director shared].stageName)
@@ -474,6 +553,33 @@ static Director *shared = nil;
 	
 	[self removeLocalLevel: name];
 }
+
+- (void) rateLevel: (NSString *) name withRating: (int) rating
+{
+	if (!name || !rating)
+		return;
+	NSLog(@"Sending flag for %@", name);
+	self.dataState = DATA_STATE_SAVING_LEVEL;
+	self.processingNetworkRequest = YES;
+	
+	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@&value4=%d", self.hashedPassword, self.username, name, rating];
+	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
+	
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.rateLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
+	[request setHTTPMethod: @"POST"];
+	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+	[request setHTTPBody: requestData];
+	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+	
+	NSURLResponse *response = [[NSURLResponse alloc] init];
+	NSString *responseString;
+	NSError *error;
+	NSData *returnData = [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
+	responseString = [[NSString alloc] initWithData: returnData encoding: NSUTF8StringEncoding];
+	[self cleanupConnection];
+}
+
+#pragma mark CONNECTION DELEGATE
 
 - (void) connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {

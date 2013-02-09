@@ -53,6 +53,25 @@
     return code;
 }
 
+- (void) tint
+{
+	ccColor3B tintColor;
+    
+	if (!self.bodyVisible)
+		return;
+	
+    if (self.poppable)
+        tintColor = ccc3(255, 75, 75);
+	else if (self.restitution > 0.2f)
+		tintColor = ccc3(255, 255, 255);
+    else if (self.movable)
+		tintColor = ccc3(252, 178, 88);
+	else
+		tintColor = ccc3(51, 240, 110);
+    
+    self.bodyVisible.color = tintColor;
+}
+
 - (id) unserializeWithDict:(NSDictionary *)dict
 {
 	[self initWithStart: ccp([[dict objectForKey: @"startPosX"] floatValue] * [Director shared].scaleFactor.width, [[dict objectForKey: @"startPosY"] floatValue] * [Director shared].scaleFactor.height) andRadius: [[dict objectForKey: @"radius"] floatValue] * [Director shared].scaleFactor.width];

@@ -102,6 +102,13 @@
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_online_levels.png"];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		
+		if (![Director shared].fullVersion)
+		{
+			DialogLayer *purchaseDialog = [[DialogLayer alloc] initWithHeader: @"FULL VERSION ONLY" andLine1: @"Sorry, but playing online levels requires purchasing the \"Online Access\" in-app purchase." target: self selector: @selector(goToPurchases) textField: NO];
+			[self addChild: purchaseDialog z: 9000];
+			return;
+		}
+		
 		if (![Director shared].loggedIn)
 		{
 			[self addChild: [[Director shared] createLogInDialog] z: 9000];
@@ -186,6 +193,11 @@
 	[Director shared].stage = nil;
 	[Director shared].stageName = nil;
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLayer scene]]];
+}
+
+- (void) goToPurchases
+{
+	
 }
 
 #pragma mark GameKit delegate

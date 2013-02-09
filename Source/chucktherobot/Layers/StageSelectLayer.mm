@@ -2,6 +2,7 @@
 #import "MToolsAppSettings.h"
 
 #define FONT_SIZE 24
+#define FONT_SIZE_LEVEL 102
 #define TITLE_FONT_SIZE 32
 
 @implementation StageSelectLayer
@@ -31,15 +32,24 @@
 		self.isTouchEnabled = YES;
 		
 		//Defaults
-		menuItemsPerPage = 18;
-		totalMenuItems = 0;
+		menuItemsPerPage = 20;
+		totalMenuItems = [[self localLevelsList] count];
+		
+		//Pan gesture recognizer for swiping the menu.
+		UIPanGestureRecognizer* pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+		CCDirector* director = [CCDirector sharedDirector];
+		[[director openGLView] addGestureRecognizer:pan];
 		
 		CGSize s = [CCDirector sharedDirector].winSize;
 		
-		CCLabelTTF *label = [CCLabelTTF labelWithString:@"Select a Level" fontName: [Director shared].globalFont fontSize: TITLE_FONT_SIZE];
-		[self addChild:label z:0];
-		[label setColor:ccc3(255, 255, 255)];
-		label.position = ccp( s.width/2, s.height-50);
+		//Crate the background.
+		CCSprite *background = [CCSprite spriteWithFile: @"Media/Backgrounds/general/main_menu.jpg"];
+		float scaleX = s.width / background.contentSize.width;
+		float scaleY = s.height / background.contentSize.height;
+		[background setAnchorPoint: ccp(0, 0)];
+		[background setScaleX: scaleX];
+		[background setScaleY: scaleY];
+		[self addChild: background z: -3];
 		
 		//Create the menu.
 		[self createMenu];
@@ -95,7 +105,7 @@
 		[self createLocalLevelList];
 	}
 	
-	[self.selectionNode setPosition: ccp((-[Director shared].levelSelectPageNum * size.width), 0)];
+	[self.selectionNode setPosition: ccp((-[Director shared].levelSelectPageNum * size.width), size.height * 0.25)];
 	
 	[self addChild: self.selectionNode];
 }
@@ -124,23 +134,54 @@
 			break;
 		}
     }
-
-	totalMenuItems = [levelsList count];
-	int enabledMenuItems = [[MToolsAppSettings getValueWithName: @"maxLevelReached"] intValue];
+	
+	//Calculate the maximum number of levels the player has reached.
+	
+	//Do we have a level progress entry? If not, we need to create it.
+	if (![MToolsAppSettings getValueWithName: @"levelProgress"])
+	{
+		NSMutableDictionary *levelProgress = [NSMutableDictionary dictionary];
+		for (NSString *levelName in [self localLevelsList])
+		{
+			[levelProgress setObject: [NSNumber numberWithInt: 0] forKey: levelName];
+		}
+		
+		[MToolsAppSettings setValue: levelProgress withName: @"levelProgress"];
+	}
+	
+	int enabledMenuItems = 0;
+	for (id key in [MToolsAppSettings getValueWithName: @"levelProgress"])
+	{
+		if ([[[MToolsAppSettings getValueWithName: @"levelProgress"] objectForKey: key] intValue] > 0)
+		{
+			enabledMenuItems++;
+		}
+	}
+	
 	//TODO: Remove this before live to test out unlocking levels.
-	enabledMenuItems = totalMenuItems;
+	//enabledMenuItems = totalMenuItems;
 	
-	if (!enabledMenuItems || enabledMenuItems <= 1)
-		enabledMenuItems = 2;
+	if (!enabledMenuItems)
+		enabledMenuItems = 0;
 	
+	enabledMenuItems += 2;
+	
+	NSDictionary *levelProgress = [MToolsAppSettings getValueWithName: @"levelProgress"];
 	for (int i = 0; i < enabledMenuItems; i++)
 	{
 		NSString *levelName = [levelsList objectAtIndex: i];
 		
-		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/stage_select_button.png"];
-		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/stage_select_button_selected.png"];
-		CCLabelTTF *label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: 24];
+		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
+		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
+		
+		CCLabelTTF *label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL];
 		[label setColor: ccBLACK];
+		[label setAnchorPoint: ccp(0.5, 0.5)];
+		[label setPosition: ccp((menuItemSprite.contentSize.width / 2 + 3) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2 - 3) * menuItemSprite.scale)];
+		[menuItemSprite addChild: label];
+		
+		label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL];
+		[label setColor: ccWHITE];
 		[label setAnchorPoint: ccp(0.5, 0.5)];
 		[label setPosition: ccp((menuItemSprite.contentSize.width / 2) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2) * menuItemSprite.scale)];
 		[menuItemSprite addChild: label];
@@ -151,30 +192,98 @@
 			[[Director shared] setStageName: [NSString stringWithFormat: @"defaults/%@", [levelName stringByDeletingPathExtension]]];
 			[self goToStage];
 		}];
+		float scale = (s.width * 0.1) / menuItem.contentSize.width;
+		[menuItem setScale: scale];
+		[menuItem setUserObject: levelName];
 		[menuItems addObject: menuItem];
-		//[menuItem setAnchorPoint: ccp(0, 0)];
-		//[menuItem setPosition: ccp(-[[CCDirector sharedDirector] winSize].width / 2, i * 24)];z
 	}
 	
 	for (int i = enabledMenuItems; i < totalMenuItems; i++)
 	{
-		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/stage_select_button_disabled.png"];
-		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/stage_select_button_selected.png"];
+		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background_locked.png"];
+		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background_locked.png"];
 		
 		menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender)
 					{
 					}];
+		float scale = (s.width * 0.1) / menuItem.contentSize.width;
+		[menuItem setScale: scale];
 		[menuItems addObject: menuItem];
 	}
 	
-	for (int j = 0; j < MAX(1, round(totalMenuItems / menuItemsPerPage)); j++)
+	int menusToCreate = MAX(1, round(totalMenuItems / menuItemsPerPage));
+	if (totalMenuItems % menuItemsPerPage > 0)
 	{
-		NSArray *newMenuItems = [menuItems subarrayWithRange: NSMakeRange((j * menuItemsPerPage), menuItemsPerPage)];
-		CCMenu *menu = [CCMenu menuWithArray: newMenuItems];
-		[menu alignItemsInColumns: [NSNumber numberWithInt: [newMenuItems count] / 3], [NSNumber numberWithInt: [newMenuItems count] / 3], [NSNumber numberWithInt: [newMenuItems count] / 3], nil];
+		menusToCreate++;
+	}
+	
+	for (int j = 0; j < menusToCreate; j++)
+	{
+		int maxRange = menuItemsPerPage;
+		if ((j * menuItemsPerPage + menuItemsPerPage) > [menuItems count])
+		{
+			maxRange -=  (j * menuItemsPerPage + menuItemsPerPage) - [menuItems count];
+		}
 		
-		CGSize size = [[CCDirector sharedDirector] winSize];
-		[menu setPosition:ccp( size.width/2 + (size.width * j), size.height/2)];
+		NSArray *newMenuItems = [menuItems subarrayWithRange: NSMakeRange((j * menuItemsPerPage), maxRange)];
+		CCMenu *menu = [CCMenu menuWithArray: newMenuItems];
+		
+		if (maxRange % 2 == 0)
+		{
+			[menu alignItemsInColumns: [NSNumber numberWithInt: maxRange / 4], [NSNumber numberWithInt: maxRange / 4], [NSNumber numberWithInt: maxRange / 4], [NSNumber numberWithInt: maxRange / 4], nil];
+		}
+		else
+		{
+			[menu alignItemsInColumns: [NSNumber numberWithInt: maxRange / 3], [NSNumber numberWithInt: maxRange / 3], [NSNumber numberWithInt: maxRange / 3], nil];
+		}
+		
+		for (int i = 0; i < [menu.children count]; i++)
+		{
+			CCMenuItem *menuItem = [menu.children objectAtIndex: i];
+			float randomYJitter = arc4random() % 12;
+			randomYJitter -= 6;
+			[menuItem setPosition: ccp(menuItem.position.x, menuItem.position.y + randomYJitter)];
+			
+			//Create stars.
+			if (menuItem.userObject)
+			{
+				for (int stars = 1; stars <= 3; stars++)
+				{
+					CCSprite *star;
+					if ([[levelProgress objectForKey: menuItem.userObject] intValue] >= stars)
+					{
+						star = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_star.png"];
+					}
+					else
+					{
+						star = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_star_empty.png"];
+					}
+					[star setPosition: ccp(
+										   (j * s.width) + menuItem.position.x - (menuItem.contentSize.width * menuItem.scaleX) / 3 + ((stars - 1) * ((menuItem.contentSize.width * menuItem.scaleX) / 3)),
+										   menuItem.position.y - (menuItem.contentSize.height * menuItem.scaleY) / 3
+										   )];
+					[star setPosition: ccp(star.position.x + s.width / 2, star.position.y + s.height / 2)];
+					[star setScale: ((menuItem.contentSize.width / 2.5) * menuItem.scaleX) / star.contentSize.width];
+					
+					[self.selectionNode addChild: star z: 66];
+				}
+			}
+			
+			//Connecting ropes
+			/*
+			if ((i + 1) % (menuItemsPerPage / 4) != 0)
+			{
+				CCSprite *rope = [CCSprite spriteWithFile: @"Media/buttons/general/button_levelselect_rope.png"];
+				float scale = (menuItem.contentSize.width * menuItem.scaleX) / (rope.contentSize.width);
+				[rope setScale: scale];
+				[rope setAnchorPoint: ccp(0, 0.5)];
+				[rope setPosition: ccp((j * s.width) + (s.width / 2) + menuItem.position.x, (s.height / 2) + menuItem.position.y)];
+				[rope setRotation: randomYJitter];
+				[self.selectionNode addChild: rope z: -2];
+			}*/
+		}
+		
+		[menu setPosition:ccp( s.width/2 + (s.width * j), s.height/2)];
 		
 		[self.selectionNode addChild: menu z:-1];
 	}
@@ -249,6 +358,7 @@
 	{
 		[menuItem setVisible: NO];
 	}
+	[menuItem setPosition: ccp((-s.width / 2) + (menuItem.contentSize.width * menuItem.scaleX) / 2, 0)];
 	[menuItems addObject: menuItem];
 	
 	menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
@@ -261,11 +371,10 @@
 	{
 		[menuItem setVisible: NO];
 	}
+	[menuItem setPosition: ccp((s.width / 2) - (menuItem.contentSize.width * menuItem.scaleX) / 2, 0)];
 	[menuItems addObject: menuItem];
 	
 	pageMenu = [CCMenu menuWithArray: menuItems];
-	[pageMenu alignItemsInRows: [NSNumber numberWithInt: 1], [NSNumber numberWithInt: 1], nil];
-	[pageMenu setPosition: ccp(s.width / 2, s.height * 0.15)];
 	[self addChild: pageMenu z: 8999];
 }
 
@@ -307,7 +416,10 @@
 
 #pragma mark PAGE CONTROLS
 - (void) goToPreviousPage: (id) caller
-{	
+{
+	if (pageTurning)
+		return;
+	
 	[Director shared].levelSelectPageNum--;
 	[[pageMenu getChildByTag: 1] setVisible: YES];
 	
@@ -324,7 +436,10 @@
 }
 
 - (void) goToNextPage: (id) caller
-{	
+{
+	if (pageTurning)
+		return;
+	
 	[Director shared].levelSelectPageNum++;
 	[[pageMenu getChildByTag: 0] setVisible: YES];
 	
@@ -342,23 +457,80 @@
 
 - (void) movePage
 {
+	pageTurning = YES;
+	[self performSelector: @selector(stopPageTurning) withObject: nil afterDelay: 0.5];
+	
 	CGSize s = [CCDirector sharedDirector].winSize;
 	CCMoveTo *action = [CCMoveTo actionWithDuration: 0.5 position: ccp((-[Director shared].levelSelectPageNum * s.width), self.selectionNode.position.y)];
 	[self.selectionNode stopAllActions];
 	[self.selectionNode runAction: action];
 }
 
+- (void) stopPageTurning
+{
+	pageTurning = NO;
+}
+
+- (void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer
+{
+	switch (gestureRecognizer.state)
+	{
+		case UIGestureRecognizerStateBegan:
+		{			
+			break;
+		}
+		case UIGestureRecognizerStateChanged:
+		{			
+			// Get pan gesture recognizer translation
+			CGPoint translation = [(UIPanGestureRecognizer*)gestureRecognizer velocityInView: gestureRecognizer.view];
+			
+			// Invert Y since position and offset are calculated in gl coordinates
+			translation = ccp(-translation.x, -translation.y);
+			
+			if (translation.x > 1000)
+			{
+				[self goToNextPage: nil];
+			}
+			else if (translation.x < -1000)
+			{
+				[self goToPreviousPage: nil];
+			}
+			
+			//self.selectionNode.position = ccp(self.selectionNode.position.x - translation.x, self.selectionNode.position.y);
+			
+			// Refresh pan gesture recognizer
+			[(UIPanGestureRecognizer*)gestureRecognizer setTranslation:CGPointZero inView:gestureRecognizer.view];
+			
+			break;
+		}
+		case UIGestureRecognizerStateEnded:
+		{
+			
+			break;
+		}
+		default:
+		{
+			break;
+		}
+    }
+}
+
 #pragma mark GOTOS
 
 - (void) goToStage
 {
+	if (pageTurning)
+	{
+		return;
+	}
+	
 	[Director shared].editing = NO;
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageLayer scene]]];
 }
 
 - (void) goToMainMenu
 {
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [MainMenuLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [MainMenuLayer scene]]];
 }
 
 - (void) goToStageLoadingLevel

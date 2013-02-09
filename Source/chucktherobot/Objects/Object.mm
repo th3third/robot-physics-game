@@ -152,6 +152,7 @@
 	{
 		CGSize s = [CCDirector sharedDirector].winSize;
 		
+		//Check to see if the body should become inactive because it has gone too far off the screen.
 		if (self.body->GetPosition().y < -(s.height * 2) / PTM_RATIO ||
 			self.body->GetPosition().y > (s.height * 2) / PTM_RATIO ||
 			self.body->GetPosition().x < -(s.width * 2) / PTM_RATIO ||
@@ -160,8 +161,10 @@
 			self.body->SetActive(NO);
 			self.bodyVisible.visible = NO;
 			self.alive = NO;
-			[debug log: [NSString stringWithFormat: @"Set %@ to inactive because it went too far off the screen.", self]];
+			//[debug log: [NSString stringWithFormat: @"Set %@ to inactive because it went too far off the screen.", self]];
 		}
+		
+		//Check for a collision of neccessary speed to trigger an impact sound.
 	}
 }
 
@@ -389,6 +392,13 @@
     
 }
 
+- (void) createObjectUserData
+{
+	ObjectUserData newUserData = ObjectUserData();
+	newUserData.objectID = self;
+	self.body->SetUserData(&newUserData);
+}
+
 - (void) wakeUp
 {
     if (self.body)
@@ -421,6 +431,20 @@
 	
 	//Now create the visible body (visible to the player)
 	[self createVisibleBody];
+}
+
+- (void) hit
+{
+	if (self.hitSound)
+	{
+		[[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/Drop Object 1.caf"]];
+	}
+}
+
+- (void) hitWithForce:(float)force
+{
+	if (force > 5)
+		[self hit];
 }
 
 #pragma  mark GETTERS/SETTERS

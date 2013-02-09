@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CE15F03C16BB205E0066B5DF /* StageLoadingLevel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE15F03B16BB205E0066B5DF /* StageLoadingLevel.mm */; };
 		CE15F03E16BB457B0066B5DF /* defaults in Resources */ = {isa = PBXBuildFile; fileRef = CE15F03D16BB457B0066B5DF /* defaults */; };
+		CE66A24316C5BDEE003AD7C9 /* MyContactListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE66A24216C5BDEE003AD7C9 /* MyContactListener.mm */; };
 		CE685A5F16964DA8001B8774 /* Layer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE685A5E16964DA8001B8774 /* Layer.mm */; };
 		CE685BBB16964F12001B8774 /* Box2DConfig.cmake in Resources */ = {isa = PBXBuildFile; fileRef = CE685A6416964F11001B8774 /* Box2DConfig.cmake */; };
 		CE685BBC16964F12001B8774 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = CE685A6516964F11001B8774 /* CMakeLists.txt */; };
@@ -262,6 +263,8 @@
 		CE15F03A16BB205E0066B5DF /* StageLoadingLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StageLoadingLevel.h; path = Layers/StageLoadingLevel.h; sourceTree = "<group>"; };
 		CE15F03B16BB205E0066B5DF /* StageLoadingLevel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StageLoadingLevel.mm; path = Layers/StageLoadingLevel.mm; sourceTree = "<group>"; };
 		CE15F03D16BB457B0066B5DF /* defaults */ = {isa = PBXFileReference; lastKnownFileType = folder; name = defaults; path = ../defaults; sourceTree = "<group>"; };
+		CE66A24116C5BDEE003AD7C9 /* MyContactListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyContactListener.h; sourceTree = "<group>"; };
+		CE66A24216C5BDEE003AD7C9 /* MyContactListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyContactListener.mm; sourceTree = "<group>"; };
 		CE685A5D16964DA8001B8774 /* Layer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layer.h; sourceTree = "<group>"; };
 		CE685A5E16964DA8001B8774 /* Layer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Layer.mm; sourceTree = "<group>"; };
 		CE685A6316964F11001B8774 /* Box2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box2D.h; sourceTree = "<group>"; };
@@ -1482,6 +1485,8 @@
 				CEE1381316A7241500A8BACF /* Group.h */,
 				CEE1381416A7241500A8BACF /* Group.mm */,
 				CE80870E169B9FC70024C88A /* Objects.h */,
+				CE66A24116C5BDEE003AD7C9 /* MyContactListener.h */,
+				CE66A24216C5BDEE003AD7C9 /* MyContactListener.mm */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -1947,6 +1952,7 @@
 				CE91209716B6E1960032186E /* TMXGenerator.m in Sources */,
 				CE91209B16B6E2D10032186E /* Motor.mm in Sources */,
 				CE15F03C16BB205E0066B5DF /* StageLoadingLevel.mm in Sources */,
+				CE66A24316C5BDEE003AD7C9 /* MyContactListener.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

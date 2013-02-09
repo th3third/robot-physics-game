@@ -11,6 +11,7 @@
 #import "GLES-Render.h"
 #import <Foundation/Foundation.h>
 #import "Stage.h"
+#import "MyContactListener.h"
 
 enum DataState
 {
@@ -28,6 +29,8 @@ enum DataState
 	GLESDebugDraw *m_debugDraw;
 }
 
+@property MyContactListener *_contactListener;
+@property bool fullVersion;
 @property NSURL *levelsServerURL;
 @property NSURL *loginScriptURL;
 @property NSURL *createUserScriptURL;
@@ -35,6 +38,7 @@ enum DataState
 @property NSURL *loadLevelScriptURL;
 @property NSURL *listingsScriptURL;
 @property NSURL *flagLevelScriptURL;
+@property NSURL *rateLevelScriptURL;
 @property NSURLConnection *connection;
 @property (nonatomic) bool paused;
 @property bool editing;
@@ -54,6 +58,7 @@ enum DataState
 @property (nonatomic) NSArray *localLevelsList;
 @property (nonatomic) NSArray *defaultLevelsList;
 @property (nonatomic) CGSize scaleFactor;
+@property NSDictionary *presetScores;
 
 //Authentication stuff.
 @property NSString *username;
@@ -74,7 +79,9 @@ enum DataState
 - (bool) getLevelFromServer;
 - (void) loadCurrentStage;
 - (void) loadBlankStage;
+- (int) getScoreForLevel: (NSString *) name;
 - (void) flagLevel: (NSString *) name;
+- (void) rateLevel: (NSString *) name withRating: (int) rating;
 - (NSArray *) onlineLevelsList: (int) number withSorting: (int) sorting;
 
 //Scaling
