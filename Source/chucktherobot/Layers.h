@@ -13,4 +13,5 @@
 #import "StageSaveLayer.h"
 #import "StageSaveToFile.h"
 #import "StageLoadingLevel.h"
+#import "BotSelectLayer.h"
 #import "AppDelegate.h"

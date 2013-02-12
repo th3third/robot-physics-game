@@ -42,7 +42,7 @@
 		[self addChild: background z: -2];
 		
 		[self scheduleUpdate];
-		[self setStatusLabel: @"Contacting server..."];
+		[self setStatusLabel: @"Constructing level out of toothpicks..."];
 		[self createSpinner];
 		[self loadLevel];
 	}
@@ -54,13 +54,20 @@
 {
 	downloadingLevel = YES;
 	
-	if ([[Director shared] getLevelFromServer])
+	if ([Director shared].online)
 	{
-		finishedDownloadingLevel = YES;
+		if ([[Director shared] getLevelFromServer])
+		{
+			finishedDownloadingLevel = YES;
+		}
+		else
+		{
+			[self performSelectorOnMainThread: @selector(failedLoading) withObject: nil waitUntilDone: YES];
+		}
 	}
 	else
 	{
-		[self performSelectorOnMainThread: @selector(failedLoading) withObject: nil waitUntilDone: YES];
+		finishedDownloadingLevel = YES;
 	}
 }
 

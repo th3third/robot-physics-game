@@ -95,16 +95,19 @@
         
 		NSMutableArray *buttons = [NSMutableArray array];
 		float okButtonPosX = background.position.x;
+		CGSize s = [CCDirector sharedDirector].winSize;
 
 		//Cancel button.
 		okButtonPosX += backgroundWidth / 4;
 		CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
+		[cancelButton setScale: ((s.width * 0.175) / cancelButton.contentSize.width)];
 		[buttons addObject: cancelButton];
 		
 		//OK button.
 		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(loginButtonPressed:)];
         [okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
+		[okButton setScale: ((s.width * 0.175) / okButton.contentSize.width)];
 		[buttons addObject: okButton];
         
         CCMenu *menu = [CCMenu menuWithArray: buttons];
@@ -234,19 +237,19 @@
         
         CCSprite *background = [self createBackground];
         
-        CCLabelTTF *line1Label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"Level completed! Your total time elapsed was: %f seconds. Your score was %d. What would you like to do next?", timeElapsed, score] fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
-        line1Label.color = ccBLACK;
-        line1Label.scale = 0.84f;
-        line1Label.dimensions = CGSizeMake(backgroundWidth * 0.9, backgroundHeight * 0.75);
-        [line1Label setPosition:ccp(background.position.x, background.position.y + DIALOG_FONT_OFFSET)];
-        [self addChild:line1Label];
-        
 		NSMutableArray *buttons = [NSMutableArray array];
 		float okButtonPosX = background.position.x;
 		okButtonPosX += backgroundWidth / 4;
-		CCMenuItemImage *retryButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_restart.png" selectedImage:@"Media/Buttons/general/button_dialog_restart.png" target:self selector:@selector(retryButtonPressed:)];
-		retryButton.scale = (backgroundWidth * 0.2) / retryButton.contentSize.width;
-		[retryButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
+		
+		CCSprite *levelCompletedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_level_completed.png"];
+		[levelCompletedSprite setScale: (backgroundWidth * 0.70) / levelCompletedSprite.contentSize.width];
+		[levelCompletedSprite setPosition:ccp(background.position.x, background.position.y + (backgroundHeight / 2) * 0.625)];
+		[self addChild: levelCompletedSprite];
+		
+		//Play again button.
+		CCMenuItemImage *retryButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_complete/button_dialog_play_again.png" selectedImage:@"Media/Buttons/general/level_complete/button_dialog_play_again.png" target:self selector:@selector(retryButtonPressed:)];
+		retryButton.scale = levelCompletedSprite.scale;
+		[retryButton setPosition: ccp(background.position.x - (backgroundWidth / 2) * 0.35, background.position.y + (backgroundHeight / 2) * 0.425)];
 		[buttons addObject: retryButton];
 		
 		if ([Director shared].online)
@@ -271,10 +274,11 @@
 		}
 		else
 		{
-			CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(nextStageButtonPressed:)];
-			okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
-			[okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
-			[buttons addObject: okButton];
+			//Next level button.
+			CCMenuItemImage *nextLevelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" selectedImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" target:self selector:@selector(nextStageButtonPressed:)];
+			nextLevelButton.scale = retryButton.scale;
+			[nextLevelButton setPosition: ccp(background.position.x + (backgroundWidth / 2) * 0.55, background.position.y + (backgroundHeight / 2) * 0.425)];
+			[buttons addObject: nextLevelButton];
 		}
 		
 		if ([Director shared].online)
@@ -295,8 +299,54 @@
 				[buttons addObject: flagButton];
 			}
 		}
+		
+		//Star rating and level time.
+		//Background
+		CCSprite *ratingBackgroundSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_win_rating_background.png"];
+		[ratingBackgroundSprite setScale: (backgroundWidth * 0.50) / ratingBackgroundSprite.contentSize.width];
+		[ratingBackgroundSprite setPosition:ccp(background.position.x, background.position.y - (backgroundHeight / 2) * 0.45)];
+		[self addChild: ratingBackgroundSprite];
 
-        
+        //Level time.
+		NSString *message = [NSString stringWithFormat: @"Level Time: %.2f", timeElapsed];
+		CCNode *levelTime = [DialogLayer createTextWithShadow: message textSize: ((ratingBackgroundSprite.contentSize.width * 1.5) / [message length])];
+		[levelTime setPosition: ccp(((ratingBackgroundSprite.contentSize.width) * 0.5), ((ratingBackgroundSprite.contentSize.height * 0.75)))];
+		[ratingBackgroundSprite addChild: levelTime z: 67];
+		
+		//Stars
+		//Create stars.
+		float maxTime = [[Director shared] getScoreForLevel: [NSString stringWithFormat: @"%@.ctr", [Director shared].stage.name]];
+		int score;		
+		if (timeElapsed < maxTime)
+			score = 3;
+		else if (timeElapsed < maxTime * 1.5)
+			score = 2;
+		else
+			score = 1;
+		
+		if (![Director shared].online)
+		{
+			for (int i = 1; i <= 3; i++)
+			{
+				CCSprite *star;
+				
+				if (score >= i)
+				{
+					star = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_star.png"];
+				}
+				else
+				{
+					star = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_star_empty.png"];
+				}
+				[star setPosition: ccp(
+									   i * ((ratingBackgroundSprite.contentSize.width) * 0.25),
+									   (ratingBackgroundSprite.contentSize.height) / 2.5
+									   )];
+				[star setScale: (star.contentSize.height / (ratingBackgroundSprite.contentSize.height * 1.5 * ratingBackgroundSprite.scaleY))];
+				[ratingBackgroundSprite addChild: star z: 66];
+			}
+		}
+		
         CCMenu *menu = [CCMenu menuWithArray: buttons];
         menu.position = ccp(0, -backgroundHeight / 6 + DIALOG_FONT_OFFSET);
         [self addChild:menu];
@@ -362,7 +412,11 @@
 	backgroundWidth = background.contentSize.width * background.scale;
 	backgroundHeight = background.contentSize.height * background.scale;
 	
-	CCLabelTTF *headerShadow = [CCLabelTTF labelWithString: header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
+	CCSprite *text = [DialogLayer createTextWithShadow: header textSize: DIALOG_FONT_SIZE * 1.25];
+	[text setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5) * [Director shared].scaleFactor.width)];
+	[self addChild: text];
+	
+	/*CCLabelTTF *headerShadow = [CCLabelTTF labelWithString: header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
 	headerShadow.color = ccBLACK;
 	headerShadow.opacity = 190;
 	[headerShadow setPosition:ccp(background.position.x - DIALOG_FONT_SHADOW_OFFSET, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5 - DIALOG_FONT_SHADOW_OFFSET) * [Director shared].scaleFactor.width)];
@@ -371,9 +425,51 @@
 	CCLabelTTF *headerLabel = [CCLabelTTF labelWithString: header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
 	headerLabel.color = ccBLACK;
 	[headerLabel setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5) * [Director shared].scaleFactor.width)];
-	[self addChild:headerLabel];
+	[self addChild:headerLabel];*/
 	
 	return background;
+}
+
++ (CCSprite *) createTextWithShadow: (NSString *) string textSize: (float) textSize
+{
+	CCLabelTTF *headerShadow = [CCLabelTTF labelWithString: string fontName: DIALOG_FONT fontSize: textSize * [Director shared].scaleFactor.width];
+	headerShadow.color = ccBLACK;
+	headerShadow.opacity = 225;
+	[headerShadow setPosition:ccp(1, -1)];
+	
+	CCLabelTTF *headerLabel = [CCLabelTTF labelWithString: string fontName: DIALOG_FONT fontSize: textSize * [Director shared].scaleFactor.width];
+	headerLabel.color = ccWHITE;
+	
+	CCRenderTexture *renderTexture = [CCRenderTexture renderTextureWithWidth: headerLabel.contentSize.width height: headerLabel.contentSize.height];
+	[renderTexture begin];
+	[headerShadow draw];
+	[headerLabel draw];
+	[renderTexture end];
+	
+	CCSprite *retSprite = [CCSprite spriteWithTexture: renderTexture.sprite.texture];
+	[retSprite setScaleY: -1];
+	
+	return retSprite;
+}
+
++(CCLabelTTF*)createShadowHeaderWithString:(NSString*)string position:(CGPoint)pos shadowOffset:(CGSize)offset color:(ccColor3B)col shadowColor:(ccColor3B)shadowCol dimensions:(CGSize)dimensions hAlignment:(CCTextAlignment)uiTextAlignment lineBreakMode:(CCLineBreakMode)lineBreakMode fontSize:(float)fontSize
+{
+    float offsetX = offset.width;
+    float offsetY = offset.height;
+	
+    //Shadow
+    CCLabelTTF *shadow = [CCLabelTTF labelWithString:string dimensions:dimensions hAlignment: uiTextAlignment lineBreakMode: lineBreakMode fontName:@"Noteworthy-Bold" fontSize:fontSize];
+    shadow.position = ccp(pos.x + offsetX, pos.y + offsetY);
+    shadow.color = shadowCol;
+    shadow.opacity = (255/100*83);//83%
+	
+    //Actual
+    CCLabelTTF *label = [CCLabelTTF labelWithString:string dimensions:dimensions hAlignment: uiTextAlignment lineBreakMode: lineBreakMode fontName:@"Noteworthy-Bold" fontSize:fontSize];
+    label.position = ccp(shadow.contentSize.width / 2 - offsetX, shadow.contentSize.height / 2 - offsetY);
+    label.color = col;
+    [shadow addChild:label];
+	
+    return shadow;
 }
 
 - (BOOL) textFieldShouldReturn:(UITextField *)textField

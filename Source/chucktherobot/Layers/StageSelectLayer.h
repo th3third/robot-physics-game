@@ -13,6 +13,17 @@
     int totalMenuItems;
 	int menuItemsPerPage;
 	bool pageTurning;
+	UIPanGestureRecognizer *pan;
+	
+	//Boundries of all the major elements.
+	CGRect topBounds;
+	CGRect midBounds;
+	CGRect arrowBounds;
+	CGRect botBounds;
+	
+	//Sprites to hold various elements. These will be regularly updated.
+	CCSprite *onlineLevelListSprite;
+	CCSprite *onlineLevelDetailsSprite;
 }
 
 typedef enum

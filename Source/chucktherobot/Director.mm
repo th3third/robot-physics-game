@@ -112,6 +112,15 @@ static Director *shared = nil;
 		self.levelSelectPageNum = 0;
 		[self calcNumOfBackgrounds];
 		
+		//TODO: REMOVE THIS AFTER TESTING!!!
+		self.fullVersion = YES;
+		
+		//This is going to be the music player delegate.
+		[[CDAudioManager sharedManager] setBackgroundMusicCompletionListener: self selector: @selector(musicFinished)];
+		
+		//The default bot type.
+		self.botType = @"general";
+		
 		//Set up the scaling factor.
 		CGSize winSize = [CCDirector sharedDirector].winSize;
 		scaleFactor = CGSizeMake(winSize.width / designSize.width,
@@ -326,40 +335,6 @@ static Director *shared = nil;
 	[[Director shared] logInWithUsername: username andPassword: [Director sha: password]];
 }
 
-- (NSArray *) onlineLevelsList: (int) number withSorting: (int) sorting
-{
-	NSArray *levelsList;
-	
-	self.dataState = DATA_STATE_LOADING_LISTINGS;
-	self.processingNetworkRequest = YES;
-	
-	NSString *requestString = [NSString stringWithFormat: @"value1=%d&value2=%d", number, sorting];
-	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
-	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.listingsScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
-	[request setHTTPMethod: @"POST"];
-	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
-	[request setHTTPBody: requestData];
-	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-	
-	NSURLResponse *response = [[NSURLResponse alloc] init];
-	NSString *responseString;
-	NSError *error;
-	NSData *returnData = [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
-	responseString = [[NSString alloc] initWithData: returnData encoding: NSUTF8StringEncoding];
-	
-	[self cleanupConnection];
-	
-	//TODO: Parse out the listing returned.
-	if (![responseString isEqualToString: @""])
-	{
-		levelsList = [responseString componentsSeparatedByString: @"|"];
-	}
-	
-	return levelsList;
-}
-
-
 //TODO: Strip out the | character in the level name. You can't do that!
 - (bool) saveLevelToServer
 {
@@ -511,6 +486,18 @@ static Director *shared = nil;
 	[self loadStageFromData: stageData];
 }
 
+- (void) nextLocalLevel
+{
+	self.localLevelIndex++;
+	
+	if (self.localLevelIndex >= [self.defaultLevelsList count])
+	{
+		self.localLevelIndex = 0;
+	}
+	
+	[[Director shared] setStageName: [NSString stringWithFormat: @"defaults/%@", [[self.defaultLevelsList objectAtIndex: self.localLevelIndex] stringByDeletingPathExtension]]];
+}
+
 - (void) removeLocalLevel: (NSString *) name
 {
 	NSFileManager *fm = [NSFileManager defaultManager];
@@ -576,7 +563,60 @@ static Director *shared = nil;
 	NSError *error;
 	NSData *returnData = [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
 	responseString = [[NSString alloc] initWithData: returnData encoding: NSUTF8StringEncoding];
+	
 	[self cleanupConnection];
+}
+
+#pragma mark MUSIC
+
+- (void) playMusic: (NSString *) bgm
+{
+	if ([[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying])
+	{
+		[self stopMusic];
+	}
+	
+	//Preload background music.
+	if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying])
+	{
+		[[SimpleAudioEngine sharedEngine] preloadBackgroundMusic: bgm];
+	}
+	[[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume: 1.0f];
+	
+	//Play background music.
+	if (![[SimpleAudioEngine sharedEngine] isBackgroundMusicPlaying])
+	{
+		[[SimpleAudioEngine sharedEngine] playBackgroundMusic: bgm loop: NO];
+	}
+}
+
+- (void) stopMusic
+{
+	[[SimpleAudioEngine sharedEngine] stopBackgroundMusic];
+}
+
+- (void) toggleSound
+{
+	if (![[SimpleAudioEngine sharedEngine] mute])
+	{
+		[[SimpleAudioEngine sharedEngine] setMute: YES];
+	}
+	else
+	{
+		[[SimpleAudioEngine sharedEngine] setMute: NO];
+	}
+}
+
+- (void) musicFinished
+{
+	if ([Director shared].editing)
+	{
+		[[Director shared] playMusic: [NSString stringWithFormat: @"Media/Audio/general/music/creator%d.mp3", arc4random() % 3]];
+	}
+	else
+	{
+		[[Director shared] playMusic: @"Media/Audio/general/music/main_menu.mp3"];
+	}
 }
 
 #pragma mark CONNECTION DELEGATE
@@ -730,6 +770,46 @@ static Director *shared = nil;
 	[levelsList removeObjectsInArray: levelsToRemove];
 	
 	return levelsList;
+}
+
+- (NSArray *) onlineLevelsList: (int) number withSorting: (int) sorting
+{
+	NSArray *levelsList;
+	
+	self.dataState = DATA_STATE_LOADING_LISTINGS;
+	self.processingNetworkRequest = YES;
+	
+	NSString *requestString = [NSString stringWithFormat: @"value1=%d&value2=%d", number, sorting];
+	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
+	
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.listingsScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
+	[request setHTTPMethod: @"POST"];
+	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+	[request setHTTPBody: requestData];
+	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+	
+	NSURLResponse *response = [[NSURLResponse alloc] init];
+	NSString *responseString;
+	NSError *error;
+	NSData *returnData = [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
+	responseString = [[NSString alloc] initWithData: returnData encoding: NSUTF8StringEncoding];
+	
+	[self cleanupConnection];
+	
+	//TODO: Parse out the listing returned.
+	NSMutableArray *finalLevelsList = [NSMutableArray array];
+	if (![responseString isEqualToString: @""])
+	{
+		levelsList = [responseString componentsSeparatedByString: @"|"];
+		
+		for (NSString *level in levelsList)
+		{
+			NSArray *separatedLevel = [level componentsSeparatedByString: @"~"];
+			[finalLevelsList addObject: separatedLevel];
+		}
+	}
+	
+	return finalLevelsList;
 }
 
 #pragma  mark ENCRYPTION

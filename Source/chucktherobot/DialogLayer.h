@@ -34,4 +34,7 @@
 
 - (void) changeStageName: (DialogLayer *) diaglayer;
 
++ (CCSprite *) createTextWithShadow: (NSString *) string textSize: (float) textSize;
++ (CCLabelTTF*) createShadowHeaderWithString:(NSString*)string position:(CGPoint)pos shadowOffset:(CGSize)offset color:(ccColor3B)col shadowColor:(ccColor3B)shadowCol dimensions:(CGSize)dimensions hAlignment:(CCTextAlignment)uiTextAlignment lineBreakMode:(CCLineBreakMode)lineBreakMode fontSize:(float)fontSize;
+
 @end

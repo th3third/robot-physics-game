@@ -53,12 +53,16 @@ enum DataState
 @property int numOfBackgrounds;
 @property int dataState;
 @property int levelSelectPageNum;
+@property int localLevelIndex;
 @property (nonatomic) bool loggedIn;
 @property (nonatomic) bool processingNetworkRequest;
 @property (nonatomic) NSArray *localLevelsList;
 @property (nonatomic) NSArray *defaultLevelsList;
 @property (nonatomic) CGSize scaleFactor;
 @property NSDictionary *presetScores;
+
+//Chuck stuff.
+@property NSString *botType;
 
 //Authentication stuff.
 @property NSString *username;
@@ -79,10 +83,16 @@ enum DataState
 - (bool) getLevelFromServer;
 - (void) loadCurrentStage;
 - (void) loadBlankStage;
+- (void) nextLocalLevel;
 - (int) getScoreForLevel: (NSString *) name;
 - (void) flagLevel: (NSString *) name;
 - (void) rateLevel: (NSString *) name withRating: (int) rating;
 - (NSArray *) onlineLevelsList: (int) number withSorting: (int) sorting;
+
+//Music player.
+- (void) playMusic: (NSString *) bgm;
+- (void) stopMusic;
+- (void) toggleSound;
 
 //Scaling
 - (CGPoint) scalePoint:(CGPoint)point;

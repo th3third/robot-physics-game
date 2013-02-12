@@ -40,6 +40,9 @@
         headWidth = width * 0.33;
         headHeight = height * 0.20;
 		
+		//Hit sounds.
+		self.hitSounds = 9;
+		
 		hurtDuration = 1.0;
     }
     
@@ -134,10 +137,11 @@
 		if (difference < 0)
 			difference *= -1;
 		
-		if ((difference) > 0.001)
+		if ((difference) > 0.001 && !hurt)
 		{
 			hurt = YES;
 			hurtCooldown = hurtDuration;
+			[self hit];
 		}
 		else if (hurt)
 		{
@@ -155,6 +159,14 @@
 	
     if (self.body && self.body->IsAwake())
         [self createVisibleBody];
+}
+
+- (void) hit
+{
+	if (self.hitSoundPlaying)
+		[[SimpleAudioEngine sharedEngine] stopEffect: self.hitSoundPlaying];
+	
+	self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/chuck_hit/chuck_hit%d.caf", arc4random() % self.hitSounds]];
 }
 
 - (void) moveToPoint: (CGPoint) point
@@ -368,8 +380,8 @@
     part.body = head;
     part.height = headHeight;
     part.width = headWidth;
-    part.sprite = [CCSprite spriteWithFile: @"Media/Objects/chuck_head.png"];
-	part.spriteHurt = [CCSprite spriteWithFile: @"Media/Objects/chuck_head_hurt.png"];
+    part.sprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Objects/bots/%@/chuck_head.png", [Director shared].botType]];
+	part.spriteHurt = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Objects/bots/%@/chuck_head_hurt.png", [Director shared].botType]];
 	part.sprite.scaleX = (part.width / (part.sprite.contentSize.width * 0.8)) * 2;
 	part.sprite.scaleY = (part.height / part.sprite.contentSize.height) * 2;
 	part.spriteHurt.scaleX = (part.width / (part.spriteHurt.contentSize.width * 0.8)) * 2;
@@ -385,7 +397,7 @@
     part.body = torso1;
     part.height = torsoHeight;
     part.width = torsoWidth;
-    part.sprite = [CCSprite spriteWithFile: @"Media/Objects/chuck_torso.png"];
+    part.sprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Objects/bots/%@/chuck_torso.png", [Director shared].botType]];
 	part.sprite.scaleX = (part.width / part.sprite.contentSize.width) * 2;
 	part.sprite.scaleY = (part.height / part.sprite.contentSize.height) * 2;
 	startPosVec = part.body->GetPosition();
@@ -399,7 +411,7 @@
     part.body = upperArmL;
     part.height = armHeight;
     part.width = armWidth;
-    part.sprite = [CCSprite spriteWithFile: @"Media/Objects/chuck_left_arm.png"];
+    part.sprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Objects/bots/%@/chuck_left_arm.png", [Director shared].botType]];
 	part.sprite.scaleX = (part.width / part.sprite.contentSize.width) * 2;
 	part.sprite.scaleY = (part.height / part.sprite.contentSize.height) * 2;
 	startPosVec = part.body->GetPosition();
@@ -413,7 +425,7 @@
     part.body = upperArmR;
     part.height = armHeight;
     part.width = armWidth;
-    part.sprite = [CCSprite spriteWithFile: @"Media/Objects/chuck_right_arm.png"];
+    part.sprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Objects/bots/%@/chuck_right_arm.png", [Director shared].botType]];
 	part.sprite.scaleX = (part.width / part.sprite.contentSize.width) * 2;
 	part.sprite.scaleY = (part.height / part.sprite.contentSize.height) * 2;
 	startPosVec = part.body->GetPosition();
@@ -427,7 +439,7 @@
     part.body = upperLegL;
     part.height = legHeight;
     part.width = legWidth;
-    part.sprite = [CCSprite spriteWithFile: @"Media/Objects/chuck_left_leg.png"];
+    part.sprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Objects/bots/%@/chuck_left_leg.png", [Director shared].botType]];
 	part.sprite.scaleX = (part.width / part.sprite.contentSize.width) * 2;
 	part.sprite.scaleY = (part.height / part.sprite.contentSize.height) * 2;
 	startPosVec = part.body->GetPosition();
@@ -441,7 +453,7 @@
     part.body = upperLegR;
     part.height = legHeight;
     part.width = legWidth;
-    part.sprite = [CCSprite spriteWithFile: @"Media/Objects/chuck_right_leg.png"];
+    part.sprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Objects/bots/%@/chuck_right_leg.png", [Director shared].botType]];
 	part.sprite.scaleX = (part.width / part.sprite.contentSize.width) * 2;
 	part.sprite.scaleY = (part.height / part.sprite.contentSize.height) * 2;
 	startPosVec = part.body->GetPosition();

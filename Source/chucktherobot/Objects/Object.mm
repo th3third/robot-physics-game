@@ -43,6 +43,9 @@
         self.alive = YES;
 		self.movable = YES;
 		self.minimumSize = 4;
+		self.hitSounds = 11;
+		self.hitBouncySounds = 4;
+		self.popSounds = 4;
         
         if (![Director shared].world)
             NSLog(@"WARNING: No world obtained from Director when attempting to initialize object! Perhaps it has not been set?");
@@ -208,6 +211,8 @@
 		{
 			[object pop];
 		}
+		
+		self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/pop/pop%d.caf", arc4random() % self.popSounds]];
     }
 }
 
@@ -435,15 +440,22 @@
 
 - (void) hit
 {
-	if (self.hitSound)
+	if (self.hitSoundPlaying)
+		[[SimpleAudioEngine sharedEngine] stopEffect: self.hitSoundPlaying];
+	
+	if (self.restitution > 0.2f)
 	{
-		[[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/Drop Object 1.caf"]];
+		self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit_bouncy/hit_bouncy%d.mp3", arc4random() % self.hitSounds]];
+	}
+	else
+	{
+		self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit/hit%d.caf", arc4random() % self.hitSounds]];
 	}
 }
 
 - (void) hitWithForce:(float)force
 {
-	if (force > 5)
+	if (force > 1.5f)
 		[self hit];
 }
 

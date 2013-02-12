@@ -167,8 +167,11 @@
 		if (self.bodyVisible.parent)
 			[self.bodyVisible removeFromParentAndCleanup: YES];
 		
-		self.dropShadow = [CCSprite spriteWithFile: @"Media/Objects/circle_drop_shadow.png"];
-		[self addChild: self.dropShadow];
+		if (!self.dropShadow.parent)
+		{
+			self.dropShadow = [CCSprite spriteWithFile: @"Media/Objects/circle_drop_shadow.png"];
+			[self addChild: self.dropShadow];
+		}
 		
 		if (self.restitution >= 0.5f)
 		{

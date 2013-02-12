@@ -125,8 +125,23 @@
 	CCMenu *menu = [CCMenu menuWithArray: menuItems];
 	[menu alignItemsVertically];
 	[menu setPosition: ccp(s.width / 2, (s.height / 2) - ((logo.contentSize.height / 2.3) * logo.scale))];
-	
 	[self addChild: menu z:-1];
+	
+	//LOWER-LEFT MENU
+	menuItems = [NSMutableArray array];
+	
+	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_cart.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_cart.png"];
+    menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[self scheduleOnce:@selector(goToBotList) delay:0];
+	}];
+	[menuItem setScale: scale];
+	[menuItem setAnchorPoint: ccp(0, 0)];
+	[menuItem setPosition: ccp(-s.width / 2, -s.height / 2)];
+    [menuItems addObject: menuItem];
+	
+	menu = [CCMenu menuWithArray: menuItems];
+	[self addChild: menu z: -1];
 }
 
 -(void) createSocialMenu
@@ -195,9 +210,9 @@
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLayer scene]]];
 }
 
-- (void) goToPurchases
+- (void) goToBotList
 {
-	
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [BotSelectLayer scene]]];
 }
 
 #pragma mark GameKit delegate

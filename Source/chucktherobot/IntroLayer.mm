@@ -95,6 +95,9 @@
 
 -(void) makeTransition:(ccTime)dt
 {
+	
+	//Play the background music.
+	[[Director shared] playMusic: @"Media/Audio/general/music/main_menu.mp3"];
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration: 1.0 scene:[MainMenuLayer scene] withColor: ccBLACK]];
 }
 @end

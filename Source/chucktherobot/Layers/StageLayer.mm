@@ -133,8 +133,8 @@ enum
 	}
 	
 	CCMenuItemImage *sound = [CCMenuItemImage itemWithNormalImage: pathToNormal  selectedImage: pathToSelected block:^(id sender) {
-        [Director shared].soundEnabled = ![Director shared].soundEnabled;
-		[MToolsAppSettings setValue: [NSNumber numberWithBool: [Director shared].soundEnabled] withName: @"soundEnabled"];
+        [[Director shared] toggleSound];
+		[MToolsAppSettings setValue: [NSNumber numberWithBool: ![[SimpleAudioEngine sharedEngine] mute]] withName: @"soundEnabled"];
 		
 		/*id ni = [CCSprite spriteWithTexture:[(CCSprite*)sound.normalImage texture]];
 		id si = [CCSprite spriteWithTexture:[(CCSprite*)sound.selectedImage texture]];
@@ -191,11 +191,16 @@ enum
 		[Director shared].paused = YES;
 		[[Director shared] loadBlankStage];
     }
-	else if ([Director shared].stageName && ![Director shared].stage)
+	else if ([Director shared].stageName)
 	{
 		[[Director shared] loadCurrentStage];
 	}
 	
+	//Play the appropriate music if we're in editing mode.
+	if ([Director shared].editing)
+	{
+		[[Director shared] playMusic: [NSString stringWithFormat: @"Media/Audio/general/music/creator%d.mp3", arc4random() % 3]];
+	}
 	
     //Set the local chuck var that we check for the position.
 	//This should ALWAYS be the first object. If it isn't, the map was saved wrongly.
@@ -240,10 +245,12 @@ enum
 		if (![object isKindOfClass: [Rope class]])
 			z = object.z;
 		
-			[self addChild: object z: z];
+		[self addChild: object z: z];
 		
 		[object display];
     }
+	
+	[debug log: @"Finished setting up level."];
 }
 
 - (void) displayEditorBar
@@ -877,16 +884,25 @@ enum
 
 - (void) showWinScreen
 {
-	winDialog = [[DialogLayer alloc] initWinnerWithHeader: @"LEVEL COMPLETE" target: self selector: @selector(goToNextStage:) andTimeElapsed: timeElapsedSinceStart andScore: score];
+	winDialog = [[DialogLayer alloc] initWinnerWithHeader: @"" target: self selector: @selector(goToNextStage:) andTimeElapsed: timeElapsedSinceStart andScore: score];
 	[self addChild: winDialog z: 9000];
 }
 
 - (void) goToNextStage: (NSNumber *) retry
 {
-	if (![retry boolValue])
+	if (![retry boolValue] && [Director shared].online)
+	{
 		[self goToStageSelect];
+	}
+	else if (![retry boolValue] && ![Director shared].online)
+	{
+		[[Director shared] nextLocalLevel];
+		[self scheduleOnce: @selector(goToStageLoading) delay: 0.0];
+	}
 	else
+	{
 		[self resetStage];
+	}
 }
 
 - (void) resetStage
@@ -1129,7 +1145,7 @@ enum
 			}
 		}
 	}
-    
+	
     return objectToReturn;
 }
 
@@ -1260,8 +1276,8 @@ enum
 			{
 				Object *object = [self getObjectAtTouch: [touches anyObject]];
 				
-				if (object.restitution != 0.9f)
-					 [object setRestitution: 0.9f];
+				if (object.restitution != 0.7f)
+					 [object setRestitution: 0.7f];
 				else
 					 [object setRestitution: 0.2f];
 			
@@ -1287,13 +1303,20 @@ enum
 				
 				break;
 			}
+			default:
+			{
+				return;
+			}
         }
         
-        Object *object = (Object *)selectedObject;
-        if (object)
-        {
-            selector = [self sizeSelector: selector WithObject: object];
-        }
+		if (selectedObject)
+		{
+			Object *object = (Object *)selectedObject;
+			if (object)
+			{
+				selector = [self sizeSelector: selector WithObject: object];
+			}
+		}
     }
     //Since we're not in editing mode, we're playing the game.
     else
@@ -1393,17 +1416,22 @@ enum
             
         //Balloon
         case DRAWING_MODE_BALLOON:
-        {      
-            
-            
+        {        
             break;
         }
+		default:
+		{
+			return;
+		}
     }
     
-    Object *object = (Object *)selectedObject;
-	if (object)
+	if (selectedObject)
 	{
-		selector = [self sizeSelector: selector WithObject: object];
+		Object *object = (Object *)selectedObject;
+		if (object)
+		{
+			selector = [self sizeSelector: selector WithObject: object];
+		}
 	}
 }
 
@@ -1495,14 +1523,21 @@ enum
             
             break;
 		}
+		default:
+		{
+			return;
+		}
             
     }
 
     selectedObject = nil;
     selectedObject2 = nil;
     
-    selector.visible = NO;
-	selector2.visible = NO;
+	if (selector)
+		selector.visible = NO;
+	
+	if (selector2)
+		selector2.visible = NO;
 }
 
 - (CGPoint) snapLocation: (CGPoint) location
@@ -1605,6 +1640,9 @@ enum
 	[Director shared].stage = nil;
 	[Director shared].stageName = nil;
 	
+	//Play the background music.
+	[[Director shared] playMusic: @"Media/Audio/general/music/main_menu.mp3"];
+	
 	if ([Director shared].editing)
 	{
 		[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [MainMenuLayer scene]]];
@@ -1622,7 +1660,16 @@ enum
 
 - (void) goToStageSelect
 {
+	//Play the background music.
+	[[Director shared] playMusic: @"Media/Audio/general/music/main_menu.mp3"];
+	
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageSelectLayer scene]]];
+}
+
+- (void) goToStageLoading
+{
+	[[Director shared] stopMusic];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInT transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
 }
 
 #pragma mark SETTERS/GETTERS

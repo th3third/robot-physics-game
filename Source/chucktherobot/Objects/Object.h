@@ -41,7 +41,9 @@ struct ObjectUserData
 @property (nonatomic) bool needToChangeTexture;
 @property (nonatomic) float minimumSize;
 @property NSString *idleSound;
-@property NSString *hitSound;
+@property int hitSounds;
+@property int hitBouncySounds;
+@property int popSounds;
 @property ALuint hitSoundPlaying;
 @property ALuint idleSoundPlaying;
 

@@ -2,7 +2,7 @@
 #import "MToolsAppSettings.h"
 
 #define FONT_SIZE 24
-#define FONT_SIZE_LEVEL 102
+#define FONT_SIZE_LEVEL 11
 #define TITLE_FONT_SIZE 32
 
 @implementation StageSelectLayer
@@ -36,7 +36,7 @@
 		totalMenuItems = [[self localLevelsList] count];
 		
 		//Pan gesture recognizer for swiping the menu.
-		UIPanGestureRecognizer* pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+		pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
 		CCDirector* director = [CCDirector sharedDirector];
 		[[director openGLView] addGestureRecognizer:pan];
 		
@@ -51,9 +51,6 @@
 		[background setScaleY: scaleY];
 		[self addChild: background z: -3];
 		
-		//Create the menu.
-		[self createMenu];
-		
 		//Create the list of levels.
 		[self showLevelList];
 		
@@ -61,29 +58,6 @@
 		[Director shared].stage = nil;
 	}
 	return self;
-}
-
-- (void) createMenu
-{
-	[CCMenuItemFont setFontSize: FONT_SIZE];
-	
-	//Start from level.
-    NSMutableArray *menuItems = [NSMutableArray array];
-	CCMenuItemLabel *menuItem;
-    
-    menuItem = [CCMenuItemFont itemWithString:@"Back to Main Menu" block:^(id sender){
-		[self scheduleOnce: @selector(goToMainMenu) delay: 0.0];
-	}];
-	[menuItem setPosition: ccp(0, -[[CCDirector sharedDirector] winSize].height / 2)];
-	[menuItem setAnchorPoint: ccp(0.5, 0)];
-    [menuItems addObject: menuItem];
-	
-	CCMenu *menu = [CCMenu menuWithArray: menuItems];
-	
-	CGSize size = [[CCDirector sharedDirector] winSize];
-	[menu setPosition:ccp( size.width/2, size.height/2)];
-	
-	[self addChild: menu z:-1];
 }
 
 - (void) showLevelList
@@ -105,7 +79,7 @@
 		[self createLocalLevelList];
 	}
 	
-	[self.selectionNode setPosition: ccp((-[Director shared].levelSelectPageNum * size.width), size.height * 0.25)];
+	[self.selectionNode setPosition: ccp((-[Director shared].levelSelectPageNum * size.width), (size.height * .25) / [Director shared].scaleFactor.height)];
 	
 	[self addChild: self.selectionNode];
 }
@@ -150,21 +124,21 @@
 	}
 	
 	int enabledMenuItems = 0;
+	int highestLevel = 0;
 	for (id key in [MToolsAppSettings getValueWithName: @"levelProgress"])
 	{
 		if ([[[MToolsAppSettings getValueWithName: @"levelProgress"] objectForKey: key] intValue] > 0)
 		{
-			enabledMenuItems++;
+			NSString *keyName = [key stringByDeletingPathExtension];
+			int levelNum = [[keyName substringFromIndex: [keyName length] - 2] intValue];
+			if (levelNum > highestLevel)
+			{
+				highestLevel = levelNum;
+			}
 		}
 	}
 	
-	//TODO: Remove this before live to test out unlocking levels.
-	//enabledMenuItems = totalMenuItems;
-	
-	if (!enabledMenuItems)
-		enabledMenuItems = 0;
-	
-	enabledMenuItems += 2;
+	enabledMenuItems = MIN(totalMenuItems, highestLevel + 2);
 	
 	NSDictionary *levelProgress = [MToolsAppSettings getValueWithName: @"levelProgress"];
 	for (int i = 0; i < enabledMenuItems; i++)
@@ -174,13 +148,13 @@
 		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
 		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
 		
-		CCLabelTTF *label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL];
+		CCLabelTTF *label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL / [Director shared].scaleFactor.width];
 		[label setColor: ccBLACK];
 		[label setAnchorPoint: ccp(0.5, 0.5)];
 		[label setPosition: ccp((menuItemSprite.contentSize.width / 2 + 3) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2 - 3) * menuItemSprite.scale)];
 		[menuItemSprite addChild: label];
 		
-		label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL];
+		label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL / [Director shared].scaleFactor.width];
 		[label setColor: ccWHITE];
 		[label setAnchorPoint: ccp(0.5, 0.5)];
 		[label setPosition: ccp((menuItemSprite.contentSize.width / 2) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2) * menuItemSprite.scale)];
@@ -188,6 +162,7 @@
 		
 		menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender)
 		{
+			[Director shared].localLevelIndex = i;
 			[Director shared].online = NO;
 			[[Director shared] setStageName: [NSString stringWithFormat: @"defaults/%@", [levelName stringByDeletingPathExtension]]];
 			[self goToStage];
@@ -296,47 +271,238 @@
     [CCMenuItemFont setFontSize: FONT_SIZE];
 	CGSize s = [CCDirector sharedDirector].winSize;
     
+	NSArray *levelsList = [NSArray arrayWithArray: [self onlineLevelsList]];
+	
     NSMutableArray *menuItems = [NSMutableArray array];
     CCMenuItemLabel *menuItem;
     
-	NSArray *levelsList;
-    switch (self.selectType)
-    {
-        default:
-        case SelectTypeLocal:
-        {
-			levelsList = [NSArray arrayWithArray: [self onlineLevelsList]];
-            break;
-        }
-		case SelectTypeWorld:
-		{
-			
-			break;
-		}
-    }
+	topBounds = CGRectMake(
+								  s.width * .5, s.height * .875,
+								  s.width * .95, s.height * .25);
+	midBounds = CGRectMake(
+								  s.width * .5, s.height * .475,
+								  s.width * .95, s.height * .55);
+	arrowBounds = CGRectMake(
+									s.width * .5, s.height * .15,
+									s.width * .95, s.height * .1);
+	float arrowBuffer = 2 * [Director shared].scaleFactor.width;
+	
+	botBounds = CGRectMake(
+								  s.width * .5, 0,
+								  s.width * .95, s.height * .15);
+	CGPoint botButtonStart = ccp((s.width - botBounds.size.width) / 2, 0);
+	
+	//TOP INFORMATION
+	CCSprite *topBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_top_background.png"];
+	[topBackground setScaleX: topBounds.size.width / topBackground.contentSize.width];
+	[topBackground setScaleY: topBounds.size.height / topBackground.contentSize.height];
+	[topBackground setPosition: ccp(topBounds.origin.x, topBounds.origin.y)];
+	[self addChild: topBackground];
+	
+	//MIDDLE LEVEL SELECTION
+	CCSprite *midBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_main_background.png"];
+	[midBackground setScaleX: midBounds.size.width / midBackground.contentSize.width];
+	[midBackground setScaleY: midBounds.size.height / midBackground.contentSize.height];
+	[midBackground setPosition: ccp(midBounds.origin.x, midBounds.origin.y)];
+	[self addChild: midBackground];
+	
+	//Titles for the level browser.
+	CCLabelTTF *nameTitle = [DialogLayer createShadowHeaderWithString: @"LEVEL NAME"
+															 position: ccp(midBounds.origin.x - midBounds.size.width * 0.45, midBounds.origin.y - midBounds.size.height * 0.05)
+														 shadowOffset: CGSizeMake(1, -1)
+																color: ccWHITE
+														  shadowColor: ccBLACK
+														   dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
+														   hAlignment: kCCTextAlignmentLeft
+														lineBreakMode: kCCLineBreakModeMiddleTruncation
+															 fontSize: FONT_SIZE_LEVEL
+							 ];
+	[nameTitle setAnchorPoint: ccp(0, 0.5)];
+	[self addChild: nameTitle];
+	
+	CCLabelTTF *creatorTitle = [DialogLayer createShadowHeaderWithString: @"CREATOR"
+															 position: ccp(midBounds.origin.x - midBounds.size.width * 0.20, midBounds.origin.y - midBounds.size.height * 0.05)
+														 shadowOffset: CGSizeMake(1, -1)
+																color: ccWHITE
+														  shadowColor: ccBLACK
+														   dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
+														   hAlignment: kCCTextAlignmentLeft
+														lineBreakMode: kCCLineBreakModeMiddleTruncation
+															 fontSize: FONT_SIZE_LEVEL
+							 ];
+	[creatorTitle setAnchorPoint: ccp(0, 0.5)];
+	[self addChild: creatorTitle];
+	
+	CCLabelTTF *ratingTitle = [DialogLayer createShadowHeaderWithString: @"THUMBS UP"
+																position: ccp(midBounds.origin.x, midBounds.origin.y - midBounds.size.height * 0.05)
+															shadowOffset: CGSizeMake(1, -1)
+																   color: ccWHITE
+															 shadowColor: ccBLACK
+															  dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
+															  hAlignment: kCCTextAlignmentLeft
+														   lineBreakMode: kCCLineBreakModeMiddleTruncation
+																fontSize: FONT_SIZE_LEVEL
+								];
+	[ratingTitle setAnchorPoint: ccp(0, 0.5)];
+	[self addChild: ratingTitle];
+	
+	CCLabelTTF *dateTitle = [DialogLayer createShadowHeaderWithString: @"CREATED"
+																position: ccp(midBounds.origin.x + midBounds.size.width * 0.20, midBounds.origin.y - midBounds.size.height * 0.05)
+															shadowOffset: CGSizeMake(1, -1)
+																   color: ccWHITE
+															 shadowColor: ccBLACK
+															  dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
+															  hAlignment: kCCTextAlignmentLeft
+														   lineBreakMode: kCCLineBreakModeMiddleTruncation
+																fontSize: FONT_SIZE_LEVEL
+								];
+	[dateTitle setAnchorPoint: ccp(0, 0.5)];
+	[self addChild: dateTitle];
+	
+	//Position the level selection list sprite, although we won't set it up quite yet.
+	if (!onlineLevelListSprite)
+		onlineLevelListSprite = [[CCSprite alloc] init];
+	//[onlineLevelListSprite setPosition: ccp(midBounds.origin.x, midBounds.origin.y)];
+	[self addChild: onlineLevelListSprite];
+	
+	//ARROWS FOR PAGE SELECTION	
+	CCSprite *arrowLeft = [CCSprite spriteWithFile: @"Media/Buttons/general/button_left_arrow.png"];
+	[arrowLeft setScale: (arrowBounds.size.height / arrowLeft.contentSize.height)];
+	[arrowLeft setPosition: ccp(arrowBounds.origin.x - (arrowLeft.contentSize.width * arrowLeft.scaleX) - arrowBuffer, arrowBounds.origin.y)];
+	[self addChild: arrowLeft];
+	
+	CCSprite *arrowRight = [CCSprite spriteWithFile: @"Media/Buttons/general/button_right_arrow.png"];
+	[arrowRight setScale: (arrowBounds.size.height / arrowRight.contentSize.height)];
+	[arrowRight setPosition: ccp(arrowBounds.origin.x + (arrowRight.contentSize.width * arrowRight.scaleX) + arrowBuffer, arrowBounds.origin.y)];
+	[self addChild: arrowRight];
+	
+	//BUTTONS FOR SELECTION FILTERING
+	//BACK BUTTON (ON SAME BOUNDS AS FILTERING BUTTONS)
+	CCSprite *backToMain = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	[backToMain setScale: ((botBounds.size.width * .2) / backToMain.contentSize.width)];
+	[backToMain setPosition: ccp(botButtonStart.x + (botBounds.size.width * .10), 0)];
+	[self addChild: backToMain];
+	
+	CCSprite *newestFilter = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	[newestFilter setScale: ((botBounds.size.width * .2) / newestFilter.contentSize.width)];
+	[newestFilter setPosition: ccp(botButtonStart.x + (botBounds.size.width * .30), 0)];
+	[self addChild: newestFilter];
+	
+	CCSprite *popularFilter = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	[popularFilter setScale: ((botBounds.size.width * .2) / popularFilter.contentSize.width)];
+	[popularFilter setPosition: ccp(botButtonStart.x + (botBounds.size.width * .50), 0)];
+	[self addChild: popularFilter];
+	
+	CCSprite *bestRatedFilter = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	[bestRatedFilter setScale: ((botBounds.size.width * .2) / bestRatedFilter.contentSize.width)];
+	[bestRatedFilter setPosition: ccp(botButtonStart.x + (botBounds.size.width * .70), 0)];
+	[self addChild: bestRatedFilter];
+	
+	CCSprite *byTagFilter = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	[byTagFilter setScale: ((botBounds.size.width * .2) / byTagFilter.contentSize.width)];
+	[byTagFilter setPosition: ccp(botButtonStart.x + (botBounds.size.width * .90), 0)];
+	[self addChild: byTagFilter];
+	
+	//Update all the menus!
+	[self updateOnlineLevelList];
+}
+
+- (void) updateOnlineLevelList
+{
+	//Flushing out the online level list needs to be done or we'll get artifacts.
+	[onlineLevelListSprite removeAllChildrenWithCleanup: YES];
+	
+	CGSize s = [CCDirector sharedDirector].winSize;
+	
+	NSArray *levelsList = [self onlineLevelsList];
+	NSMutableArray *menuItems = [NSMutableArray array];
 	
 	for (int i = 0; i < [levelsList count]; i++)
 	{
-		NSString *levelName = [levelsList objectAtIndex: i];
-		//Level name
-		CCLabelTTF *label = [CCLabelTTF labelWithString: [levelName stringByDeletingPathExtension] dimensions: CGSizeMake(s.width / 2, FONT_SIZE * 1.5) hAlignment: kCCTextAlignmentLeft fontName: [Director shared].globalFont fontSize: FONT_SIZE];
-		menuItem = [CCMenuItemFont itemWithLabel: label block:^(id sender){
-			[Director shared].online = YES;
-			[[Director shared] setStageName: [levelName stringByDeletingPathExtension]];
-			[self goToStageLoadingLevel];
+		NSArray *level = [levelsList objectAtIndex: i];
+		//Begin the render texture. We're going to draw all the elements in a single texture so it will fit nicer.
+		CCRenderTexture *renderTextureNormal = [CCRenderTexture renderTextureWithWidth: midBounds.size.width * 0.9 height: midBounds.size.height * 0.07];
+		[renderTextureNormal beginWithClear: 0 g: 0 b: 0 a: 0];
+		
+		//Level name		
+		CCLabelTTF *name = [DialogLayer createShadowHeaderWithString: [level objectAtIndex: 0]
+															position: ccp(0, -s.height / 2)
+														shadowOffset: CGSizeMake(1, -1)
+															   color: ccWHITE
+														 shadowColor: ccBLACK
+														  dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
+														  hAlignment: kCCTextAlignmentLeft
+													   lineBreakMode: kCCLineBreakModeMiddleTruncation
+															fontSize: FONT_SIZE_LEVEL
+							];
+		[name setAnchorPoint:ccp(0, 0)];
+		[name visit];
+		
+		//Creator
+		CCLabelTTF *creator = [DialogLayer createShadowHeaderWithString: [level objectAtIndex: 1]
+															position: ccp(midBounds.size.width * 0.25, -s.height / 2)
+														shadowOffset: CGSizeMake(1, -1)
+															   color: ccWHITE
+														 shadowColor: ccBLACK
+														  dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
+														  hAlignment: kCCTextAlignmentLeft
+													   lineBreakMode: kCCLineBreakModeMiddleTruncation
+															fontSize: FONT_SIZE_LEVEL
+							];
+		[creator setAnchorPoint:ccp(0, 0)];
+		[creator visit];
+		
+		//Rating
+		CCLabelTTF *rating = [DialogLayer createShadowHeaderWithString: [level objectAtIndex: 2]
+															   position: ccp(midBounds.size.width * 0.50, -s.height / 2)
+														   shadowOffset: CGSizeMake(1, -1)
+																  color: ccWHITE
+															shadowColor: ccBLACK
+															 dimensions: CGSizeMake(midBounds.size.width * 0.15, midBounds.size.height)
+															 hAlignment: kCCTextAlignmentLeft
+														  lineBreakMode: kCCLineBreakModeMiddleTruncation
+															   fontSize: FONT_SIZE_LEVEL
+							   ];
+		[rating setAnchorPoint:ccp(0, 0)];
+		[rating visit];
+		
+		//Date modified
+		CCLabelTTF *date = [DialogLayer createShadowHeaderWithString: [level objectAtIndex: 3]
+															   position: ccp(midBounds.size.width * 0.65, -s.height / 2)
+														   shadowOffset: CGSizeMake(1, -1)
+																  color: ccWHITE
+															shadowColor: ccBLACK
+															 dimensions: CGSizeMake(midBounds.size.width * 0.35, midBounds.size.height)
+															 hAlignment: kCCTextAlignmentLeft
+														  lineBreakMode: kCCLineBreakModeMiddleTruncation
+															   fontSize: FONT_SIZE_LEVEL
+							   ];
+		[date setAnchorPoint:ccp(0, 0)];
+		[date visit];
+		
+		//End render texture.
+		[renderTextureNormal end];
+		
+		CCSprite *itemSpriteNormal = [CCSprite spriteWithTexture: renderTextureNormal.sprite.texture];
+		[itemSpriteNormal setScaleY: -1];
+		CCSprite *itemSpriteSelected = [CCSprite spriteWithTexture: renderTextureNormal.sprite.texture];
+		[itemSpriteSelected setScaleY: -1];
+		CCMenuItemSprite *menuItem = [CCMenuItemSprite itemWithNormalSprite: itemSpriteNormal selectedSprite: itemSpriteSelected block:^(id sender) {
+			[self updateLevelDetails: level];
 		}];
+		[menuItem setPosition: ccp(0, -(midBounds.size.height * 0.07) * i)];
 		[menuItems addObject: menuItem];
-		//[menuItem setAnchorPoint: ccp(0, 0)];
-		//[menuItem setPosition: ccp(-[[CCDirector sharedDirector] winSize].width / 2, -i * 24)];
 	}
 	
-	CCMenuAdvanced *menu = [CCMenuAdvanced menuWithArray: menuItems];
-	[menu alignItemsVerticallyWithPadding: 0 bottomToTop: YES];
-	[menu setBoundaryRect: CGRectMake(-s.width * 0.5, 24, s.width, s.height * 0.9)];
-	[menu fixPosition];
-	//[menu setPosition:ccp( size.width/2, size.height/2)];
+	CCMenu *menu = [CCMenu menuWithArray: menuItems];
+	[menu setPosition: ccp(s.width / 2, midBounds.origin.y + (midBounds.size.height * 0.375))];
 	
-	[self.selectionNode addChild: menu z:-1];
+	[onlineLevelListSprite addChild: menu];
+}
+
+- (void) updateLevelDetails: (NSArray *) level
+{
+	[onlineLevelDetailsSprite removeAllChildrenWithCleanup: YES];
 }
 
 - (void) createPageTurners
@@ -409,7 +575,7 @@
 - (NSArray *) onlineLevelsList
 {
 	NSMutableArray *levelsList = [NSMutableArray array];
-	[levelsList addObjectsFromArray: [[Director shared] onlineLevelsList: 200 withSorting: 0]];
+	[levelsList addObjectsFromArray: [[Director shared] onlineLevelsList: 10 withSorting: 0]];
 	
 	return levelsList;
 }
@@ -524,18 +690,33 @@
 		return;
 	}
 	
+	[[Director shared] stopMusic];
+	
+	CCDirector* director = [CCDirector sharedDirector];
+	[[director openGLView] removeGestureRecognizer: pan];
+	
 	[Director shared].editing = NO;
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageLayer scene]]];
+	[Director shared].online = NO;
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
 }
 
 - (void) goToMainMenu
 {
+	CCDirector* director = [CCDirector sharedDirector];
+	[[director openGLView] removeGestureRecognizer: pan];
+	
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [MainMenuLayer scene]]];
 }
 
 - (void) goToStageLoadingLevel
 {
+	[[Director shared] stopMusic];
+	
+	CCDirector* director = [CCDirector sharedDirector];
+	[[director openGLView] removeGestureRecognizer: pan];
+	
 	[Director shared].editing = NO;
+	[Director shared].online = YES;
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
 }
 
