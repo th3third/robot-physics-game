@@ -17,6 +17,9 @@ struct ObjectUserData
 };
 
 @interface Object : CCNode
+{
+	float soundCooldown;
+}
 
 @property b2World *world;
 @property b2Body *body;
@@ -46,6 +49,7 @@ struct ObjectUserData
 @property int popSounds;
 @property ALuint hitSoundPlaying;
 @property ALuint idleSoundPlaying;
+@property CDSoundSource *soundPlaying;
 
 + (Object *) object;
 

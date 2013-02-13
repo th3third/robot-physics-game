@@ -32,18 +32,25 @@ void MyContactListener::PostSolve(b2Contact* contact,
 {
 	if (contact->GetFixtureA()->GetUserData() != NULL && contact->GetFixtureB()->GetUserData() != NULL)
 	{
-		float force = impulse->normalImpulses[0];
+		int32 count = contact->GetManifold()->pointCount;
+		
+		float maxImpulse = 0.0f;
+		
+		for (int i = 0; i < count; i++)
+		{
+			maxImpulse = b2Max(maxImpulse, impulse->normalImpulses[i]);
+		}
 		
 		if (((ObjectUserData *)contact->GetFixtureA()->GetUserData()))
 		{
 			Object *object1 = ((ObjectUserData *)contact->GetFixtureA()->GetUserData())->objectID;
-			[object1 hitWithForce: force];
+			[object1 hitWithForce: maxImpulse];
 		}
 		
 		if (((ObjectUserData *)contact->GetFixtureB()->GetUserData()))
 		{
 			Object *object2 = ((ObjectUserData *)contact->GetFixtureB()->GetUserData())->objectID;
-			[object2 hitWithForce: force];
+			[object2 hitWithForce: maxImpulse];
 		}
 	}
 }

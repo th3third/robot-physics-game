@@ -309,7 +309,7 @@
 
         //Level time.
 		NSString *message = [NSString stringWithFormat: @"Level Time: %.2f", timeElapsed];
-		CCNode *levelTime = [DialogLayer createTextWithShadow: message textSize: ((ratingBackgroundSprite.contentSize.width * 1.5) / [message length])];
+		CCSprite *levelTime = [DialogLayer createTextWithShadow: message textSize: ((ratingBackgroundSprite.contentSize.width * 1.5) / [message length])];
 		[levelTime setPosition: ccp(((ratingBackgroundSprite.contentSize.width) * 0.5), ((ratingBackgroundSprite.contentSize.height * 0.75)))];
 		[ratingBackgroundSprite addChild: levelTime z: 67];
 		
@@ -412,9 +412,12 @@
 	backgroundWidth = background.contentSize.width * background.scale;
 	backgroundHeight = background.contentSize.height * background.scale;
 	
-	CCSprite *text = [DialogLayer createTextWithShadow: header textSize: DIALOG_FONT_SIZE * 1.25];
-	[text setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5) * [Director shared].scaleFactor.width)];
-	[self addChild: text];
+	if (!header || [header isEqualToString: @""])
+	{
+		CCLabelTTF *text = [DialogLayer createShadowHeaderWithString: header position: ccp(0, 0) shadowOffset: CGSizeMake(1, -1) color: ccWHITE shadowColor: ccBLACK dimensions: CGSizeMake(backgroundWidth, backgroundHeight) hAlignment: kCCTextAlignmentCenter lineBreakMode: kCCLineBreakModeWordWrap fontSize: DIALOG_FONT_SIZE];
+		[text setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5) * [Director shared].scaleFactor.width)];
+		[self addChild: text];
+	}
 	
 	/*CCLabelTTF *headerShadow = [CCLabelTTF labelWithString: header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
 	headerShadow.color = ccBLACK;

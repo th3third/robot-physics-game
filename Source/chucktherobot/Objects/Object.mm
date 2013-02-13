@@ -46,6 +46,7 @@
 		self.hitSounds = 11;
 		self.hitBouncySounds = 4;
 		self.popSounds = 4;
+		soundCooldown = 0.0f;
         
         if (![Director shared].world)
             NSLog(@"WARNING: No world obtained from Director when attempting to initialize object! Perhaps it has not been set?");
@@ -168,6 +169,11 @@
 		}
 		
 		//Check for a collision of neccessary speed to trigger an impact sound.
+	}
+	
+	if (soundCooldown > 0)
+	{
+		soundCooldown -= dt;
 	}
 }
 
@@ -440,8 +446,8 @@
 
 - (void) hit
 {
-	if (self.hitSoundPlaying)
-		[[SimpleAudioEngine sharedEngine] stopEffect: self.hitSoundPlaying];
+	if (soundCooldown > 0)
+		return;
 	
 	if (self.restitution > 0.2f)
 	{
@@ -451,12 +457,35 @@
 	{
 		self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit/hit%d.caf", arc4random() % self.hitSounds]];
 	}
+	
+	soundCooldown = 1.0f;
+}
+
+- (void) hitWithVolume: (float) volume
+{
+	if (soundCooldown > 0)
+		return;
+	
+	if (self.restitution > 0.2f)
+	{
+		self.soundPlaying = [[SimpleAudioEngine sharedEngine] soundSourceForFile: [NSString stringWithFormat: @"Media/Audio/general/hit_bouncy/hit_bouncy%d.mp3", arc4random() % self.hitSounds]];
+	}
+	else
+	{
+		self.soundPlaying = [[SimpleAudioEngine sharedEngine] soundSourceForFile: [NSString stringWithFormat: @"Media/Audio/general/hit/hit%d.caf", arc4random() % self.hitSounds]];
+	}
+	
+	self.soundPlaying.gain = volume;
+	self.soundPlaying.looping = NO;
+	[self.soundPlaying play];
+	
+	soundCooldown = 1.0f;
 }
 
 - (void) hitWithForce:(float)force
 {
-	if (force > 1.5f)
-		[self hit];
+	if (force > 1.0f)
+		[self hitWithVolume: MAX(1.0, force - 1.0)];
 }
 
 #pragma  mark GETTERS/SETTERS

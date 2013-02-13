@@ -24,6 +24,9 @@
 	//Sprites to hold various elements. These will be regularly updated.
 	CCSprite *onlineLevelListSprite;
 	CCSprite *onlineLevelDetailsSprite;
+	CCSprite *titleBackground;
+	CCSprite *creatorBackground;
+	CCSprite *thumbsUpBackground;
 }
 
 typedef enum

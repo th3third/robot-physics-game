@@ -184,45 +184,6 @@ static Director *shared = nil;
 	self.numOfBackgrounds = [[[NSBundle mainBundle] pathsForResourcesOfType: @".jpg" inDirectory: @"Media/Backgrounds/wallpaper"] count];
 }
 
-- (void) setPaused:(bool)paused
-{
-    _paused = paused;
-    
-    if (paused)
-    {
-		if (self.world)
-		{
-			b2Vec2 gravity;
-			gravity.Set(0.0f, 0.0f);
-			[Director shared].world->SetGravity(gravity);
-		}
-        
-        for (Object *object in self.stage.objects)
-        {
-            if (object.class != @"Rope")
-            {
-                object.alive = NO;
-            }
-        }
-    }
-    else
-    {
-		if (self.world)
-		{
-			b2Vec2 gravity;
-			gravity.Set(0.0f, -10.0f);
-			[Director shared].world->SetGravity(gravity);
-		}
-
-        [self awakeAll];
-        
-        for (Object *object in self.stage.objects)
-        {
-            [object reset];
-        }
-    }
-}
-
 - (void) awakeAll
 {
     for (Object *object in [[Director shared].stage objects])
@@ -810,6 +771,47 @@ static Director *shared = nil;
 	}
 	
 	return finalLevelsList;
+}
+
+- (void) setPaused:(bool)paused
+{
+    _paused = paused;
+    
+    if (paused)
+    {
+		[[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume: 1.00];
+		if (self.world)
+		{
+			b2Vec2 gravity;
+			gravity.Set(0.0f, 0.0f);
+			[Director shared].world->SetGravity(gravity);
+		}
+        
+        for (Object *object in self.stage.objects)
+        {
+            if (object.class != @"Rope")
+            {
+                object.alive = NO;
+            }
+        }
+    }
+    else
+    {
+		[[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume: 0.25];
+		if (self.world)
+		{
+			b2Vec2 gravity;
+			gravity.Set(0.0f, -10.0f);
+			[Director shared].world->SetGravity(gravity);
+		}
+		
+        [self awakeAll];
+        
+        for (Object *object in self.stage.objects)
+        {
+            [object reset];
+        }
+    }
 }
 
 #pragma  mark ENCRYPTION

@@ -39,17 +39,9 @@
 	// ask director for the window size
 	CGSize size = [[CCDirector sharedDirector] winSize];
 
-	CCSprite *background;
-	
-	if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone )
-    {
-		background = [CCSprite spriteWithFile:@"Graphics/Default.png"];
-		background.rotation = 90;
-	}
-    else
-    {
-		background = [CCSprite spriteWithFile:@"Graphics/Default-Landscape~ipad.png"];
-	}
+	CCSprite *background = [CCSprite spriteWithFile:@"Media/Backgrounds/general/loading.jpg"];
+	[background setScaleX: (size.width / background.contentSize.width)];
+	[background setScaleY: (size.height / background.contentSize.height)];
 	background.position = ccp(size.width/2, size.height/2);
 
 	// add the label as a child to this Layer
