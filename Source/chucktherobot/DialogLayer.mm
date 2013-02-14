@@ -12,6 +12,7 @@
 
 #define DIALOG_FONT @"Segoe Print"
 #define DIALOG_FONT_SIZE 18
+#define DIALOG_FONT_SIZE_TITLE 20
 #define DIALOG_FONT_SHADOW_OFFSET 0.5
 #define DIALOG_FONT_OFFSET 5
 
@@ -309,8 +310,8 @@
 
         //Level time.
 		NSString *message = [NSString stringWithFormat: @"Level Time: %.2f", timeElapsed];
-		CCSprite *levelTime = [DialogLayer createTextWithShadow: message textSize: ((ratingBackgroundSprite.contentSize.width * 1.5) / [message length])];
-		[levelTime setPosition: ccp(((ratingBackgroundSprite.contentSize.width) * 0.5), ((ratingBackgroundSprite.contentSize.height * 0.75)))];
+		CCLabelTTF *levelTime = [DialogLayer createShadowHeaderWithString: message position: ccp(0, 0) shadowOffset: CGSizeMake(1, -1) color: ccWHITE shadowColor: ccBLACK dimensions: CGSizeMake((ratingBackgroundSprite.contentSize.width * 2), (ratingBackgroundSprite.contentSize.height)) hAlignment:kCCTextAlignmentCenter lineBreakMode: kCCLineBreakModeClip fontSize: ((ratingBackgroundSprite.contentSize.width * 1.5) / [message length])];
+		[levelTime setPosition: ccp(((ratingBackgroundSprite.contentSize.width) * 0.5), ((ratingBackgroundSprite.contentSize.height * 0.35)))];
 		[ratingBackgroundSprite addChild: levelTime z: 67];
 		
 		//Stars
@@ -342,7 +343,7 @@
 									   i * ((ratingBackgroundSprite.contentSize.width) * 0.25),
 									   (ratingBackgroundSprite.contentSize.height) / 2.5
 									   )];
-				[star setScale: (star.contentSize.height / (ratingBackgroundSprite.contentSize.height * 1.5 * ratingBackgroundSprite.scaleY))];
+				[star setScale: ((ratingBackgroundSprite.contentSize.width * 0.25) / star.contentSize.width)];
 				[ratingBackgroundSprite addChild: star z: 66];
 			}
 		}
@@ -398,6 +399,377 @@
     return self;
 }
 
+- (id) initSaveWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	self.dialogType = 3;
+	
+	if (self = [super init])
+	{
+		callbackObj = callbackObjNew;
+        selector = selectorNew;
+		
+		CCSprite *background = [self createBackground];
+		
+		//Name your level title
+		CCLabelTTF *nameYourLevelTitle = [DialogLayer createShadowHeaderWithString: @"Name Your Level"
+																	 position: ccp(background.position.x, background.position.y + backgroundHeight * 0.375)
+																 shadowOffset: CGSizeMake(1, -1)
+																		color: ccWHITE
+																  shadowColor: ccBLACK
+																   dimensions: CGSizeMake(background.contentSize.width * background.scaleX, (background.contentSize.height * background.scaleY) * 0.2)
+																   hAlignment: kCCTextAlignmentCenter
+																lineBreakMode: kCCLineBreakModeMiddleTruncation
+																	 fontSize: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width
+									 ];
+		[self addChild: nameYourLevelTitle];
+		
+		//Name of level (needs input text box)
+		CCSprite *nameLevelInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_name_background.png"];
+		[nameLevelInputBackground setScale: (backgroundWidth * 0.6) / nameLevelInputBackground.contentSize.width];
+		[nameLevelInputBackground setPosition: ccp(background.position.x, background.position.y + backgroundHeight * 0.275)];
+		[self addChild: nameLevelInputBackground];
+		
+		//Input text box
+		self.textField = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (nameLevelInputBackground.contentSize.width * nameLevelInputBackground.scale * 0.9), (nameLevelInputBackground.contentSize.height * nameLevelInputBackground.scale) * 0.75)];
+		self.textField.center = ccp([[CCDirector sharedDirector] view].center.x, [[CCDirector sharedDirector] view].center.y - backgroundHeight * 0.3);
+		self.textField.borderStyle = UITextBorderStyleNone;
+		[self.textField setBackgroundColor: [UIColor clearColor]];
+		[self.textField setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
+		[self.textField setPlaceholder: @"Enter name here"
+		 ];
+		self.textField.delegate = self;
+		[self.textField becomeFirstResponder];
+		self.textField.keyboardType = UIKeyboardAppearanceDefault;
+		self.textField.returnKeyType = UIReturnKeyDone;
+		self.textField.autocorrectionType = UITextAutocapitalizationTypeNone;
+		self.textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
+		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField];
+		
+		//Name of creator (filled in with default logged in user.
+		CCSprite *creatorNameBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_creator_background.png"];
+		[creatorNameBackground setScale: (backgroundWidth * 0.6) / nameLevelInputBackground.contentSize.width];
+		[creatorNameBackground setPosition: ccp(background.position.x, background.position.y + backgroundHeight * 0.125)];
+		[self addChild: creatorNameBackground];
+		
+		CCLabelTTF *creatorName = [DialogLayer createShadowHeaderWithString: [Director shared].username
+																   position: ccp(creatorNameBackground.position.x + backgroundWidth * 0.025, creatorNameBackground.position.y + backgroundHeight * 0.01)
+															   shadowOffset: CGSizeMake(1, -1)
+																	  color: ccWHITE
+																shadowColor: ccBLACK
+																 dimensions: CGSizeMake((creatorNameBackground.contentSize.width * creatorNameBackground.scale), (creatorNameBackground.contentSize.height * creatorNameBackground.scale))
+																 hAlignment: kCCTextAlignmentLeft
+															  lineBreakMode: kCCLineBreakModeMiddleTruncation
+																   fontSize: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width
+								   ];
+		[self addChild: creatorName];
+		
+		//Tag your level title
+		CCLabelTTF *tagYourLevelTitle = [DialogLayer createShadowHeaderWithString: @"Tag Your Level"
+																		  position: ccp(background.position.x, background.position.y - backgroundHeight * 0.025)
+																	  shadowOffset: CGSizeMake(1, -1)
+																			 color: ccWHITE
+																	   shadowColor: ccBLACK
+																		dimensions: CGSizeMake(background.contentSize.width * background.scaleX, (background.contentSize.height * background.scaleY) * 0.2)
+																		hAlignment: kCCTextAlignmentCenter
+																	 lineBreakMode: kCCLineBreakModeMiddleTruncation
+																		  fontSize: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width
+										  ];
+		[self addChild: tagYourLevelTitle];
+		
+		//Tag background.
+		CCSprite *tagBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_tags_background.png"];
+		[tagBackground setScale: (backgroundWidth * 0.6) / nameLevelInputBackground.contentSize.width];
+		[tagBackground setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.175)];
+		[self addChild: tagBackground];
+		
+		//Create all the tag names.
+		NSMutableArray *tagNames = [NSMutableArray array];
+		[tagNames addObject: @"destructive"];
+		[tagNames addObject: @"crazy"];
+		[tagNames addObject: @"hard"];
+		[tagNames addObject: @"bouncy"];
+		[tagNames addObject: @"short"];
+		[tagNames addObject: @"puzzle"];
+		[tagNames addObject: @"artistic"];
+		[tagNames addObject: @"timing"];
+		//Togglable tags.
+		CCMenuItemToggle *menuItem;
+		CCMenu *menu;
+		NSMutableArray *menuItems = [NSMutableArray array];
+		
+		float offOpacity = 100;
+		int row = 0;
+		int col = 0;
+		CGPoint startingPos = ccp(tagBackground.position.x - (tagBackground.contentSize.width * tagBackground.scale) * 0.35, tagBackground.position.y + (tagBackground.contentSize.height * tagBackground.scale) * 0.225);
+		for (NSString *tagName in tagNames)
+		{
+			CCSprite *tagOnSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/tags/tag_blank_1.png"];
+			CCSprite *tagOnSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/tags/tag_blank_1.png"];
+			[tagOnSelectedSprite setScale: 0.95];
+			
+			CCSprite *tagOffSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/tags/tag_blank_1.png"];
+			[tagOffSprite setOpacity: offOpacity];
+			CCSprite *tagOffSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/tags/tag_blank_1.png"];
+			[tagOffSelectedSprite setScale: 0.95];
+			[tagOffSelectedSprite setOpacity: offOpacity];
+			
+			//Tag on
+			CCLabelTTF *tagLabel;
+			tagLabel = [DialogLayer createShadowHeaderWithString: tagName
+																	position: ccp(tagOnSprite.contentSize.width / 2, tagOnSprite.contentSize.height / 2)
+																shadowOffset: CGSizeMake(1, -1)
+																	   color: ccWHITE
+																 shadowColor: ccBLACK
+																  dimensions: CGSizeMake(tagOnSprite.contentSize.width, tagOnSprite.contentSize.height)
+																  hAlignment: kCCTextAlignmentCenter
+															   lineBreakMode: kCCLineBreakModeMiddleTruncation
+																	fontSize: (DIALOG_FONT_SIZE * [Director shared].scaleFactor.width)
+									];
+			[tagOnSprite addChild: tagLabel];
+			
+			tagLabel = [DialogLayer createShadowHeaderWithString: tagName
+														position: ccp(tagOnSelectedSprite.contentSize.width / 2, tagOnSelectedSprite.contentSize.height / 2)
+													shadowOffset: CGSizeMake(1, -1)
+														   color: ccWHITE
+													 shadowColor: ccBLACK
+													  dimensions: CGSizeMake(tagOnSelectedSprite.contentSize.width, tagOnSelectedSprite.contentSize.height)
+													  hAlignment: kCCTextAlignmentCenter
+												   lineBreakMode: kCCLineBreakModeMiddleTruncation
+														fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+						];
+			[tagOnSelectedSprite addChild: tagLabel];
+			
+			//Tag off
+			tagLabel = [DialogLayer createShadowHeaderWithString: tagName
+														position: ccp(tagOffSprite.contentSize.width / 2, tagOffSprite.contentSize.height / 2)
+													shadowOffset: CGSizeMake(1, -1)
+														   color: ccWHITE
+													 shadowColor: ccBLACK
+													  dimensions: CGSizeMake(tagOffSprite.contentSize.width, tagOffSprite.contentSize.height)
+													  hAlignment: kCCTextAlignmentCenter
+												   lineBreakMode: kCCLineBreakModeMiddleTruncation
+														fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+						];
+			[tagLabel setOpacity: offOpacity];
+			[tagOffSprite addChild: tagLabel];
+			
+			tagLabel = [DialogLayer createShadowHeaderWithString: tagName
+														position: ccp(tagOffSelectedSprite.contentSize.width / 2, tagOffSelectedSprite.contentSize.height / 2)
+													shadowOffset: CGSizeMake(1, -1)
+														   color: ccWHITE
+													 shadowColor: ccBLACK
+													  dimensions: CGSizeMake(tagOffSelectedSprite.contentSize.width, tagOffSelectedSprite.contentSize.height)
+													  hAlignment: kCCTextAlignmentCenter
+												   lineBreakMode: kCCLineBreakModeMiddleTruncation
+														fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+						];
+			[tagLabel setOpacity: offOpacity];
+			[tagOffSelectedSprite addChild: tagLabel];
+			
+			CCMenuItem *menuItemOn = [CCMenuItemSprite itemWithNormalSprite: tagOnSprite selectedSprite: tagOnSelectedSprite];
+			CCMenuItem *menuItemOff = [CCMenuItemSprite itemWithNormalSprite: tagOffSprite selectedSprite: tagOffSelectedSprite];
+			
+			NSArray *toggleItems = [NSArray arrayWithObjects: menuItemOff, menuItemOn, nil];
+			
+			menuItem = [CCMenuItemToggle itemWithItems: toggleItems block:^(id sender) {
+				[self toggleTag: tagName];
+			}];
+			[menuItem setScale: ((tagBackground.contentSize.width * tagBackground.scale) * 0.2) / menuItem.contentSize.width];
+			
+			for (NSString *tag in [Director shared].stage.tags)
+			{
+				if ([tag isEqualToString: tagName])
+				{
+					[menuItem activate];
+				}
+			}
+			
+			if (col >= 4)
+			{
+				row++;
+				col = 0;
+			}
+			
+			
+			[menuItem setPosition: ccp(startingPos.x + ((menuItem.contentSize.width * menuItem.scale + 9.5) * col), startingPos.y - ((menuItem.contentSize.height * menuItem.scale) * row))];
+			[menuItems addObject: menuItem];
+			
+			col++;
+		}
+		
+		menu = [CCMenu menuWithArray: menuItems];
+		[menu setAnchorPoint: ccp(0, 0)];
+		[menu setPosition: CGPointZero];
+		[self addChild: menu];
+		
+		//Cancel
+		CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_save/button_cancel_level.png" selectedImage:@"Media/Buttons/general/level_save/button_cancel_level.png" target:self selector:@selector(cancelButtonPressed:)];
+		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
+		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		//Save
+		CCMenuItemImage *saveButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_save/button_save_level.png" selectedImage:@"Media/Buttons/general/level_save/button_save_level.png" target:self selector:@selector(saveButtonPressed:)];
+		saveButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
+		[saveButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		CCMenu *cancelAndSaveMenu = [CCMenu menuWithItems: cancelButton, saveButton, nil];
+		[cancelAndSaveMenu setAnchorPoint: ccp(0, 0)];
+		[cancelAndSaveMenu setPosition: CGPointZero];
+		[self addChild: cancelAndSaveMenu];
+	}
+				
+	return self;
+}
+
+- (id) initPurchaseWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	if (self = [super init])
+	{
+		callbackObj = callbackObjNew;
+		selector = selectorNew;
+		
+		CCSprite *background = [self createBackground];
+		
+		//Purchase the full game label.
+		CCLabelTTF *purchaseFullGameLabel = [DialogLayer createShadowHeaderWithString: @"Purchase Full Game"
+																		position: ccp(background.position.x - backgroundWidth * 0.16, background.position.y + backgroundHeight * 0.375)
+																	shadowOffset: CGSizeMake(1, -1)
+																		   color: ccWHITE
+																	 shadowColor: ccBLACK
+																	  dimensions: CGSizeMake(backgroundWidth * 0.5, backgroundHeight * 0.15)
+																	  hAlignment: kCCTextAlignmentLeft
+																   lineBreakMode: kCCLineBreakModeMiddleTruncation
+																		fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+										];
+		[self addChild: purchaseFullGameLabel];
+		
+		//Full game description label.
+		CCLabelTTF *fullGameDescLabel = [DialogLayer createShadowHeaderWithString: @"- All levels become playable!\n- Access to Online Levels!\n- Save and upload your own custom made Online Levels!\n- Support indie developers!\n- Only $ 0.99!"
+																			 position: ccp(background.position.x - backgroundWidth * 0.2, background.position.y + backgroundHeight * 0.350)
+																		 shadowOffset: CGSizeMake(1, -1)
+																				color: ccWHITE
+																		  shadowColor: ccBLACK
+																		   dimensions: CGSizeMake(backgroundWidth * 0.45, backgroundHeight * 0.5)
+																		   hAlignment: kCCTextAlignmentLeft
+																		lineBreakMode: kCCLineBreakModeWordWrap
+																			 fontSize: (DIALOG_FONT_SIZE * 0.5) * [Director shared].scaleFactor.width
+											 ];
+		[fullGameDescLabel setAnchorPoint: ccp(0.5, 1)];
+		[self addChild: fullGameDescLabel];
+		
+		//Full game purchase button.
+		CCSprite *purchaseFullGameSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_full_game_purchase.png"];
+		CCSprite *purchaseFullGameSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_full_game_purchase.png"];
+		[purchaseFullGameSelectedSprite setScale: 0.95];
+		CCMenuItemSprite *purchaseFullGameMenuItem = [CCMenuItemSprite itemWithNormalSprite: purchaseFullGameSprite selectedSprite: purchaseFullGameSelectedSprite block:^(id sender) {
+		
+		}];
+		[purchaseFullGameMenuItem setScale: (backgroundWidth * 0.33) / purchaseFullGameMenuItem.contentSize.width];
+		[purchaseFullGameMenuItem setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y + backgroundHeight * 0.2)];
+		
+		CCMenu *purchaseMenu = [CCMenu menuWithItems: purchaseFullGameMenuItem, nil];
+		[purchaseMenu setAnchorPoint: ccp(0, 0)];
+		[purchaseMenu setPosition: CGPointZero];
+		[self addChild: purchaseMenu];
+		
+		//Unlock Chuck's Friends label
+		CCLabelTTF *unlockFriendsLabel = [DialogLayer createShadowHeaderWithString: @"Unlock Chuck's Friends"
+																			 position: ccp(background.position.x, background.position.y - backgroundHeight * 0.1)
+																		 shadowOffset: CGSizeMake(1, -1)
+																				color: ccWHITE
+																		  shadowColor: ccBLACK
+																		   dimensions: CGSizeMake(backgroundWidth * 0.5, backgroundHeight * 0.15)
+																		   hAlignment: kCCTextAlignmentLeft
+																		lineBreakMode: kCCLineBreakModeMiddleTruncation
+																			 fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+											 ];
+		[self addChild: unlockFriendsLabel];
+		
+		//See how many bots are available for purchase.
+		NSMutableArray *botMenuItems = [NSMutableArray array];
+		NSArray *botsForPurchase = [NSArray arrayWithObjects: @"1", @"1", @"1", @"1", @"1", @"1", nil];
+		for (int i = 0; i < [botsForPurchase count]; i++)
+		{
+			CCSprite *botSprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Buttons/general/purchase/button_purchase_bot_%@.png", [botsForPurchase objectAtIndex: i]]];
+			CCSprite *botSelectedSprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Buttons/general/purchase/button_purchase_bot_%@.png", [botsForPurchase objectAtIndex: i]]];
+			[botSelectedSprite setScale: 0.95];
+			
+			CCMenuItemSprite *botMenuItem = [CCMenuItemSprite itemWithNormalSprite: botSprite selectedSprite: botSelectedSprite block:^(id sender) {
+				
+			}];
+			[botMenuItem setScale: ((backgroundWidth * 0.12) / botMenuItem.contentSize.width)];
+			[botMenuItem setPosition: ccp(background.position.x - backgroundWidth * 0.3 + (i * (botMenuItem.contentSize.width * botMenuItem.scale)), background.position.y - backgroundHeight * 0.25)];
+			
+			[botMenuItems addObject: botMenuItem];
+		}
+		
+		CCMenu *botMenu = [CCMenu menuWithArray: botMenuItems];
+		[botMenu setAnchorPoint: ccp(0, 0)];
+		[botMenu setPosition: ccp(0, 0)];
+		[self addChild: botMenu];
+	}
+	
+	return self;
+}
+
+- (id) initCreditsWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	if (self = [super init])
+	{
+		CCSprite *background = [self createBackground];
+	}
+	
+	return self;
+}
+
+- (id) initLoginWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	self.dialogType = 2;
+	
+    if((self = [super init]))
+    {
+        callbackObj = callbackObjNew;
+        selector = selectorNew;
+        
+        CCSprite *background = [self createBackground];
+        
+		NSMutableArray *buttons = [NSMutableArray array];
+		float okButtonPosX = background.position.x;
+		okButtonPosX += backgroundWidth / 4;
+		
+		CCSprite *loginTitleSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/login/button_login_title.png"];
+		[loginTitleSprite setScale: (backgroundWidth * 0.70) / loginTitleSprite.contentSize.width];
+		[loginTitleSprite setPosition:ccp(background.position.x, background.position.y + (backgroundHeight / 2) * 0.625)];
+		[self addChild: loginTitleSprite];
+    }
+    
+    return self;
+}
+
+- (void) toggleTag: (NSString *) tagString
+{
+	if (!currentTags)
+		currentTags = [NSMutableArray array];
+	
+	id tagToRemove;
+	for (NSString *tag in currentTags)
+	{
+		if ([tag isEqualToString: tagString])
+		{
+			tagToRemove = tag;
+		}
+	}
+	
+	if (tagToRemove)
+	{
+		[currentTags removeObject: tagToRemove];
+	}
+	else
+	{
+		[currentTags addObject: tagString];
+	}
+}
+
 - (CCSprite *) createBackground
 {
 	CGSize screenSize = [CCDirector sharedDirector].winSize;
@@ -412,12 +784,12 @@
 	backgroundWidth = background.contentSize.width * background.scale;
 	backgroundHeight = background.contentSize.height * background.scale;
 	
-	if (!header || [header isEqualToString: @""])
+	/*if (!header || [header isEqualToString: @""])
 	{
 		CCLabelTTF *text = [DialogLayer createShadowHeaderWithString: header position: ccp(0, 0) shadowOffset: CGSizeMake(1, -1) color: ccWHITE shadowColor: ccBLACK dimensions: CGSizeMake(backgroundWidth, backgroundHeight) hAlignment: kCCTextAlignmentCenter lineBreakMode: kCCLineBreakModeWordWrap fontSize: DIALOG_FONT_SIZE];
 		[text setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5) * [Director shared].scaleFactor.width)];
 		[self addChild: text];
-	}
+	}*/
 	
 	/*CCLabelTTF *headerShadow = [CCLabelTTF labelWithString: header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
 	headerShadow.color = ccBLACK;
@@ -481,6 +853,8 @@
 		[self okButtonPressed: self];
 	else if (self.dialogType == 1)
 		[self loginButtonPressed: self];
+	else if (self.dialogType == 3)
+		[self saveButtonPressed: self];
 	
     return NO;
 }
@@ -574,6 +948,24 @@
 	
 	[Director shared].editing = YES;
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
+}
+
+- (void) saveButtonPressed: (id) sender
+{
+	[self playButtonSound];
+	
+	[Director shared].stage.name = self.textField.text;
+	
+	[self.textField removeFromSuperview];
+	[self.textField2 removeFromSuperview];
+    [self removeFromParentAndCleanup:YES];
+	
+	if (!currentTags)
+	{
+		currentTags = [NSMutableArray array];
+	}
+	
+	[callbackObj performSelector: selector withObject: currentTags];
 }
 
 - (void) playButtonSound

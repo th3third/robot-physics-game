@@ -446,19 +446,7 @@
 
 - (void) hit
 {
-	if (soundCooldown > 0)
-		return;
 	
-	if (self.restitution > 0.2f)
-	{
-		self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit_bouncy/hit_bouncy%d.mp3", arc4random() % self.hitSounds]];
-	}
-	else
-	{
-		self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit/hit%d.caf", arc4random() % self.hitSounds]];
-	}
-	
-	soundCooldown = 1.0f;
 }
 
 - (void) hitWithVolume: (float) volume
@@ -468,24 +456,25 @@
 	
 	if (self.restitution > 0.2f)
 	{
-		self.soundPlaying = [[SimpleAudioEngine sharedEngine] soundSourceForFile: [NSString stringWithFormat: @"Media/Audio/general/hit_bouncy/hit_bouncy%d.mp3", arc4random() % self.hitSounds]];
+		[[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit_bouncy/hit_bouncy%d.mp3", arc4random() % self.hitSounds] pitch: 1.0 pan: 1.0 gain:volume];
 	}
 	else
 	{
-		self.soundPlaying = [[SimpleAudioEngine sharedEngine] soundSourceForFile: [NSString stringWithFormat: @"Media/Audio/general/hit/hit%d.caf", arc4random() % self.hitSounds]];
+		[[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit/hit%d.caf", arc4random() % self.hitSounds] pitch: 1.0 pan: 1.0 gain:volume];
 	}
-	
-	self.soundPlaying.gain = volume;
-	self.soundPlaying.looping = NO;
-	[self.soundPlaying play];
 	
 	soundCooldown = 1.0f;
 }
 
 - (void) hitWithForce:(float)force
 {
-	if (force > 1.0f)
-		[self hitWithVolume: MAX(1.0, force - 1.0)];
+	if (force <= 0)
+		return;
+	
+	float massMod = MIN(self.body->GetMass(), 1.00);
+
+	if (force > 2.0f * massMod)
+		[self hitWithVolume: MAX(0.1, massMod)];
 }
 
 #pragma  mark GETTERS/SETTERS

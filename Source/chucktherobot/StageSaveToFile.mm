@@ -70,7 +70,7 @@
 
 - (void) failedServerSave
 {
-	DialogLayer *errorDialog = [[DialogLayer alloc] initWithHeader: @"Server Error" andLine1: @"There was an error saving your level to the server. This could mean the server is currently too busy, a firewall is blocking the connection, or some other insane reason. Your level has been saved locally to your device in the meantime. Sorry about that!" target: self selector: @selector(goToStage) textField: NO];
+	DialogLayer *errorDialog = [[DialogLayer alloc] initWithHeader: @"Server Error" andLine1: @"There was an error saving your level to the server. This usually means that a level by your name already exists." target: self selector: @selector(goToStage) textField: NO];
 	[self addChild: errorDialog z: 9000];
 }
 
@@ -131,7 +131,7 @@
 - (void) goToStage
 {
 	[Director shared].stageName = [Director shared].stage.name;
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInB transitionWithDuration: 0.5 scene: [StageLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageLayer scene]]];
 }
 
 @end

@@ -128,20 +128,51 @@
 	[self addChild: menu z:-1];
 	
 	//LOWER-LEFT MENU
+	CCSprite *lowerLeftMenuBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_lower_left_background.png"];
+	[lowerLeftMenuBackground setAnchorPoint: ccp(0, 0.5)];
+	[lowerLeftMenuBackground setScale: (s.width * 0.2) / lowerLeftMenuBackground.contentSize.width];
+	[lowerLeftMenuBackground setPosition: ccp(0, (lowerLeftMenuBackground.contentSize.height * lowerLeftMenuBackground.scale) * 0.5)];
+	[self addChild: lowerLeftMenuBackground];
+	
 	menuItems = [NSMutableArray array];
 	
-	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_cart.png"];
-	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_cart.png"];
-    menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
-		[self scheduleOnce:@selector(goToBotList) delay:0];
+	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_cart.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_cart.png"];
+    menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender)
+	{
+		if (!purchaseDialog)
+			purchaseDialog = [[DialogLayer alloc] initPurchaseWithCallbackObj: self selector: @selector(madePurchase:)];
+		
+		if (!purchaseDialog.parent)
+			[self addChild: purchaseDialog z: 9000];
+		else
+			[purchaseDialog removeFromParentAndCleanup: YES];
 	}];
 	[menuItem setScale: scale];
-	[menuItem setAnchorPoint: ccp(0, 0)];
-	[menuItem setPosition: ccp(-s.width / 2, -s.height / 2)];
+	[menuItem setAnchorPoint: ccp(0, 0.5)];
+	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.15), lowerLeftMenuBackground.position.y)];
+    [menuItems addObject: menuItem];
+	
+	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_question_mark.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_question_mark.png"];
+    menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		if (!creditsDialog)
+			creditsDialog = [[DialogLayer alloc] initCreditsWithCallbackObj: self selector: @selector(madePurchase:)];
+		
+		if (!creditsDialog.parent)
+			[self addChild: creditsDialog z: 9000];
+		else
+			[creditsDialog removeFromParentAndCleanup: YES];
+	}];
+	[menuItem setScale: scale];
+	[menuItem setAnchorPoint: ccp(1, 0.5)];
+	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.80), lowerLeftMenuBackground.position.y)];
     [menuItems addObject: menuItem];
 	
 	menu = [CCMenu menuWithArray: menuItems];
-	[self addChild: menu z: -1];
+	[menu setAnchorPoint: ccp(0, 0)];
+	[menu setPosition: CGPointZero];
+	[self addChild: menu];
 }
 
 -(void) createSocialMenu
@@ -167,7 +198,9 @@
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_facebook.png"];
 	scale = (s.width * 0.06) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
-		//TODO: Share on Facebook.
+		NSString *pageURL = @"http://www.facebook.com/sharer.php?u=https://www.facebook.com/gearsprout?fref=ts&t=Playing Chuck the Bot by GearSprout!";
+		NSString *escaped = [pageURL stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+		[[UIApplication sharedApplication] openURL: [NSURL URLWithString: escaped]];
 	}];
 	[menuItem setScale: scale];
     [menuItems addObject: menuItem];
@@ -176,7 +209,9 @@
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_twitter.png"];
 	scale = (s.width * 0.06) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
-		//TODO: Share on Twitter.
+		NSString *pageURL = @"http://twitter.com/home?status=RT @GearSprout – Having fun playing Chuck the Bot on my iOS device!";
+		NSString *escaped = [pageURL stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+		[[UIApplication sharedApplication] openURL: [NSURL URLWithString: escaped]];
 	}];
 	[menuItem setScale: scale];
     [menuItems addObject: menuItem];
@@ -185,7 +220,7 @@
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_email.png"];
 	scale = (s.width * 0.06) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
-		//TODO: Share via email.
+		[self mail];
 	}];
 	[menuItem setScale: scale];
     [menuItems addObject: menuItem];
@@ -213,6 +248,28 @@
 - (void) goToBotList
 {
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [BotSelectLayer scene]]];
+}
+
+#pragma mark MFMail delegate
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+	AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
+	[app.navController dismissModalViewControllerAnimated: YES];
+}
+
+- (void) mail
+{
+	AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
+	
+	MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
+	picker.mailComposeDelegate = self;
+	[picker setSubject:@"Playing Chuck the Bot"];
+	
+	NSString *emailBody = @"I've been playing Chuck the Bot and I'd like you to check it out too so we can share levels! \n\n http://gearsprout.com/chuck_the_bot.html";
+	[picker setMessageBody:emailBody isHTML:YES];
+	
+	[app.navController presentModalViewController:picker animated:YES];
 }
 
 #pragma mark GameKit delegate

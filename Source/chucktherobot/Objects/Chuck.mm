@@ -91,6 +91,7 @@
 	upperLegR->SetAngularVelocity(0);
 	
 	self.alive = YES;
+	[self resetBody];
     [self createVisibleBody];
 }
 
@@ -200,6 +201,8 @@
 
 - (void) rotateAllPartsTo: (float) angle
 {
+	return;
+	
 	if (!self->torso1)
 		return;
 	
@@ -286,15 +289,18 @@
     fixtureDef.density = 0.16f;
     fixtureDef.friction = 0.12f;
     fixtureDef.restitution = 0.5f;
+	fixtureDef.isSensor = NO;
     bd.position.Set((self.curPos.x + width * .5) / PTM_RATIO, (self.curPos.y) / PTM_RATIO);
     head = self.world->CreateBody(&bd);//b2Body *head
     head->CreateFixture(&fixtureDef);
     head->SetSleepingAllowed(true);
+	
     
     
     // Torso1 ----
     box.SetAsBox(torsoWidth / PTM_RATIO, torsoHeight / PTM_RATIO);
     fixtureDef.shape = &box;
+	fixtureDef.isSensor = NO;
     bd.position.Set((self.curPos.x + width * .5) / PTM_RATIO, ((self.curPos.y - headHeight * 1.8)) / PTM_RATIO);
     torso1 = self.world->CreateBody(&bd);
     torso1->CreateFixture(&fixtureDef);
@@ -304,6 +310,7 @@
     // Left
     box.SetAsBox(armWidth / PTM_RATIO, armHeight / PTM_RATIO);
     fixtureDef.shape = &box;
+	fixtureDef.isSensor = YES;
     bd.position.Set((self.curPos.x + armWidth * 0.6) / PTM_RATIO, (self.curPos.y - headHeight * 1.8) / PTM_RATIO);
     upperArmL = self.world->CreateBody(&bd);
     upperArmL->CreateFixture(&fixtureDef);
@@ -312,6 +319,7 @@
     // Right
     box.SetAsBox(armWidth / PTM_RATIO, armHeight / PTM_RATIO);
     fixtureDef.shape = &box;
+	fixtureDef.isSensor = YES;
     bd.position.Set((self.curPos.x + width * 1.0 - (armWidth * 0.6)) / PTM_RATIO, (self.curPos.y - headHeight * 1.8) / PTM_RATIO);
     upperArmR = self.world->CreateBody(&bd);
     upperArmR->CreateFixture(&fixtureDef);
@@ -321,6 +329,7 @@
     // Left
     box.SetAsBox(legWidth / PTM_RATIO, legHeight / PTM_RATIO);
     fixtureDef.shape = &box;
+	fixtureDef.isSensor = NO;
     bd.position.Set((self.curPos.x + width * .36) / PTM_RATIO, (self.curPos.y - ((headHeight * 2) + torsoHeight * 1.75)) / PTM_RATIO);
     upperLegL = self.world->CreateBody(&bd);
     upperLegL->CreateFixture(&fixtureDef);
@@ -329,6 +338,7 @@
     // Right
     box.SetAsBox(legWidth / PTM_RATIO, legHeight / PTM_RATIO);
     fixtureDef.shape = &box;
+	fixtureDef.isSensor = NO;
     bd.position.Set((self.curPos.x + width * .63) / PTM_RATIO, (self.curPos.y - ((headHeight * 2) + torsoHeight * 1.75)) / PTM_RATIO);
     upperLegR = self.world->CreateBody(&bd);
     upperLegR->CreateFixture(&fixtureDef);
@@ -361,11 +371,11 @@
     // Torso to upper leg
     // Left
     jd.lowerAngle = -25.0f / (180.0f / M_PI);
-    jd.upperAngle = 45.0f / (180.0f / M_PI);
+    jd.upperAngle = 25.0f / (180.0f / M_PI);
     jd.Initialize(torso1, upperLegL, b2Vec2((self.curPos.x + width * .36) / PTM_RATIO, (self.curPos.y - headHeight * 1.8 - legHeight / 2) / PTM_RATIO));
     self->neckJoint = self.world->CreateJoint(&jd);
     // Right
-    jd.lowerAngle = -45.0f / (180.0f / M_PI);
+    jd.lowerAngle = -25.0f / (180.0f / M_PI);
     jd.upperAngle = 25.0f / (180.0f / M_PI);
     jd.Initialize(torso1, upperLegR, b2Vec2((self.curPos.x + width * .63) / PTM_RATIO, (self.curPos.y - headHeight * 1.8 - legHeight / 2) / PTM_RATIO));
     self.world->CreateJoint(&jd);
@@ -463,6 +473,37 @@
     [bodyParts addObject: part];
     
     self.body = head;
+}
+
+- (void) resetBody
+{
+	b2Vec2 pos;
+	
+	// Head ------
+	pos = b2Vec2((self.curPos.x + width * .5) / PTM_RATIO, (self.curPos.y) / PTM_RATIO);
+	head->SetTransform(pos, 0);
+    
+    // Torso1 ----
+	pos = b2Vec2((self.curPos.x + width * .5) / PTM_RATIO, ((self.curPos.y - headHeight * 1.8)) / PTM_RATIO);
+	torso1->SetTransform(pos, 0);
+    
+    // ARMS
+    // Left
+	pos = b2Vec2((self.curPos.x + armWidth * 0.6) / PTM_RATIO, (self.curPos.y - headHeight * 1.8) / PTM_RATIO);
+	upperArmL->SetTransform(pos, 0);
+    
+    // Right
+	pos = b2Vec2((self.curPos.x + width * 1.0 - (armWidth * 0.6)) / PTM_RATIO,  (self.curPos.y - headHeight * 1.8) / PTM_RATIO);
+	upperArmR->SetTransform(pos, 0);
+    
+    // LEGS
+    // Left
+	pos = b2Vec2((self.curPos.x + width * .36) / PTM_RATIO, (self.curPos.y - ((headHeight * 2) + torsoHeight * 1.75)) / PTM_RATIO);
+	upperLegL->SetTransform(pos, 0);
+    
+    // Right
+	pos = b2Vec2((self.curPos.x + width * .63) / PTM_RATIO, (self.curPos.y - ((headHeight * 2) + torsoHeight * 1.75)) / PTM_RATIO);
+	upperLegR->SetTransform(pos, 0);
 }
 
 - (void) createVisibleBody

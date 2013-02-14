@@ -89,10 +89,7 @@
 }
 
 - (void) createLocalLevelList
-{
-	
-    [CCMenuItemFont setFontSize: FONT_SIZE];
-    
+{    
 	CGSize s = [CCDirector sharedDirector].winSize;
     NSMutableArray *menuItems = [NSMutableArray array];
     CCMenuItemSprite *menuItem;
@@ -152,13 +149,13 @@
 		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
 		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
 		
-		CCLabelTTF *label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL_LARGE / [Director shared].scaleFactor.width];
+		CCLabelTTF *label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL_LARGE ];
 		[label setColor: ccBLACK];
 		[label setAnchorPoint: ccp(0.5, 0.5)];
 		[label setPosition: ccp((menuItemSprite.contentSize.width / 2 + 3) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2 - 3) * menuItemSprite.scale)];
 		[menuItemSprite addChild: label];
 		
-		label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL_LARGE / [Director shared].scaleFactor.width];
+		label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL_LARGE];
 		[label setColor: ccWHITE];
 		[label setAnchorPoint: ccp(0.5, 0.5)];
 		[label setPosition: ccp((menuItemSprite.contentSize.width / 2) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2) * menuItemSprite.scale)];
@@ -350,7 +347,7 @@
 														   dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
 														   hAlignment: kCCTextAlignmentLeft
 														lineBreakMode: kCCLineBreakModeMiddleTruncation
-															 fontSize: FONT_SIZE_LEVEL
+															 fontSize: FONT_SIZE_LEVEL * [Director shared].scaleFactor.width
 							 ];
 	[nameTitle setAnchorPoint: ccp(0, 0.5)];
 	[self addChild: nameTitle];
@@ -363,7 +360,7 @@
 														   dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
 														   hAlignment: kCCTextAlignmentLeft
 														lineBreakMode: kCCLineBreakModeMiddleTruncation
-															 fontSize: FONT_SIZE_LEVEL
+															 fontSize: FONT_SIZE_LEVEL * [Director shared].scaleFactor.width
 							 ];
 	[creatorTitle setAnchorPoint: ccp(0, 0.5)];
 	[self addChild: creatorTitle];
@@ -376,7 +373,7 @@
 															  dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
 															  hAlignment: kCCTextAlignmentLeft
 														   lineBreakMode: kCCLineBreakModeMiddleTruncation
-																fontSize: FONT_SIZE_LEVEL
+																fontSize: FONT_SIZE_LEVEL * [Director shared].scaleFactor.width
 								];
 	[ratingTitle setAnchorPoint: ccp(0, 0.5)];
 	[self addChild: ratingTitle];
@@ -389,7 +386,7 @@
 															  dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
 															  hAlignment: kCCTextAlignmentLeft
 														   lineBreakMode: kCCLineBreakModeMiddleTruncation
-																fontSize: FONT_SIZE_LEVEL
+																fontSize: FONT_SIZE_LEVEL * [Director shared].scaleFactor.width
 								];
 	[dateTitle setAnchorPoint: ccp(0, 0.5)];
 	[self addChild: dateTitle];
@@ -445,7 +442,7 @@
 																 dimensions: CGSizeMake(backToMainMenuItem.contentSize.width * backToMainMenuItem.scaleX, backToMainMenuItem.contentSize.height * backToMainMenuItem.scaleY)
 																 hAlignment: kCCTextAlignmentCenter
 															  lineBreakMode: kCCLineBreakModeMiddleTruncation
-																   fontSize: FONT_SIZE_FILTER
+																   fontSize: FONT_SIZE_FILTER * [Director shared].scaleFactor.width
 								   ];
 	[backToMainLabel setAnchorPoint: ccp(0.5, 0.5)];
 	[self addChild: backToMainLabel z: 101];
@@ -505,7 +502,7 @@
 														  dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
 														  hAlignment: kCCTextAlignmentLeft
 													   lineBreakMode: kCCLineBreakModeMiddleTruncation
-															fontSize: FONT_SIZE_LEVEL
+															fontSize: FONT_SIZE_LEVEL * [Director shared].scaleFactor.width
 							];
 		[name setAnchorPoint:ccp(0, 0)];
 		[name visit];
@@ -519,7 +516,7 @@
 														  dimensions: CGSizeMake(midBounds.size.width * 0.25, midBounds.size.height)
 														  hAlignment: kCCTextAlignmentLeft
 													   lineBreakMode: kCCLineBreakModeMiddleTruncation
-															fontSize: FONT_SIZE_LEVEL
+															fontSize: FONT_SIZE_LEVEL * [Director shared].scaleFactor.width
 							];
 		[creator setAnchorPoint:ccp(0, 0)];
 		[creator visit];
@@ -533,7 +530,7 @@
 															 dimensions: CGSizeMake(midBounds.size.width * 0.15, midBounds.size.height)
 															 hAlignment: kCCTextAlignmentLeft
 														  lineBreakMode: kCCLineBreakModeMiddleTruncation
-															   fontSize: FONT_SIZE_LEVEL
+															   fontSize: FONT_SIZE_LEVEL * [Director shared].scaleFactor.width
 							   ];
 		[rating setAnchorPoint:ccp(0, 0)];
 		[rating visit];
@@ -547,7 +544,7 @@
 															 dimensions: CGSizeMake(midBounds.size.width * 0.35, midBounds.size.height)
 															 hAlignment: kCCTextAlignmentLeft
 														  lineBreakMode: kCCLineBreakModeMiddleTruncation
-															   fontSize: FONT_SIZE_LEVEL
+															   fontSize: FONT_SIZE_LEVEL * [Director shared].scaleFactor.width
 							   ];
 		[date setAnchorPoint:ccp(0, 0)];
 		[date visit];
@@ -588,7 +585,7 @@
 														   dimensions: CGSizeMake(titleBackground.contentSize.width * titleBackground.scaleX, titleBackground.contentSize.height * titleBackground.scaleY)
 														   hAlignment: kCCTextAlignmentLeft
 														lineBreakMode: kCCLineBreakModeMiddleTruncation
-															 fontSize: FONT_SIZE_TITLE
+															 fontSize: FONT_SIZE_TITLE * [Director shared].scaleFactor.width
 							 ];
 	[levelName setAnchorPoint: ccp(0, 0.5)];
 	[onlineLevelDetailsSprite addChild: levelName];
@@ -602,7 +599,7 @@
 														   dimensions: CGSizeMake(creatorBackground.contentSize.width * creatorBackground.scaleX, creatorBackground.contentSize.height * creatorBackground.scaleY)
 														   hAlignment: kCCTextAlignmentLeft
 														lineBreakMode: kCCLineBreakModeMiddleTruncation
-															 fontSize: FONT_SIZE_TITLE
+															 fontSize: FONT_SIZE_TITLE * [Director shared].scaleFactor.width
 							 ];
 	[creatorName setAnchorPoint: ccp(1, 0.5)];
 	[onlineLevelDetailsSprite addChild: creatorName];
@@ -625,19 +622,19 @@
 			
 			[tagSprite setScaleX: topBounds.size.width * 0.1125 / tagSprite.contentSize.width];
 			[tagSprite setScaleY: topBounds.size.height * 0.225 / tagSprite.contentSize.height];
-			[tagSprite setPosition: ccp(topBounds.origin.x - topBounds.size.width * 0.40 + (col * topBounds.size.width * .1125), topBounds.origin.y - topBounds.size.height * 0.05 - (row * topBounds.size.height * .205))];
+			[tagSprite setPosition: ccp(topBounds.origin.x - topBounds.size.width * 0.40 + (col * topBounds.size.width * .1125), topBounds.origin.y - topBounds.size.height * 0.08 - (row * topBounds.size.height * .205))];
 			[tagSprite setAnchorPoint: ccp(0.5, 0.5)];
 			[onlineLevelDetailsSprite addChild: tagSprite];
 			
 			CCLabelTTF *tagLabel = [DialogLayer createShadowHeaderWithString: tag
-																	position: ccp(tagSprite.position.x, tagSprite.position.y - topBounds.size.height * 0.1)
+																	position: ccp(tagSprite.position.x, tagSprite.position.y - topBounds.size.height * 0.09)
 																shadowOffset: CGSizeMake(1, -1)
 																	   color: ccWHITE
 																 shadowColor: ccBLACK
 																  dimensions: CGSizeMake(creatorBackground.contentSize.width * creatorBackground.scaleX, creatorBackground.contentSize.height * creatorBackground.scaleY)
 																  hAlignment: kCCTextAlignmentCenter
 															   lineBreakMode: kCCLineBreakModeMiddleTruncation
-																	fontSize: FONT_SIZE_TAG
+																	fontSize: FONT_SIZE_TAG * [Director shared].scaleFactor.width
 									];
 			[tagLabel setAnchorPoint: ccp(0.5, 0.5)];
 			[onlineLevelDetailsSprite addChild: tagLabel];
@@ -654,14 +651,14 @@
 	
 	//Thumbs up rating.
 	CCLabelTTF *thumbsUpAmount = [DialogLayer createShadowHeaderWithString: [NSString stringWithFormat: @"%@%%", [level objectAtIndex: 2]]
-															   position: ccp(topBounds.origin.x + topBounds.size.width * 0.125, topBounds.origin.y + topBounds.size.height * 0.025)
+															   position: ccp(topBounds.origin.x + topBounds.size.width * 0.095, topBounds.origin.y + topBounds.size.height * 0.025)
 														   shadowOffset: CGSizeMake(1, -1)
 																  color: ccWHITE
 															shadowColor: ccBLACK
-															 dimensions: CGSizeMake(thumbsUpBackground.contentSize.width * thumbsUpBackground.scaleX, thumbsUpBackground.contentSize.height * creatorBackground.scaleY)
-															 hAlignment: kCCTextAlignmentLeft
+															 dimensions: CGSizeMake(thumbsUpBackground.contentSize.width * 0.5 * thumbsUpBackground.scaleX, thumbsUpBackground.contentSize.height * creatorBackground.scaleY)
+															 hAlignment: kCCTextAlignmentRight
 														  lineBreakMode: kCCLineBreakModeMiddleTruncation
-															   fontSize: FONT_SIZE_TITLE
+															   fontSize: FONT_SIZE_TITLE * [Director shared].scaleFactor.width
 							   ];
 	[thumbsUpAmount setAnchorPoint: ccp(0, 1)];
 	[onlineLevelDetailsSprite addChild: thumbsUpAmount];

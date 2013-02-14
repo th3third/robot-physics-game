@@ -527,7 +527,7 @@ enum
 	//SAVE
 	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_save.png" selectedImage: @"Media/Buttons/general/button_editor_save.png" block:^(id sender) {
-		[self saveStage];
+		[self createStageSaveInfo];
     }];
 	if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorLeftButtonSize / menuItem.contentSize.width;
@@ -764,12 +764,6 @@ enum
 	
 	if (!motorArrows.parent)
 		[editorBarBot addChild: motorArrows z: 8999];
-}
-
-- (void) changeStageName: (DialogLayer *) diaglayer
-{
-    [Director shared].stage.name = diaglayer.textField.text;
-    [stageNameItem setString: [Director shared].stage.name];
 }
 
 - (void) setDrawingMode:(int)drawingMode
@@ -1343,15 +1337,19 @@ enum
         case DRAWING_MODE_ROTATE:
         {
             Object *object = selectedObject;
-            float dx = (object.curPos.x + object.widthAbs / 2) - location.x;
-            float dy = (object.curPos.y + object.heightAbs / 2) - location.y;
-            float angle = atan2(dy, dx);
-            
-            object.rotationAngle = angle;
-            
-            touchStart = location;
 			
-			selector = [self sizeSelector: selector WithObject: object];
+			if (![object isKindOfClass: [Chuck class]])
+			{
+				float dx = (object.curPos.x + object.widthAbs / 2) - location.x;
+				float dy = (object.curPos.y + object.heightAbs / 2) - location.y;
+				float angle = atan2(dy, dx);
+				
+				object.rotationAngle = angle;
+				
+				touchStart = location;
+				
+				selector = [self sizeSelector: selector WithObject: object];
+			}
             
             break;
         }
@@ -1589,6 +1587,25 @@ enum
 	return selectorNum;
 }
 
+#pragma mark SAVE FUNCTIONS
+
+- (void) createStageSaveInfo
+{
+	DialogLayer *saveDialog = [[DialogLayer alloc] initSaveWithCallbackObj: self selector: @selector(changeStageNameAndSave:)];
+	[self addChild: saveDialog z: 9000];
+}
+
+- (void) changeStageNameAndSave: (NSMutableArray *) tagNames
+{
+	[Director shared].stage.tags = tagNames;
+	[self scheduleOnce: @selector(goToSaveToFile) delay: 0.0];
+}
+
+- (BOOL) textFieldShouldReturn:(UITextField *)textField
+{
+    return NO;
+}
+
 #pragma mark HELP
 
 //Loads up the help popups.
@@ -1670,6 +1687,17 @@ enum
 {
 	[[Director shared] stopMusic];
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInT transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
+}
+
+- (void) goToSaveToFile
+{
+	if (![Director shared].loggedIn)
+	{
+		[self addChild: [[Director shared] createLogInDialog] z: 9000];
+		return;
+	}
+	
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageSaveToFile scene]]];
 }
 
 #pragma mark SETTERS/GETTERS

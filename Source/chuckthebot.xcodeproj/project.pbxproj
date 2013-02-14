@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CE15F03C16BB205E0066B5DF /* StageLoadingLevel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE15F03B16BB205E0066B5DF /* StageLoadingLevel.mm */; };
 		CE15F03E16BB457B0066B5DF /* defaults in Resources */ = {isa = PBXBuildFile; fileRef = CE15F03D16BB457B0066B5DF /* defaults */; };
+		CE60679216CC35D300A97B89 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE60679116CC35D300A97B89 /* MessageUI.framework */; };
 		CE66A24316C5BDEE003AD7C9 /* MyContactListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE66A24216C5BDEE003AD7C9 /* MyContactListener.mm */; };
 		CE685A5F16964DA8001B8774 /* Layer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE685A5E16964DA8001B8774 /* Layer.mm */; };
 		CE685BBB16964F12001B8774 /* Box2DConfig.cmake in Resources */ = {isa = PBXBuildFile; fileRef = CE685A6416964F11001B8774 /* Box2DConfig.cmake */; };
@@ -169,6 +170,7 @@
 		CE7B863F16A4D24D00C5A519 /* Balloon.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B863E16A4D24D00C5A519 /* Balloon.mm */; };
 		CE7BC02816A5E7950049F4AA /* Weld.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7BC02716A5E7940049F4AA /* Weld.mm */; };
 		CE7C1A0216C95721002BE715 /* BotSelectLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7C1A0116C95721002BE715 /* BotSelectLayer.mm */; };
+		CE7DA19B16CC1F2B00DDCC7A /* CustomTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7DA19A16CC1F2B00DDCC7A /* CustomTextField.mm */; };
 		CE7F6CC816B9A3C80025A3E3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7F6CC716B9A3C80025A3E3 /* Security.framework */; };
 		CE803885169C91C600843895 /* Circle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE803884169C91C600843895 /* Circle.mm */; };
 		CE80389F169CEB6B00843895 /* VPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = CE80389A169CEB6B00843895 /* VPoint.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -264,6 +266,7 @@
 		CE15F03A16BB205E0066B5DF /* StageLoadingLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StageLoadingLevel.h; path = Layers/StageLoadingLevel.h; sourceTree = "<group>"; };
 		CE15F03B16BB205E0066B5DF /* StageLoadingLevel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StageLoadingLevel.mm; path = Layers/StageLoadingLevel.mm; sourceTree = "<group>"; };
 		CE15F03D16BB457B0066B5DF /* defaults */ = {isa = PBXFileReference; lastKnownFileType = folder; name = defaults; path = ../defaults; sourceTree = "<group>"; };
+		CE60679116CC35D300A97B89 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		CE66A24116C5BDEE003AD7C9 /* MyContactListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyContactListener.h; sourceTree = "<group>"; };
 		CE66A24216C5BDEE003AD7C9 /* MyContactListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyContactListener.mm; sourceTree = "<group>"; };
 		CE685A5D16964DA8001B8774 /* Layer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layer.h; sourceTree = "<group>"; };
@@ -603,6 +606,8 @@
 		CE7BC02716A5E7940049F4AA /* Weld.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Weld.mm; sourceTree = "<group>"; };
 		CE7C1A0016C95721002BE715 /* BotSelectLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BotSelectLayer.h; path = Layers/BotSelectLayer.h; sourceTree = "<group>"; };
 		CE7C1A0116C95721002BE715 /* BotSelectLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BotSelectLayer.mm; path = Layers/BotSelectLayer.mm; sourceTree = "<group>"; };
+		CE7DA19916CC1F2B00DDCC7A /* CustomTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTextField.h; sourceTree = "<group>"; };
+		CE7DA19A16CC1F2B00DDCC7A /* CustomTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomTextField.mm; sourceTree = "<group>"; };
 		CE7F6CC716B9A3C80025A3E3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CE803883169C91C600843895 /* Circle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Circle.h; sourceTree = "<group>"; };
 		CE803884169C91C600843895 /* Circle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Circle.mm; sourceTree = "<group>"; };
@@ -762,6 +767,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE60679216CC35D300A97B89 /* MessageUI.framework in Frameworks */,
 				CE7F6CC816B9A3C80025A3E3 /* Security.framework in Frameworks */,
 				CE91209D16B6E6BE0032186E /* MediaPlayer.framework in Frameworks */,
 				CE80870A169B82EA0024C88A /* StoreKit.framework in Frameworks */,
@@ -1497,6 +1503,7 @@
 		CEE02BC9169640BA00264586 = {
 			isa = PBXGroup;
 			children = (
+				CE60679116CC35D300A97B89 /* MessageUI.framework */,
 				CE87525316C4545B00FB0879 /* Default-Landscape@2x~ipad.png */,
 				CE87525116C4545400FB0879 /* Default.png */,
 				CE87524F16C4545200FB0879 /* Default@2x.png */,
@@ -1617,6 +1624,8 @@
 				CEE793F6169B44B400046082 /* CCMenuMT.mm */,
 				CEE1383416A76E7E00A8BACF /* DialogLayer.h */,
 				CEE1383516A76E7E00A8BACF /* DialogLayer.mm */,
+				CE7DA19916CC1F2B00DDCC7A /* CustomTextField.h */,
+				CE7DA19A16CC1F2B00DDCC7A /* CustomTextField.mm */,
 			);
 			name = "Custom Cocos2D Objects";
 			sourceTree = "<group>";
@@ -1959,6 +1968,7 @@
 				CE15F03C16BB205E0066B5DF /* StageLoadingLevel.mm in Sources */,
 				CE66A24316C5BDEE003AD7C9 /* MyContactListener.mm in Sources */,
 				CE7C1A0216C95721002BE715 /* BotSelectLayer.mm in Sources */,
+				CE7DA19B16CC1F2B00DDCC7A /* CustomTextField.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
