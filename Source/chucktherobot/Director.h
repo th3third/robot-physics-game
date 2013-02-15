@@ -13,6 +13,8 @@
 #import "Stage.h"
 #import "MyContactListener.h"
 
+#define trimEnds( object ) [object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet] ]
+
 enum DataState
 {
 	DATA_STATE_LOGGING_IN = 0,
@@ -60,6 +62,7 @@ enum DataState
 @property (nonatomic) NSArray *defaultLevelsList;
 @property (nonatomic) CGSize scaleFactor;
 @property NSDictionary *presetScores;
+@property DialogLayer *currentDialog;
 
 //Chuck stuff.
 @property NSString *botType;
@@ -73,10 +76,10 @@ enum DataState
 
 + (Director *) shared;
 + (NSString *) levelsPath;
++ (NSString *) sha: (NSString *) string;
 - (int) getNewObjectID;
 
 //User stuffz.
-- (DialogLayer *) createLogInDialog;
 - (bool) createUsername: (NSString *) username andPassword: (NSString *) password;
 - (bool) logInWithUsername: (NSString *) username andPassword: (NSString *) encryptedPassword;
 - (bool) saveLevelToServer;

@@ -77,7 +77,7 @@
 	scale = (s.width * 0.9) / logo.contentSize.width;
 	[logo setScale: scale];
 	[logo setAnchorPoint: ccp(0.5, 1)];
-	[logo setPosition: ccp(s.width / 2, s.height - 5)];
+	[logo setPosition: ccp(s.width / 2, s.height * 0.885)];
 	[self addChild: logo];
 	
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_play.png"];
@@ -104,14 +104,16 @@
 		
 		if (![Director shared].fullVersion)
 		{
-			DialogLayer *purchaseDialog = [[DialogLayer alloc] initWithHeader: @"FULL VERSION ONLY" andLine1: @"Sorry, but playing online levels requires purchasing the \"Online Access\" in-app purchase." target: self selector: @selector(goToPurchases) textField: NO];
+			DialogLayer *purchaseDialog = [[DialogLayer alloc] initNotificationWithMessage: @"Sorry, but playing online levels requires purchasing the Full Version in-app purchase." callback: self selector: @selector(openPurchaseDialog)];
 			[self addChild: purchaseDialog z: 9000];
 			return;
 		}
 		
 		if (![Director shared].loggedIn)
 		{
-			[self addChild: [[Director shared] createLogInDialog] z: 9000];
+			[Director shared].online = YES;
+			DialogLayer *loginDialog = [[DialogLayer alloc] initLoginWithCallbackObj: self selector: @selector(logInWith:)];
+			[self addChild: loginDialog z: 9000];
 		}
 		else
 		{
@@ -140,13 +142,7 @@
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_cart.png"];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender)
 	{
-		if (!purchaseDialog)
-			purchaseDialog = [[DialogLayer alloc] initPurchaseWithCallbackObj: self selector: @selector(madePurchase:)];
-		
-		if (!purchaseDialog.parent)
-			[self addChild: purchaseDialog z: 9000];
-		else
-			[purchaseDialog removeFromParentAndCleanup: YES];
+		[self openPurchaseDialog];
 	}];
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(0, 0.5)];
@@ -232,13 +228,23 @@
 	[self addChild: menu z:-1];
 }
 
+- (void) openPurchaseDialog
+{
+	DialogLayer *purchaseDialog = [[DialogLayer alloc] initPurchaseWithCallbackObj: self selector: @selector(madePurchase:)];
+	[self addChild: purchaseDialog z: 9000];
+}
+
+#pragma mark GOTOS
+
 - (void) goToStageSelect
 {
+	[DialogLayer playButtonSound];
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageSelectLayer scene]]];
 }
 
 - (void) goToStage
 {
+	[DialogLayer playButtonSound];
 	[Director shared].editing = YES;
 	[Director shared].stage = nil;
 	[Director shared].stageName = nil;
@@ -247,7 +253,16 @@
 
 - (void) goToBotList
 {
+	[DialogLayer playButtonSound];
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [BotSelectLayer scene]]];
+}
+
+#pragma mark LOGIN
+
+- (void) logInWith:(NSArray *)loginInfo
+{
+	[super logInWith: loginInfo];
+	[self goToStageSelect];
 }
 
 #pragma mark MFMail delegate

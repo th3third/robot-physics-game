@@ -9,6 +9,8 @@
 #import "Layers.h"
 #import "DialogLayer.h"
 #import "MToolsFileManager.h"
+#import "Director.h"
+#import "MToolsPurchaseManager.h"
 
 #pragma mark - IntroLayer
 
@@ -46,6 +48,13 @@
 
 	// add the label as a child to this Layer
 	[self addChild: background];
+
+	//Init the director right away.
+	[[Director shared] init];
+	
+	//Init the purchase stuff.
+	[[MToolsPurchaseManager sharedManager] setVocal: YES];
+	[[MToolsPurchaseManager sharedManager] loadStore];
 	
     //Create the levels folder if it doesn't exist already.
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -55,8 +64,10 @@
     if (error)
     {
         NSLog(@"CRITICAL ERROR: There was a problem creating the levels directory. The game will NOT be able to run like this!");
-        DialogLayer *diaLayer = [[DialogLayer alloc] initWithHeader: @"Critical Error" andLine1: @"The levels directory was not able to be created. You may have a corrupt installation of this app." target: nil selector: nil textField: NO];
-        [self addChild: diaLayer];
+        DialogLayer *diaLayer = [[DialogLayer alloc] initNotificationWithMessage: @"The levels directory was not able to be created. You may have a corrupt installation of this app or another application is blocking this app."];
+        [self addChild: diaLayer z: 9000];
+		
+		return;
     }
 	
 	//Create and populate the default levels folder if it doesn't exist already.
@@ -65,14 +76,14 @@
     
     if (error)
     {
-		DialogLayer *diaLayer = [[DialogLayer alloc] initWithHeader: @"Critical Error" andLine1: @"The default levels directory was not able to be created. You may have a corrupt installation of this app." target: nil selector: nil textField: NO];
-        [self addChild: diaLayer];
-		
 		NSLog(@"CRITICAL ERROR: There was a problem creating the default levels directory. The game will NOT be able to run like this!");
+		DialogLayer *diaLayer = [[DialogLayer alloc] initNotificationWithMessage: @"The default levels directory was not able to be created. You may have a corrupt installation of this app or another application is blocking this app."];
+        [self addChild: diaLayer z: 9000];
+		
+		return;
 	}
 	
 	NSArray *defaultsPaths = [[NSBundle mainBundle] pathsForResourcesOfType: @".ctr" inDirectory: @"defaults"];
-	NSLog(@"Counted %d levels", [defaultsPaths count]);
 	for (NSString *defaultPath in defaultsPaths)
 	{
 		[fm copyItemAtPath: defaultPath toPath: [NSString stringWithFormat: @"%@/defaults/%@", [Director levelsPath], [defaultPath lastPathComponent]] error: &error];

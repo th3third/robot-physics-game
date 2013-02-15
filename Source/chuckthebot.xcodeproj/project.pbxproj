@@ -225,7 +225,6 @@
 		CE91209716B6E1960032186E /* TMXGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = CE91207716B6E1960032186E /* TMXGenerator.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CE91209B16B6E2D10032186E /* Motor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE91209A16B6E2D10032186E /* Motor.mm */; };
 		CE91209D16B6E6BE0032186E /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE91209C16B6E6BE0032186E /* MediaPlayer.framework */; };
-		CE91BBDB16B07EF200DE6D6E /* StageSaveLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE91BBDA16B07EF200DE6D6E /* StageSaveLayer.mm */; };
 		CEA1E1331696479800835AAA /* Chuck.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E12E1696479800835AAA /* Chuck.mm */; };
 		CEA1E1341696479800835AAA /* Object.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E1301696479800835AAA /* Object.mm */; };
 		CEA1E1351696479800835AAA /* Rectangle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E1321696479800835AAA /* Rectangle.mm */; };
@@ -698,8 +697,6 @@
 		CE91209916B6E2D10032186E /* Motor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Motor.h; sourceTree = "<group>"; };
 		CE91209A16B6E2D10032186E /* Motor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Motor.mm; sourceTree = "<group>"; };
 		CE91209C16B6E6BE0032186E /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
-		CE91BBD916B07EF100DE6D6E /* StageSaveLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StageSaveLayer.h; path = Layers/StageSaveLayer.h; sourceTree = "<group>"; };
-		CE91BBDA16B07EF200DE6D6E /* StageSaveLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StageSaveLayer.mm; path = Layers/StageSaveLayer.mm; sourceTree = "<group>"; };
 		CEA1E12D1696479800835AAA /* Chuck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chuck.h; sourceTree = "<group>"; };
 		CEA1E12E1696479800835AAA /* Chuck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Chuck.mm; sourceTree = "<group>"; };
 		CEA1E12F1696479800835AAA /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
@@ -1598,8 +1595,6 @@
 				CEE02E101696457B00264586 /* MainMenuLayer.mm */,
 				CEE1381716A7607A00A8BACF /* StageSelectLayer.h */,
 				CEE1381816A7607A00A8BACF /* StageSelectLayer.mm */,
-				CE91BBD916B07EF100DE6D6E /* StageSaveLayer.h */,
-				CE91BBDA16B07EF200DE6D6E /* StageSaveLayer.mm */,
 				CE6D511916B0A21A006B4A80 /* StageSaveToFile.h */,
 				CE6D511A16B0A21A006B4A80 /* StageSaveToFile.mm */,
 				CE15F03A16BB205E0066B5DF /* StageLoadingLevel.h */,
@@ -1608,11 +1603,11 @@
 				CEA1E138169647E900835AAA /* StageLayer.mm */,
 				CEE1381B16A7624B00A8BACF /* TouchEvent.h */,
 				CEE1381C16A7624C00A8BACF /* TouchEvent.mm */,
+				CE7C1A0016C95721002BE715 /* BotSelectLayer.h */,
+				CE7C1A0116C95721002BE715 /* BotSelectLayer.mm */,
 				CE685A5D16964DA8001B8774 /* Layer.h */,
 				CE685A5E16964DA8001B8774 /* Layer.mm */,
 				CEE1381A16A7611C00A8BACF /* Layers.h */,
-				CE7C1A0016C95721002BE715 /* BotSelectLayer.h */,
-				CE7C1A0116C95721002BE715 /* BotSelectLayer.mm */,
 			);
 			name = Layers;
 			sourceTree = "<group>";
@@ -1942,7 +1937,6 @@
 				CEE1381916A7607A00A8BACF /* StageSelectLayer.mm in Sources */,
 				CEE1381D16A7624C00A8BACF /* TouchEvent.mm in Sources */,
 				CEE1383616A76E7E00A8BACF /* DialogLayer.mm in Sources */,
-				CE91BBDB16B07EF200DE6D6E /* StageSaveLayer.mm in Sources */,
 				CE6D511B16B0A21A006B4A80 /* StageSaveToFile.mm in Sources */,
 				CE91207816B6E1960032186E /* CCAnimate+SequenceLoader.m in Sources */,
 				CE91207916B6E1960032186E /* CCAnimation+SequenceLoader.m in Sources */,

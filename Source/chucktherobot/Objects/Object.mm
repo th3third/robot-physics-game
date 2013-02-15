@@ -43,7 +43,7 @@
         self.alive = YES;
 		self.movable = YES;
 		self.minimumSize = 4;
-		self.hitSounds = 11;
+		self.hitSounds = 5;
 		self.hitBouncySounds = 4;
 		self.popSounds = 4;
 		soundCooldown = 0.0f;
@@ -468,13 +468,13 @@
 
 - (void) hitWithForce:(float)force
 {
-	if (force <= 0)
+	if (force <= 0.1)
 		return;
 	
 	float massMod = MIN(self.body->GetMass(), 1.00);
-
+	
 	if (force > 2.0f * massMod)
-		[self hitWithVolume: MAX(0.1, massMod)];
+		[self hitWithVolume: MAX(0, massMod)];
 }
 
 #pragma  mark GETTERS/SETTERS

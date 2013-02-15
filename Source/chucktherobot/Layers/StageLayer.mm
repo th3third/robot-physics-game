@@ -119,27 +119,21 @@ enum
 	[self addChild: topRightBackground z: 8999];
 	
     //Sound
-	NSString *pathToNormal;
-	NSString *pathToSelected;
+	CCSprite *soundNormalImage;
+	CCSprite *soundSelectedImage;
 	if ([Director shared].soundEnabled)
 	{
-		pathToNormal = @"Media/Buttons/general/button_sound_toggle.png";
-		pathToNormal = @"Media/Buttons/general/button_sound_toggle_off.png";
+		soundNormalImage = [CCSprite spriteWithFile: @"Media/Buttons/general/button_sound_toggle.png"];
+		soundSelectedImage = [CCSprite spriteWithFile: @"Media/Buttons/general/button_sound_toggle_off.png"];
 	}
 	else
 	{
-		pathToNormal = @"Media/Buttons/general/button_sound_toggle_off.png";
-		pathToNormal = @"Media/Buttons/general/button_sound_toggle.png";
+		soundNormalImage = [CCSprite spriteWithFile: @"Media/Buttons/general/button_sound_toggle_off.png"];
+		soundSelectedImage = [CCSprite spriteWithFile: @"Media/Buttons/general/button_sound_toggle.png"];
 	}
 	
-	CCMenuItemImage *sound = [CCMenuItemImage itemWithNormalImage: pathToNormal  selectedImage: pathToSelected block:^(id sender) {
-        [[Director shared] toggleSound];
-		[MToolsAppSettings setValue: [NSNumber numberWithBool: ![[SimpleAudioEngine sharedEngine] mute]] withName: @"soundEnabled"];
-		
-		/*id ni = [CCSprite spriteWithTexture:[(CCSprite*)sound.normalImage texture]];
-		id si = [CCSprite spriteWithTexture:[(CCSprite*)sound.selectedImage texture]];
-		[sound setNormalImage: si];
-		[sound setSelectedImage: ni];*/
+	sound = [CCMenuItemSprite itemWithNormalSprite: soundNormalImage  selectedSprite: soundSelectedImage block:^(id sender) {
+        [self toggleSound];
     }];
 	if (sound.contentSize.width > sound.contentSize.height)
 		[sound setScale: buttonSize / sound.contentSize.width];
@@ -159,7 +153,8 @@ enum
     
     //Menu
 	CCMenuItem *pause = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_pause.png" selectedImage: @"Media/Buttons/general/button_pause.png" block:^(id sender) {
-        [self scheduleOnce: @selector(goToMainMenu) delay: 0.0f];
+        DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to the main menu? If your level is not saved it will be lost." callback: self selector: @selector(quitConfirm)];
+		[self addChild: mainMenuConfirmDialog z: 9000];
     }];
     if (pause.contentSize.width > pause.contentSize.height)
 		[pause setScale: buttonSize / pause.contentSize.width];
@@ -303,7 +298,7 @@ enum
 	scale = (s.height * 0.90) / leftEditorBackground.contentSize.height;
 	[leftEditorBackground setScale: scale];
 	[leftEditorBackground setAnchorPoint: ccp(0.5, 0)];
-	[leftEditorBackground setPosition: ccp(gear.position.x + 7, gear.position.y)];
+	[leftEditorBackground setPosition: ccp(gear.position.x + 9 * [Director shared].scaleFactor.width, gear.position.y)];
 	[editorBarLeft addChild: leftEditorBackground z: 1];
 	
 	startingPoint = ccp(-(s.width / 2) + leftEditorBackground.position.x, -(s.height / 2) + botEditorBackground.position.y + 2);
@@ -527,7 +522,23 @@ enum
 	//SAVE
 	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_save.png" selectedImage: @"Media/Buttons/general/button_editor_save.png" block:^(id sender) {
-		[self createStageSaveInfo];
+		if ([Director shared].loggedIn)
+		{
+			[self createStageSaveInfo];
+		}
+		else
+		{
+			if (![Director shared].fullVersion)
+			{
+				DialogLayer *purchaseFullVersionDialog = [[DialogLayer alloc] initNotificationWithMessage: @"In order to save your levels and share them online you must purchase the Full Version in-app purchase." callback: self selector: @selector(openPurchaseDialog)];
+				[self addChild: purchaseFullVersionDialog z: 9000];
+			}
+			else
+			{
+				DialogLayer *loginDialog = [[DialogLayer alloc] initLoginWithCallbackObj: self selector: @selector(logInWithUsername:andPassword:)];
+				[self addChild: loginDialog z: 9000];
+			}
+		}
     }];
 	if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorLeftButtonSize / menuItem.contentSize.width;
@@ -1587,6 +1598,26 @@ enum
 	return selectorNum;
 }
 
+#pragma mark SOUND FUNCTIONS
+- (void) toggleSound
+{
+	[[Director shared] toggleSound];
+	[MToolsAppSettings setValue: [NSNumber numberWithBool: ![[SimpleAudioEngine sharedEngine] mute]] withName: @"soundEnabled"];
+	
+	id ni = [CCSprite spriteWithTexture:[(CCSprite*)sound.normalImage texture]];
+	id si = [CCSprite spriteWithTexture:[(CCSprite*)sound.selectedImage texture]];
+	[sound setNormalImage: si];
+	[sound setSelectedImage: ni];
+}
+
+#pragma  mark PURCHASE FUNCTIONS
+
+- (void) openPurchaseDialog
+{
+	DialogLayer *purchaseDialog = [[DialogLayer alloc] initPurchaseWithCallbackObj: self selector: @selector(madePurchase:)];
+	[self addChild: purchaseDialog z: 9000];
+}
+
 #pragma mark SAVE FUNCTIONS
 
 - (void) createStageSaveInfo
@@ -1670,11 +1701,6 @@ enum
 	}
 }
 
-- (void) goToStageSave
-{
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInT transitionWithDuration: 0.5 scene: [StageSaveLayer scene]]];
-}
-
 - (void) goToStageSelect
 {
 	//Play the background music.
@@ -1693,7 +1719,8 @@ enum
 {
 	if (![Director shared].loggedIn)
 	{
-		[self addChild: [[Director shared] createLogInDialog] z: 9000];
+		DialogLayer *loginDialog = [[DialogLayer alloc] initLoginWithCallbackObj: [Director shared] selector: @selector(logInWith:)];
+		[self addChild: loginDialog z: 9000];
 		return;
 	}
 	

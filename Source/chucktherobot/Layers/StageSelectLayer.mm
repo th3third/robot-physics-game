@@ -94,6 +94,11 @@
     NSMutableArray *menuItems = [NSMutableArray array];
     CCMenuItemSprite *menuItem;
     
+	botBounds = CGRectMake(
+						   s.width * .5, 0,
+						   s.width * .95, s.height * .15);
+	CGPoint botButtonStart = ccp((s.width - botBounds.size.width) / 2, 0);
+	
 	NSArray *levelsList;
     switch (self.selectType)
     {
@@ -263,6 +268,33 @@
 		
 		[self.selectionNode addChild: menu z:-1];
 	}
+	
+	//BUTTONS FOR SELECTION FILTERING
+	//BACK BUTTON (ON SAME BOUNDS AS FILTERING BUTTONS)
+	CCSprite *backToMainSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	CCSprite *backToMainSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	CCMenuItemSprite *backToMainMenuItem = [CCMenuItemSprite itemWithNormalSprite: backToMainSprite selectedSprite: backToMainSpriteSelected block:^(id sender) {
+		[self goToMainMenu];
+	}];
+	[backToMainMenuItem setScale: ((botBounds.size.width * .25) / backToMainMenuItem.contentSize.width)];
+	[backToMainMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .10), 0)];
+	CCLabelTTF *backToMainLabel = [DialogLayer createShadowHeaderWithString: @"Main Menu"
+																   position: ccp(backToMainMenuItem.position.x, - ((backToMainMenuItem.contentSize.height * backToMainMenuItem.scale) * 0.15))
+															   shadowOffset: CGSizeMake(1, -1)
+																	  color: ccWHITE
+																shadowColor: ccBLACK
+																 dimensions: CGSizeMake(backToMainMenuItem.contentSize.width * backToMainMenuItem.scaleX, backToMainMenuItem.contentSize.height * backToMainMenuItem.scaleY)
+																 hAlignment: kCCTextAlignmentCenter
+															  lineBreakMode: kCCLineBreakModeMiddleTruncation
+																   fontSize: FONT_SIZE_FILTER * [Director shared].scaleFactor.width
+								   ];
+	[backToMainLabel setAnchorPoint: ccp(0.5, 0.5)];
+	[self addChild: backToMainLabel z: 101];
+	
+	CCMenu *botMenu = [CCMenu menuWithItems: backToMainMenuItem, nil];
+	[botMenu setAnchorPoint: ccp(0, 0)];
+	[botMenu setPosition: CGPointZero];
+	[self addChild: botMenu];
 	
 	[self createPageTurners];
 }
@@ -690,8 +722,8 @@
 	CCSprite *menuItemSprite;
 	CCSprite *menuItemSpriteSelected;
 	
-	menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
-	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+	menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_left_arrow.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_left_arrow.png"];
 	menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		[self goToPreviousPage: menuItem];
 	}];
@@ -700,11 +732,12 @@
 	{
 		[menuItem setVisible: NO];
 	}
+	[menuItem setScale: ((s.width * 0.1) / menuItem.contentSize.width)];
 	[menuItem setPosition: ccp((-s.width / 2) + (menuItem.contentSize.width * menuItem.scaleX) / 2, 0)];
 	[menuItems addObject: menuItem];
 	
-	menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
-	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+	menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_right_arrow.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_right_arrow.png"];
 	menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		[self goToNextPage: menuItem];
 	}];
@@ -713,6 +746,7 @@
 	{
 		[menuItem setVisible: NO];
 	}
+	[menuItem setScale: ((s.width * 0.1) / menuItem.contentSize.width)];
 	[menuItem setPosition: ccp((s.width / 2) - (menuItem.contentSize.width * menuItem.scaleX) / 2, 0)];
 	[menuItems addObject: menuItem];
 	
@@ -766,7 +800,7 @@
 #pragma mark PAGE CONTROLS
 - (void) goToPreviousPage: (id) caller
 {
-	if (pageTurning)
+	if (pageTurning || [Director shared].levelSelectPageNum <= 0)
 		return;
 	
 	[Director shared].levelSelectPageNum = MAX(0, [Director shared].levelSelectPageNum - 1);
@@ -786,7 +820,7 @@
 
 - (void) goToNextPage: (id) caller
 {
-	if (pageTurning)
+	if (pageTurning || [Director shared].levelSelectPageNum >= totalMenuItems / menuItemsPerPage)
 		return;
 	
 	[Director shared].levelSelectPageNum = ([Director shared].levelSelectPageNum + 1);
@@ -881,18 +915,20 @@
 		return;
 	}
 	
+	[DialogLayer playButtonSound];
 	[[Director shared] stopMusic];
 	
 	CCDirector* director = [CCDirector sharedDirector];
 	[[director openGLView] removeGestureRecognizer: pan];
 	
 	[Director shared].editing = NO;
-	[Director shared].online = NO;
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
 }
 
 - (void) goToMainMenu
 {
+	[DialogLayer playButtonSound];
+	
 	CCDirector* director = [CCDirector sharedDirector];
 	[[director openGLView] removeGestureRecognizer: pan];
 	
@@ -901,6 +937,7 @@
 
 - (void) goToStageLoadingLevel
 {
+	[DialogLayer playButtonSound];
 	[[Director shared] stopMusic];
 	
 	CCDirector* director = [CCDirector sharedDirector];

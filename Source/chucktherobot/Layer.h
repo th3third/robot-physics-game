@@ -14,4 +14,6 @@
 
 + (CCScene *) scene;
 
+- (void) logInWith: (NSArray *) loginInfo;
+
 @end

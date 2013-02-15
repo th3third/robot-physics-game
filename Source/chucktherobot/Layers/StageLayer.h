@@ -34,10 +34,14 @@
 	CCSprite *leftEditorBackground;
 	CCMenuAdvanced *helpMenu;
 	CCMenuItemSprite *gear;
+	
+	//Dialogs
 	DialogLayer *winDialog;
+	DialogLayer *purchaseDialog;
 	
 	//Saving vars
 	CCMenuItemFont *stageNameItem;
+	CCMenuItemSprite *sound;
 }
 
 typedef enum

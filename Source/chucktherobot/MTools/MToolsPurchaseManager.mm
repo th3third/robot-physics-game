@@ -14,6 +14,7 @@
 #import "MToolsDebug.h"
 #import "MToolsAlertViewManager.h"
 #import "MToolsFileManager.h"
+#import "MToolsAppSettings.h"
 
 #define kMToolsPurchaseManagerTransactionSucceededNotification @"kMToolsPurchaseManagerTransactionSucceededNotification"
 #define kMToolsPurchaseManagerTransactionFailedNotification @"kMToolsPurchaseManagerTransactionFailedNotification"
@@ -97,6 +98,30 @@ static MToolsPurchaseManager *sharedManager = nil;
     product = [products objectAtIndex: productID];
     SKPayment *payment = [SKPayment paymentWithProduct: product];
     [[SKPaymentQueue defaultQueue] addPayment: payment];
+	
+	//Go ahead and set the value for this to purchased.
+	[MToolsAppSettings setValue: [NSNumber numberWithBool: YES] withName: [NSString stringWithFormat: @"%@Purchased", product.productIdentifier]];
+}
+
+//Finds the product by name in the products array and then attempts to purchase it.
+- (void) purchaseProductByName: (NSString *) name
+{
+	for (int i = 0; i < [products count]; i++)
+	{
+		SKProduct *producti = [products objectAtIndex: i];
+		
+		if ([producti.productIdentifier isEqualToString: name])
+		{
+			[self purchaseProduct: i];
+			 i = [products count];
+		}
+	}
+}
+
+//Checks to see if a product has already been purchased.
+- (bool) productPurchased:(NSString *)name
+{
+	return [MToolsAppSettings getValueWithName: [NSString stringWithFormat: @"%@Receipt", name]];
 }
 
 //Restores all previous purchases.
@@ -110,7 +135,7 @@ static MToolsPurchaseManager *sharedManager = nil;
 //Save a record of the transaction to disk.
 - (void) recordTransaction: (SKPaymentTransaction *) transaction
 {
-    [[NSUserDefaults standardUserDefaults] setValue: transaction.transactionReceipt forKey:[NSString stringWithFormat:@"%@Receipt", transaction.payment.productIdentifier]];
+	[MToolsAppSettings setValue: transaction.transactionReceipt withName: [NSString stringWithFormat:@"%@Receipt", transaction.payment.productIdentifier]];
 }
 
 - (void) requestProductData: (NSArray *) productIDs

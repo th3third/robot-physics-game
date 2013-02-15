@@ -10,6 +10,7 @@
 #import "Object.h"
 #import "MToolsFileManager.h"
 #import "MToolsAppSettings.h"
+#import "MToolsPurchaseManager.h"
 #import <CommonCrypto/CommonDigest.h>
 
 @implementation Director
@@ -110,10 +111,17 @@ static Director *shared = nil;
 		self.globalFont = @"Segoe Print";
 		self.drawDebugData = NO;
 		self.levelSelectPageNum = 0;
+		
+		self.soundEnabled = [[MToolsAppSettings getValueWithName: @"soundEnabled"] boolValue];
+		if (!self.soundEnabled)
+		{
+			[SimpleAudioEngine sharedEngine].mute = YES;
+		}
+		
 		[self calcNumOfBackgrounds];
 		
 		//TODO: REMOVE THIS AFTER TESTING!!!
-		self.fullVersion = YES;
+		self.fullVersion = [[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"];
 		
 		//This is going to be the music player delegate.
 		[[CDAudioManager sharedManager] setBackgroundMusicCompletionListener: self selector: @selector(musicFinished)];
@@ -257,43 +265,33 @@ static Director *shared = nil;
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
 	[request setHTTPBody: requestData];
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-	[NSURLConnection connectionWithRequest: request delegate: self];
+	
+	NSURLResponse *response = [[NSURLResponse alloc] init];
+	NSString *responseString;
+	NSError *error;
+	NSData *returnData = [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
+	responseString = [[NSString alloc] initWithData: returnData encoding: NSUTF8StringEncoding];
+	
+	NSString *successfulResponse = [Director sha: [NSString stringWithFormat: @"%@bears%@", self.username, self.hashedPassword]];
+	
+	[self cleanupConnection];
+	
+	if (![responseString isEqualToString: successfulResponse])
+	{
+		[debug log: @"Logging in failed."];
+		self.username = nil;
+		self.hashedPassword = nil;
+	}
+	else
+	{
+		[debug log: @"Successful log in!"];
+		[MToolsAppSettings setValue: self.username withName: @"username"];
+		[MToolsAppSettings setValue: self.hashedPassword withName: @"password"];
+		
+		return YES;
+	}
 	
 	return NO;
-}
-
-- (DialogLayer *) createLogInDialog
-{
-	//Attempt to log in the player.
-	DialogLayer *logInBox = [[DialogLayer alloc] initLoginWithHeader: @"Log In" target: self selector: @selector(logInDialog:) andExistingText: [Director shared].username];
-	
-	return logInBox;
-}
-
-//Pop up the dialog box to log in the user. If the username is already present in the app settings, go ahead and put that in as a placeholder.
-- (void) logInDialog: (NSArray *) values
-{
-	NSString *username;
-	NSString *password;
-		
-	if ([values count] >= 2)
-	{
-		username = [values objectAtIndex: 0];
-		password = [values objectAtIndex: 1];
-	}
-	
-	if (!username || !password)
-	{
-		username = [MToolsAppSettings getValueWithName: @"username"];
-	}
-	
-	if (!username || !password)
-	{
-		[debug log: @"Did not find username and/or password in the app settings."];
-		return;
-	}
-	
-	[[Director shared] logInWithUsername: username andPassword: [Director sha: password]];
 }
 
 //TODO: Strip out the | character in the level name. You can't do that!
@@ -566,6 +564,8 @@ static Director *shared = nil;
 	{
 		[[SimpleAudioEngine sharedEngine] setMute: NO];
 	}
+	
+	[MToolsAppSettings setValue: [NSNumber numberWithBool: [[SimpleAudioEngine sharedEngine] mute]] withName: @"soundEnabled"];
 }
 
 - (void) musicFinished
@@ -635,21 +635,7 @@ static Director *shared = nil;
 			
 		case DATA_STATE_LOGGING_IN:
 		{
-			NSString *successfulResponse = [Director sha: [NSString stringWithFormat: @"%@bears%@", self.username, self.hashedPassword]];
-			if (![response isEqualToString: successfulResponse])
-			{
-				[debug log: @"Logging in failed."];
-				self.username = nil;
-				self.hashedPassword = nil;
-			}
-			else
-			{
-				[debug log: @"Successful log in!"];
-				[MToolsAppSettings setValue: self.username withName: @"username"];
-				[MToolsAppSettings setValue: self.hashedPassword withName: @"password"];
-			}
 			
-			break;
 		}
 	}
 	

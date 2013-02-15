@@ -16,6 +16,10 @@
 	float backgroundHeight;
 	NSString *header;
 	NSMutableArray *currentTags;
+	
+	CCMenuItemImage *likeButton;
+	CCMenuItemImage *dislikeButton;
+	CCLabelTTF *ratingThanksLabel;
 }
 
 @property id callbackObj;
@@ -25,9 +29,11 @@
 @property int buttonPressedIndex;
 @property int dialogType;
 
--(id) initWithHeader:(NSString *)header andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField;
-- (id) initWithHeader:(NSString *)header andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField andExistingText: (NSString *) existingText andCancelButton: (bool) addCancelButton;
-- (id) initLoginWithHeader:(NSString *)headerIn target:(id)callbackObjNew selector:(SEL)selectorNew andExistingText: (NSString *) existingText;
+- (id) initNotificationWithMessage: (NSString *) message;
+- (id) initNotificationWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew;
+- (id) initChoiceWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew;
+- (id) initLoader;
+- (id) initLoginWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew;
 - (id) initWinnerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andTimeElapsed: (float) timeElapsed andScore: (int) score;
 - (id) initFlaggerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andLevelName: (NSString *) levelName;
 - (id) initStageMenuWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew;
@@ -35,11 +41,14 @@
 - (id) initPurchaseWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew;
 - (id) initCreditsWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew;
 
--(void) okButtonPressed:(id) sender;
+- (void) okButtonPressed:(id) sender;
+- (void) remove;
 
 - (void) changeStageName: (DialogLayer *) diaglayer;
 
++ (void) playButtonSound;
 + (CCSprite *) createTextWithShadow: (NSString *) string textSize: (float) textSize;
 + (CCLabelTTF*) createShadowHeaderWithString:(NSString*)string position:(CGPoint)pos shadowOffset:(CGSize)offset color:(ccColor3B)col shadowColor:(ccColor3B)shadowCol dimensions:(CGSize)dimensions hAlignment:(CCTextAlignment)uiTextAlignment lineBreakMode:(CCLineBreakMode)lineBreakMode fontSize:(float)fontSize;
++ (CCLabelTTF*) createShadowHeaderWithString:(NSString*)string position:(CGPoint)pos shadowOffset:(CGSize)offset color:(ccColor3B)col shadowColor:(ccColor3B)shadowCol dimensions:(CGSize)dimensions hAlignment:(CCTextAlignment)uiTextAlignment vAlignment: (CCVerticalTextAlignment) uiVTextAlignment lineBreakMode :(CCLineBreakMode)lineBreakMode fontSize:(float)fontSize;
 
 @end

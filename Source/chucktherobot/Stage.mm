@@ -84,7 +84,6 @@
     [code appendString: @"</name>\n"];
     
     //Stage creator
-	creator = [Director shared].username;
     [code appendString: @"<creator>"];
     [code appendString: creator];
     [code appendString: @"</creator>\n"];

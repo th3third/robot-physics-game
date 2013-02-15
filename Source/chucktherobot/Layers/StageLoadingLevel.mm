@@ -73,7 +73,7 @@
 
 - (void) failedLoading
 {
-	DialogLayer *errorDialog = [[DialogLayer alloc] initWithHeader: @"Server Error" andLine1: @"There was an error loading the level from the server. This could mean the server is currently too busy, a firewall is blocking the connection, the file is corrupt, or some other insane reason. Sorry about that!" target: self selector: @selector(goToStageSelect) textField: NO];
+	DialogLayer *errorDialog = [[DialogLayer alloc] initNotificationWithMessage: @"There was an error loading the level from the server. This could mean the file is corrupt or the server is currently down. Sorry about that!"];
 	[self addChild: errorDialog z: 9000];
 }
 

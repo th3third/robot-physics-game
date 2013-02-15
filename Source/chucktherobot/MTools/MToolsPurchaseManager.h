@@ -42,9 +42,10 @@
 - (void) loadStore;
 - (bool) canMakePurchase;
 - (void) purchaseProduct: (int) productID;
+- (void) purchaseProductByName: (NSString *) name;
+- (bool) productPurchased: (NSString *) name;
 - (void) restorePurchases;
 
-- (void) retrieveProductsList;
 - (NSArray *) getProducts;
 
 @end

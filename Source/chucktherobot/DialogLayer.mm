@@ -9,10 +9,13 @@
 #import "DialogLayer.h"
 #import "Director.h"
 #import "Layers.h"
+#import "MToolsPurchaseManager.h"
+#import "MToolsAppSettings.h"
 
 #define DIALOG_FONT @"Segoe Print"
 #define DIALOG_FONT_SIZE 18
 #define DIALOG_FONT_SIZE_TITLE 20
+#define DIALOG_FONT_SIZE_TAG 36
 #define DIALOG_FONT_SHADOW_OFFSET 0.5
 #define DIALOG_FONT_OFFSET 5
 
@@ -20,6 +23,21 @@
 
 @synthesize callbackObj;
 @synthesize selector;
+
+- (id) init
+{
+	if (self = [super init])
+	{
+		if ([Director shared].currentDialog)
+		{
+			[[Director shared].currentDialog remove];
+		}
+		
+		[Director shared].currentDialog = self;
+	}
+	
+	return self;
+}
 
 - (id) initWithHeader:(NSString *)header andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField
 {
@@ -30,7 +48,7 @@
 {
 	self.dialogType = 0;
 	
-    if((self = [super init]))
+    if((self = [self init]))
     {
         header = headerIn;
         callbackObj = callbackObjNew;
@@ -82,69 +100,104 @@
     return self;
 }
 
-- (id) initLoginWithHeader:(NSString *)headerIn target:(id)callbackObjNew selector:(SEL)selectorNew andExistingText: (NSString *) existingText
+- (id) initNotificationWithMessage: (NSString *) message
 {
-	self.dialogType = 1;
-	
-	if((self = [super init]))
-    {
-		header = headerIn;
-        callbackObj = callbackObjNew;
-        selector = selectorNew;
-        
-        CCSprite *background = [self createBackground];
-        
-		NSMutableArray *buttons = [NSMutableArray array];
-		float okButtonPosX = background.position.x;
-		CGSize s = [CCDirector sharedDirector].winSize;
+	return [self initNotificationWithMessage: message callback: nil selector: nil];
+}
 
-		//Cancel button.
-		okButtonPosX += backgroundWidth / 4;
+- (id) initChoiceWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	if (self = [self init])
+	{
+		callbackObj = callbackObjNew;
+		selector = selectorNew;
+		
+		CCSprite *background = [self createBackground];
+		CGSize s = [CCDirector sharedDirector].winSize;
+		
+		CCLabelTTF *messageLabel = [DialogLayer createShadowHeaderWithString: message
+																	position: ccp(background.position.x, background.position.y + backgroundHeight * 0.1)
+																shadowOffset: CGSizeMake(1, -1)
+																	   color: ccWHITE
+																 shadowColor: ccBLACK
+																  dimensions: CGSizeMake(backgroundWidth * 0.8, backgroundHeight * 0.7)
+																  hAlignment: kCCTextAlignmentCenter
+																  vAlignment: kCCVerticalTextAlignmentCenter
+															   lineBreakMode: kCCLineBreakModeWordWrap
+																	fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+									];
+		[self addChild: messageLabel];
+		
+		//Cancel
 		CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
-		[cancelButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
-		[cancelButton setScale: ((s.width * 0.175) / cancelButton.contentSize.width)];
-		[buttons addObject: cancelButton];
+		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
+		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
-		//OK button.
-		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(loginButtonPressed:)];
-        [okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
-		[okButton setScale: ((s.width * 0.175) / okButton.contentSize.width)];
-		[buttons addObject: okButton];
-        
-        CCMenu *menu = [CCMenu menuWithArray: buttons];
-        menu.position = ccp(0, -backgroundHeight / 6 + DIALOG_FONT_OFFSET);
-        [self addChild:menu];
+		//Okay
+		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(okButtonPressed:)];
+		okButton.scale = (backgroundWidth * 0.225) / okButton.contentSize.width;
+		[okButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
-		//Text fields.
-		//Username
-		self.textField = [[UITextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24 * [Director shared].scaleFactor.height)];
-		self.textField.borderStyle = UITextBorderStyleRoundedRect;
-		self.textField.center = ccp([[CCDirector sharedDirector] view].center.x , [[CCDirector sharedDirector] view].center.y - backgroundHeight / 4);
-		self.textField.delegate = self;
-		[self.textField setPlaceholder: @"username"];
-		self.textField.text = existingText;
-		[self.textField becomeFirstResponder];
-		[[[CCDirector sharedDirector] view] addSubview: self.textField];
+		CCMenu *cancelAndOkMenu = [CCMenu menuWithItems: cancelButton, okButton, nil];
+		[cancelAndOkMenu setAnchorPoint: ccp(0, 0)];
+		[cancelAndOkMenu setPosition: CGPointZero];
+		[self addChild: cancelAndOkMenu];
+	}
+	
+	return self;
+}
+
+- (id) initNotificationWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	if (self = [self init])
+	{
+		callbackObj = callbackObjNew;
+		selector = selectorNew;
 		
-		//Password
-		self.textField2 = [[UITextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24 * [Director shared].scaleFactor.height)];
-		self.textField2.borderStyle = UITextBorderStyleRoundedRect;
-		self.textField2.center = ccp([[CCDirector sharedDirector] view].center.x , self.textField.center.y + 29);
-		self.textField2.delegate = self;
-		self.textField2.secureTextEntry = YES;
-		[self.textField2 setPlaceholder: @"password"];
-		[self.textField2 becomeFirstResponder];
-		[[[CCDirector sharedDirector] view] addSubview: self.textField2];
-    }
-    
-    return self;
+		CCSprite *background = [self createBackground];
+		CGSize s = [CCDirector sharedDirector].winSize;
+		
+		CCLabelTTF *messageLabel = [DialogLayer createShadowHeaderWithString: message
+																	position: ccp(background.position.x, background.position.y + backgroundHeight * 0.1)
+																shadowOffset: CGSizeMake(1, -1)
+																	   color: ccWHITE
+																 shadowColor: ccBLACK
+																  dimensions: CGSizeMake(backgroundWidth * 0.8, backgroundHeight * 0.7)
+																  hAlignment: kCCTextAlignmentCenter
+																  vAlignment: kCCVerticalTextAlignmentCenter
+															   lineBreakMode: kCCLineBreakModeWordWrap
+																	fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+									];
+		[self addChild: messageLabel];
+		
+		//Okay
+		CCMenuItemImage *okayButton;
+		if (!callbackObj || !selector)
+		{
+			okayButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(cancelButtonPressed:)];
+		}
+		else
+		{
+			okayButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(okButtonPressed:)];
+		}
+		
+		okayButton.scale = (backgroundWidth * 0.225) / okayButton.contentSize.width;
+		[okayButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.35)];
+		
+		CCMenu *okayMenu = [CCMenu menuWithItems: okayButton, nil];
+		[okayMenu setAnchorPoint: ccp(0, 0)];
+		[okayMenu setPosition: CGPointZero];
+		[self addChild: okayMenu];
+	}
+	
+	return self;
 }
 
 - (id) initStageMenuWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew
 {
 	self.dialogType = 2;
 	
-    if((self = [super init]))
+    if((self = [self init]))
     {
         header = headerIn;
         callbackObj = callbackObjNew;
@@ -230,7 +283,7 @@
 {
 	self.dialogType = 2;
 	
-    if((self = [super init]))
+    if((self = [self init]))
     {
         header = headerIn;
         callbackObj = callbackObjNew;
@@ -255,19 +308,33 @@
 		
 		if ([Director shared].online)
 		{
-			CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_levels.png" selectedImage:@"Media/Buttons/general/button_dialog_levels.png" target:self selector:@selector(nextStageButtonPressed:)];
+			CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" selectedImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" target:self selector:@selector(nextStageButtonPressed:)];
 			okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
 			[okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
 			[buttons addObject: okButton];
 			
-			if (![[Director shared].stage.name isEqualToString: [Director shared].username])
+			if (![[Director shared].stage.creator isEqualToString: [Director shared].username])
 			{
-				CCMenuItemImage *likeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_like.png" selectedImage:@"Media/Buttons/general/button_dialog_levels.png" target:self selector:@selector(likeButtonPressed:)];
+				likeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_thumbs_up.png" selectedImage:@"Media/Buttons/general/button_dialog_thumbs_up.png" target:self selector:@selector(likeButtonPressed:)];
 				likeButton.scale = (backgroundWidth * 0.2) / likeButton.contentSize.width;
 				[likeButton setPosition: ccp(okButtonPosX + backgroundWidth / 8, background.position.y)];
 				[buttons addObject: likeButton];
 				
-				CCMenuItemImage *dislikeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_like.png" selectedImage:@"Media/Buttons/general/button_dialog_levels.png" target:self selector:@selector(dislikeButtonPressed:)];
+				ratingThanksLabel = [DialogLayer createShadowHeaderWithString: @"Thank you for rating!"
+																	   position: ccp(okButtonPosX, background.position.y)
+																   shadowOffset: CGSizeMake(1, -1)
+																		  color: ccWHITE
+																	shadowColor: ccBLACK
+																	 dimensions: CGSizeMake(backgroundWidth * 0.8, backgroundHeight * 0.7)
+																	 hAlignment: kCCTextAlignmentCenter
+																	 vAlignment: kCCVerticalTextAlignmentCenter
+																  lineBreakMode: kCCLineBreakModeWordWrap
+																	   fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+									   ];
+				[self addChild: ratingThanksLabel];
+				[ratingThanksLabel setVisible: NO];
+				
+				dislikeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_thumbs_down.png" selectedImage:@"Media/Buttons/general/button_dialog_thumbs_down.png" target:self selector:@selector(dislikeButtonPressed:)];
 				dislikeButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
 				[dislikeButton setPosition: ccp(okButtonPosX - backgroundWidth / 8, background.position.y)];
 				[buttons addObject: dislikeButton];
@@ -284,7 +351,6 @@
 		
 		if ([Director shared].online)
 		{
-			NSLog(@"Compare: %@ with %@", [Director shared].stage.creator, [Director shared].username);
 			if ([[Director shared].stage.creator isEqualToString: [Director shared].username])
 			{
 				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_edit.png" selectedImage:@"Media/Buttons/general/button_dialog_edit.png" target:self selector:@selector(editButtonPressed:)];
@@ -300,6 +366,7 @@
 				[buttons addObject: flagButton];
 			}
 		}
+		NSLog(@"Creator is %@", [Director shared].stage.creator);
 		
 		//Star rating and level time.
 		//Background
@@ -315,36 +382,39 @@
 		[ratingBackgroundSprite addChild: levelTime z: 67];
 		
 		//Stars
-		//Create stars.
-		float maxTime = [[Director shared] getScoreForLevel: [NSString stringWithFormat: @"%@.ctr", [Director shared].stage.name]];
-		int score;		
-		if (timeElapsed < maxTime)
-			score = 3;
-		else if (timeElapsed < maxTime * 1.5)
-			score = 2;
-		else
-			score = 1;
-		
 		if (![Director shared].online)
 		{
-			for (int i = 1; i <= 3; i++)
+			//Create stars.
+			float maxTime = [[Director shared] getScoreForLevel: [NSString stringWithFormat: @"%@.ctr", [Director shared].stage.name]];
+			int score;		
+			if (timeElapsed < maxTime)
+				score = 3;
+			else if (timeElapsed < maxTime * 1.5)
+				score = 2;
+			else
+				score = 1;
+			
+			if (![Director shared].online)
 			{
-				CCSprite *star;
-				
-				if (score >= i)
+				for (int i = 1; i <= 3; i++)
 				{
-					star = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_star.png"];
+					CCSprite *star;
+					
+					if (score >= i)
+					{
+						star = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_star.png"];
+					}
+					else
+					{
+						star = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_star_empty.png"];
+					}
+					[star setPosition: ccp(
+										   i * ((ratingBackgroundSprite.contentSize.width) * 0.25),
+										   (ratingBackgroundSprite.contentSize.height) / 2.5
+										   )];
+					[star setScale: ((ratingBackgroundSprite.contentSize.width * 0.25) / star.contentSize.width)];
+					[ratingBackgroundSprite addChild: star z: 66];
 				}
-				else
-				{
-					star = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_star_empty.png"];
-				}
-				[star setPosition: ccp(
-									   i * ((ratingBackgroundSprite.contentSize.width) * 0.25),
-									   (ratingBackgroundSprite.contentSize.height) / 2.5
-									   )];
-				[star setScale: ((ratingBackgroundSprite.contentSize.width * 0.25) / star.contentSize.width)];
-				[ratingBackgroundSprite addChild: star z: 66];
 			}
 		}
 		
@@ -356,11 +426,21 @@
     return self;
 }
 
+- (id) initOnlineMenuWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	self.dialogType = 1;
+	
+	if (self = [self init])
+	{
+		
+	}
+}
+
 - (id) initFlaggerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andLevelName: (NSString *) levelName
 {
 	self.dialogType = 2;
 	
-    if((self = [super init]))
+    if((self = [self init]))
     {
         header = headerIn;
         callbackObj = callbackObjNew;
@@ -403,7 +483,7 @@
 {
 	self.dialogType = 3;
 	
-	if (self = [super init])
+	if (self = [self init])
 	{
 		callbackObj = callbackObjNew;
         selector = selectorNew;
@@ -423,7 +503,7 @@
 									 ];
 		[self addChild: nameYourLevelTitle];
 		
-		//Name of level (needs input text box)
+		//Name of level background
 		CCSprite *nameLevelInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_name_background.png"];
 		[nameLevelInputBackground setScale: (backgroundWidth * 0.6) / nameLevelInputBackground.contentSize.width];
 		[nameLevelInputBackground setPosition: ccp(background.position.x, background.position.y + backgroundHeight * 0.275)];
@@ -451,7 +531,14 @@
 		[creatorNameBackground setPosition: ccp(background.position.x, background.position.y + backgroundHeight * 0.125)];
 		[self addChild: creatorNameBackground];
 		
-		CCLabelTTF *creatorName = [DialogLayer createShadowHeaderWithString: [Director shared].username
+		NSString *username;
+		
+		if (![Director shared].username)
+			username = @"You";
+		else
+			username = [Director shared].username;
+		
+		CCLabelTTF *creatorName = [DialogLayer createShadowHeaderWithString: username
 																   position: ccp(creatorNameBackground.position.x + backgroundWidth * 0.025, creatorNameBackground.position.y + backgroundHeight * 0.01)
 															   shadowOffset: CGSizeMake(1, -1)
 																	  color: ccWHITE
@@ -523,7 +610,7 @@
 																  dimensions: CGSizeMake(tagOnSprite.contentSize.width, tagOnSprite.contentSize.height)
 																  hAlignment: kCCTextAlignmentCenter
 															   lineBreakMode: kCCLineBreakModeMiddleTruncation
-																	fontSize: (DIALOG_FONT_SIZE * [Director shared].scaleFactor.width)
+																	fontSize: DIALOG_FONT_SIZE_TAG
 									];
 			[tagOnSprite addChild: tagLabel];
 			
@@ -535,7 +622,7 @@
 													  dimensions: CGSizeMake(tagOnSelectedSprite.contentSize.width, tagOnSelectedSprite.contentSize.height)
 													  hAlignment: kCCTextAlignmentCenter
 												   lineBreakMode: kCCLineBreakModeMiddleTruncation
-														fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+														fontSize: DIALOG_FONT_SIZE_TAG
 						];
 			[tagOnSelectedSprite addChild: tagLabel];
 			
@@ -548,7 +635,7 @@
 													  dimensions: CGSizeMake(tagOffSprite.contentSize.width, tagOffSprite.contentSize.height)
 													  hAlignment: kCCTextAlignmentCenter
 												   lineBreakMode: kCCLineBreakModeMiddleTruncation
-														fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+														fontSize: DIALOG_FONT_SIZE_TAG
 						];
 			[tagLabel setOpacity: offOpacity];
 			[tagOffSprite addChild: tagLabel];
@@ -561,7 +648,7 @@
 													  dimensions: CGSizeMake(tagOffSelectedSprite.contentSize.width, tagOffSelectedSprite.contentSize.height)
 													  hAlignment: kCCTextAlignmentCenter
 												   lineBreakMode: kCCLineBreakModeMiddleTruncation
-														fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+														fontSize: DIALOG_FONT_SIZE_TAG
 						];
 			[tagLabel setOpacity: offOpacity];
 			[tagOffSelectedSprite addChild: tagLabel];
@@ -623,12 +710,22 @@
 
 - (id) initPurchaseWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
 {
-	if (self = [super init])
-	{
+	if (self = [self init])
+	{		
 		callbackObj = callbackObjNew;
 		selector = selectorNew;
 		
 		CCSprite *background = [self createBackground];
+		
+		//Restore purchases.
+		CCSprite *restorePurchasesSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_restore_purchases.png"];
+		CCSprite *restorePurchasesSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_restore_purchases.png"];
+		[restorePurchasesSelectedSprite setScale: 0.95];
+		CCMenuItemSprite *restorePurchasesMenuItem = [CCMenuItemSprite itemWithNormalSprite: restorePurchasesSprite selectedSprite: restorePurchasesSelectedSprite block:^(id sender) {
+			[self restorePurchases];
+		}];
+		[restorePurchasesMenuItem setScale: (backgroundWidth * 0.66) / restorePurchasesMenuItem.contentSize.width];
+		[restorePurchasesMenuItem setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.55)];
 		
 		//Purchase the full game label.
 		CCLabelTTF *purchaseFullGameLabel = [DialogLayer createShadowHeaderWithString: @"Purchase Full Game"
@@ -641,10 +738,11 @@
 																   lineBreakMode: kCCLineBreakModeMiddleTruncation
 																		fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
 										];
+		
 		[self addChild: purchaseFullGameLabel];
 		
 		//Full game description label.
-		CCLabelTTF *fullGameDescLabel = [DialogLayer createShadowHeaderWithString: @"- All levels become playable!\n- Access to Online Levels!\n- Save and upload your own custom made Online Levels!\n- Support indie developers!\n- Only $ 0.99!"
+		CCLabelTTF *fullGameDescLabel = [DialogLayer createShadowHeaderWithString: @"- All levels become playable!\n- Access to Online Levels!\n- Save and upload your own custom made Online Levels!\n- Support indie developers!"
 																			 position: ccp(background.position.x - backgroundWidth * 0.2, background.position.y + backgroundHeight * 0.350)
 																		 shadowOffset: CGSizeMake(1, -1)
 																				color: ccWHITE
@@ -652,7 +750,7 @@
 																		   dimensions: CGSizeMake(backgroundWidth * 0.45, backgroundHeight * 0.5)
 																		   hAlignment: kCCTextAlignmentLeft
 																		lineBreakMode: kCCLineBreakModeWordWrap
-																			 fontSize: (DIALOG_FONT_SIZE * 0.5) * [Director shared].scaleFactor.width
+																			 fontSize: (DIALOG_FONT_SIZE * 0.6) * [Director shared].scaleFactor.width
 											 ];
 		[fullGameDescLabel setAnchorPoint: ccp(0.5, 1)];
 		[self addChild: fullGameDescLabel];
@@ -662,15 +760,26 @@
 		CCSprite *purchaseFullGameSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_full_game_purchase.png"];
 		[purchaseFullGameSelectedSprite setScale: 0.95];
 		CCMenuItemSprite *purchaseFullGameMenuItem = [CCMenuItemSprite itemWithNormalSprite: purchaseFullGameSprite selectedSprite: purchaseFullGameSelectedSprite block:^(id sender) {
-		
+			[[MToolsPurchaseManager sharedManager] purchaseProductByName: @"fullversion"];
 		}];
 		[purchaseFullGameMenuItem setScale: (backgroundWidth * 0.33) / purchaseFullGameMenuItem.contentSize.width];
 		[purchaseFullGameMenuItem setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y + backgroundHeight * 0.2)];
 		
-		CCMenu *purchaseMenu = [CCMenu menuWithItems: purchaseFullGameMenuItem, nil];
+		CCMenu *purchaseMenu = [CCMenu menuWithItems: purchaseFullGameMenuItem, restorePurchasesMenuItem, nil];
 		[purchaseMenu setAnchorPoint: ccp(0, 0)];
 		[purchaseMenu setPosition: CGPointZero];
 		[self addChild: purchaseMenu];
+		
+		//Icon to overlay on the purchase button if we've already got the full version.
+		if ([[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"])
+		{
+			CCSprite *purchasedIcon = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_icon.png"];
+			[purchasedIcon setScale: (purchaseFullGameMenuItem.contentSize.width * purchaseFullGameMenuItem.scaleX) / purchasedIcon.contentSize.width];
+			[purchasedIcon setPosition: purchaseFullGameMenuItem.position];
+			[purchasedIcon setOpacity: 100];
+			[purchaseFullGameMenuItem setOpacity: 150];
+			[self addChild: purchasedIcon];
+		}
 		
 		//Unlock Chuck's Friends label
 		CCLabelTTF *unlockFriendsLabel = [DialogLayer createShadowHeaderWithString: @"Unlock Chuck's Friends"
@@ -678,8 +787,8 @@
 																		 shadowOffset: CGSizeMake(1, -1)
 																				color: ccWHITE
 																		  shadowColor: ccBLACK
-																		   dimensions: CGSizeMake(backgroundWidth * 0.5, backgroundHeight * 0.15)
-																		   hAlignment: kCCTextAlignmentLeft
+																		   dimensions: CGSizeMake(backgroundWidth, backgroundHeight * 0.15)
+																		   hAlignment: kCCTextAlignmentCenter
 																		lineBreakMode: kCCLineBreakModeMiddleTruncation
 																			 fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
 											 ];
@@ -695,7 +804,7 @@
 			[botSelectedSprite setScale: 0.95];
 			
 			CCMenuItemSprite *botMenuItem = [CCMenuItemSprite itemWithNormalSprite: botSprite selectedSprite: botSelectedSprite block:^(id sender) {
-				
+				[[MToolsPurchaseManager sharedManager] purchaseProductByName: [NSString stringWithFormat:@"botskin%@", [botsForPurchase objectAtIndex: i]]];
 			}];
 			[botMenuItem setScale: ((backgroundWidth * 0.12) / botMenuItem.contentSize.width)];
 			[botMenuItem setPosition: ccp(background.position.x - backgroundWidth * 0.3 + (i * (botMenuItem.contentSize.width * botMenuItem.scale)), background.position.y - backgroundHeight * 0.25)];
@@ -714,7 +823,7 @@
 
 - (id) initCreditsWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
 {
-	if (self = [super init])
+	if (self = [self init])
 	{
 		CCSprite *background = [self createBackground];
 	}
@@ -724,27 +833,91 @@
 
 - (id) initLoginWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
 {
-	self.dialogType = 2;
+	self.dialogType = 4;
 	
-    if((self = [super init]))
+    if((self = [self init]))
     {
         callbackObj = callbackObjNew;
         selector = selectorNew;
         
         CCSprite *background = [self createBackground];
-        
+     
+		CGSize s = [CCDirector sharedDirector].winSize;
 		NSMutableArray *buttons = [NSMutableArray array];
 		float okButtonPosX = background.position.x;
 		okButtonPosX += backgroundWidth / 4;
 		
 		CCSprite *loginTitleSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/login/button_login_title.png"];
-		[loginTitleSprite setScale: (backgroundWidth * 0.70) / loginTitleSprite.contentSize.width];
+		[loginTitleSprite setScale: (backgroundWidth * 0.40) / loginTitleSprite.contentSize.width];
 		[loginTitleSprite setPosition:ccp(background.position.x, background.position.y + (backgroundHeight / 2) * 0.625)];
 		[self addChild: loginTitleSprite];
+		
+		//Username input background
+		CCSprite *usernameInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_name_background.png"];
+		[usernameInputBackground setScale: (backgroundWidth * 0.6) / usernameInputBackground.contentSize.width];
+		[usernameInputBackground setPosition: ccp(background.position.x, background.position.y + backgroundHeight * 0.1)];
+		[self addChild: usernameInputBackground];
+		
+		//Username input text box
+		self.textField = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (usernameInputBackground.contentSize.width * usernameInputBackground.scale * 0.9), (usernameInputBackground.contentSize.height * usernameInputBackground.scale) * 0.75)];
+		self.textField.center = ccp(background.position.x, background.position.y - backgroundHeight * 0.125);
+		self.textField.borderStyle = UITextBorderStyleNone;
+		[self.textField setBackgroundColor: [UIColor clearColor]];
+		[self.textField setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
+		[self.textField setPlaceholder: @"Username"
+		 ];
+		self.textField.delegate = self;
+		[self.textField becomeFirstResponder];
+		self.textField.keyboardType = UIKeyboardAppearanceDefault;
+		self.textField.returnKeyType = UIReturnKeyNext;
+		self.textField.autocorrectionType = UITextAutocapitalizationTypeNone;
+		self.textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
+		self.textField.tag = 0;
+		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField];
+		
+		//Password input background
+		CCSprite *passwordInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_creator_background.png"];
+		[passwordInputBackground setScale: (backgroundWidth * 0.6) / passwordInputBackground.contentSize.width];
+		[passwordInputBackground setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.05)];
+		[self addChild: passwordInputBackground];
+		
+		//Password input text box
+		self.textField2 = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (passwordInputBackground.contentSize.width * passwordInputBackground.scale * 0.9), (passwordInputBackground.contentSize.height * passwordInputBackground.scale) * 0.75)];
+		self.textField2.center = ccp(background.position.x, background.position.y + backgroundHeight * 0.025);
+		self.textField2.borderStyle = UITextBorderStyleNone;
+		[self.textField2 setBackgroundColor: [UIColor clearColor]];
+		[self.textField2 setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
+		[self.textField2 setPlaceholder: @"Password"
+		 ];
+		self.textField2.delegate = self;
+		self.textField2.keyboardType = UIKeyboardAppearanceDefault;
+		self.textField2.returnKeyType = UIReturnKeyDone;
+		self.textField2.autocorrectionType = UITextAutocapitalizationTypeNone;
+		self.textField2.autocapitalizationType = UITextAutocapitalizationTypeNone;
+		self.textField2.secureTextEntry = YES;
+		self.textField2.tag = 1;
+		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField2];
+		
+		//Cancel
+		CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
+		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
+		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		//Next
+		CCMenuItemImage *nextButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(loginButtonPressed:)];
+		nextButton.scale = (backgroundWidth * 0.225) / nextButton.contentSize.width;
+		[nextButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		CCMenu *cancelAndNextMenu = [CCMenu menuWithItems: cancelButton, nextButton, nil];
+		[cancelAndNextMenu setAnchorPoint: ccp(0, 0)];
+		[cancelAndNextMenu setPosition: CGPointZero];
+		[self addChild: cancelAndNextMenu];
     }
     
     return self;
 }
+
+#pragma mark MISC JUNK BUTT FART
 
 - (void) toggleTag: (NSString *) tagString
 {
@@ -772,35 +945,26 @@
 
 - (CCSprite *) createBackground
 {
-	CGSize screenSize = [CCDirector sharedDirector].winSize;
+	CGSize s = [CCDirector sharedDirector].winSize;
+	
+	//This is the invisible closing background which will remove the notification window if hit.
+	CCMenuItemImage *closeMenuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Backgrounds/blank.jpg" selectedImage: @"Media/Backgrounds/blank.jpg" target: self selector: @selector(remove)];
+	[closeMenuItem setScaleX: (s.width / closeMenuItem.contentSize.width)];
+	[closeMenuItem setScaleY: (s.height / closeMenuItem.contentSize.height)];
+	[closeMenuItem setOpacity: 100];
+	
+	CCMenu *closeMenu = [CCMenu menuWithItems: closeMenuItem, nil];
+	[self addChild: closeMenu z: -2];
 	
 	CCSprite *background = [CCSprite node];
-	background = [background initWithFile:@"Media/Backgrounds/background_dialog.png"];
-	float scale = (screenSize.width * .75) / background.contentSize.width;
+	background = [background initWithFile: @"Media/Backgrounds/general/dialog.png"];
+	float scale = (s.width * .75) / background.contentSize.width;
 	[background setScale: scale];
-	[background setPosition:ccp(screenSize.width / 2, screenSize.height / 2)];
+	[background setPosition:ccp(s.width / 2, s.height / 2)];
 	[self addChild:background z:-1];
 	
 	backgroundWidth = background.contentSize.width * background.scale;
 	backgroundHeight = background.contentSize.height * background.scale;
-	
-	/*if (!header || [header isEqualToString: @""])
-	{
-		CCLabelTTF *text = [DialogLayer createShadowHeaderWithString: header position: ccp(0, 0) shadowOffset: CGSizeMake(1, -1) color: ccWHITE shadowColor: ccBLACK dimensions: CGSizeMake(backgroundWidth, backgroundHeight) hAlignment: kCCTextAlignmentCenter lineBreakMode: kCCLineBreakModeWordWrap fontSize: DIALOG_FONT_SIZE];
-		[text setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5) * [Director shared].scaleFactor.width)];
-		[self addChild: text];
-	}*/
-	
-	/*CCLabelTTF *headerShadow = [CCLabelTTF labelWithString: header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
-	headerShadow.color = ccBLACK;
-	headerShadow.opacity = 190;
-	[headerShadow setPosition:ccp(background.position.x - DIALOG_FONT_SHADOW_OFFSET, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5 - DIALOG_FONT_SHADOW_OFFSET) * [Director shared].scaleFactor.width)];
-	[self addChild:headerShadow];
-	
-	CCLabelTTF *headerLabel = [CCLabelTTF labelWithString: header fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
-	headerLabel.color = ccBLACK;
-	[headerLabel setPosition:ccp(background.position.x, background.position.y + backgroundHeight / 2 - (DIALOG_FONT_SIZE * 1.5) * [Director shared].scaleFactor.width)];
-	[self addChild:headerLabel];*/
 	
 	return background;
 }
@@ -829,17 +993,24 @@
 
 +(CCLabelTTF*)createShadowHeaderWithString:(NSString*)string position:(CGPoint)pos shadowOffset:(CGSize)offset color:(ccColor3B)col shadowColor:(ccColor3B)shadowCol dimensions:(CGSize)dimensions hAlignment:(CCTextAlignment)uiTextAlignment lineBreakMode:(CCLineBreakMode)lineBreakMode fontSize:(float)fontSize
 {
-    float offsetX = offset.width;
+    return [DialogLayer createShadowHeaderWithString: string position: pos shadowOffset: offset color: col shadowColor: shadowCol dimensions: dimensions hAlignment: uiTextAlignment vAlignment: kCCVerticalTextAlignmentTop lineBreakMode:lineBreakMode fontSize: fontSize];
+}
+
++(CCLabelTTF*)createShadowHeaderWithString:(NSString*)string position:(CGPoint)pos shadowOffset:(CGSize)offset color:(ccColor3B)col shadowColor:(ccColor3B)shadowCol dimensions:(CGSize)dimensions hAlignment:(CCTextAlignment)uiTextAlignment vAlignment: (CCVerticalTextAlignment) uiVTextAlignment lineBreakMode :(CCLineBreakMode)lineBreakMode fontSize:(float)fontSize
+{
+	float offsetX = offset.width;
     float offsetY = offset.height;
 	
     //Shadow
-    CCLabelTTF *shadow = [CCLabelTTF labelWithString:string dimensions:dimensions hAlignment: uiTextAlignment lineBreakMode: lineBreakMode fontName:@"Noteworthy-Bold" fontSize:fontSize];
+    CCLabelTTF *shadow = [CCLabelTTF labelWithString:string dimensions:dimensions hAlignment: uiTextAlignment lineBreakMode: lineBreakMode fontName: [Director shared].globalFont fontSize:fontSize];
+	shadow.verticalAlignment = uiVTextAlignment;
     shadow.position = ccp(pos.x + offsetX, pos.y + offsetY);
     shadow.color = shadowCol;
     shadow.opacity = (255/100*83);//83%
 	
     //Actual
-    CCLabelTTF *label = [CCLabelTTF labelWithString:string dimensions:dimensions hAlignment: uiTextAlignment lineBreakMode: lineBreakMode fontName:@"Noteworthy-Bold" fontSize:fontSize];
+    CCLabelTTF *label = [CCLabelTTF labelWithString:string dimensions:dimensions hAlignment: uiTextAlignment lineBreakMode: lineBreakMode fontName: [Director shared].globalFont fontSize:fontSize];
+	label.verticalAlignment = uiVTextAlignment;
     label.position = ccp(shadow.contentSize.width / 2 - offsetX, shadow.contentSize.height / 2 - offsetY);
     label.color = col;
     [shadow addChild:label];
@@ -855,30 +1026,71 @@
 		[self loginButtonPressed: self];
 	else if (self.dialogType == 3)
 		[self saveButtonPressed: self];
+	else if (self.dialogType == 4)
+	{
+		NSInteger nextTag = textField.tag + 1;
+		UIResponder *nextResponder = [textField.superview viewWithTag: nextTag];
+		
+		if (nextResponder)
+		{
+			[nextResponder becomeFirstResponder];
+		}
+		else
+		{
+			[textField resignFirstResponder];
+			[self loginButtonPressed: self];
+		}
+	}
 	
     return NO;
 }
 
-- (void) likeButtonPressed: (id) sender
+- (void) remove
 {
-	[[Director shared] rateLevel: [Director shared].stage.name withRating: 1];
-	DialogLayer *thanksDialog = [[DialogLayer alloc] initWithHeader: @"THANKS!" andLine1: @"Thank you for submitting your rating of this level!" target: self selector: @selector(submittedRating:) textField: NO];
-	[self.parent addChild: thanksDialog z: 9100];
+	[self.textField removeFromSuperview];
+	[self.textField2 removeFromSuperview];
+    [self removeFromParentAndCleanup:YES];
 }
 
-- (void) submittedRating: (id) sender
+#pragma mark BUTTON PRESSES
+
+#pragma mark L purchases
+
+- (void) restorePurchases
 {
-	[self removeFromParentAndCleanup: YES];
+	[DialogLayer playButtonSound];
+	
+	[[MToolsPurchaseManager sharedManager] restorePurchases];
+}
+
+#pragma mark L ratings
+
+- (void) likeButtonPressed: (id) sender
+{
+	[DialogLayer playButtonSound];
+	
+	[[Director shared] rateLevel: [Director shared].stage.name withRating: 1];
+	[self submittedRating: self];
 }
 
 - (void) dislikeButtonPressed: (id) sender
 {
+	[DialogLayer playButtonSound];
+	
 	[[Director shared] rateLevel: [Director shared].stage.name withRating: -1];
+	[self submittedRating: self];
+}
+
+- (void) submittedRating: (id) sender
+{
+	[ratingThanksLabel setVisible: YES];
+	[dislikeButton setVisible: NO];
+	[likeButton setVisible: NO];
 }
 
 - (void) flagButtonPressed: (id) sender
 {
-	[self playButtonSound];
+	[DialogLayer playButtonSound];
 	
 	DialogLayer *flagConfirmDialog = [[DialogLayer alloc] initFlaggerWithHeader: @"CONFIRM FLAG" target: self selector: @selector(flagConfirmButtonPressed:) andLevelName: [Director shared].stage.name];
 	[self.parent addChild: flagConfirmDialog z: 9100];
@@ -887,7 +1099,7 @@
 
 - (void) flagConfirmButtonPressed: (id) sender
 {
-	[self playButtonSound];
+	[DialogLayer playButtonSound];
 	
 	[[Director shared] flagLevel: [Director shared].stage.name];
 	DialogLayer *thankYouDialog = [[DialogLayer alloc] initWithHeader: @"THANK YOU" andLine1: @"Thank you for your report. We will investigate the level you have flagged and take the appropriate action." target: self selector: @selector(cancelButtonPressed:) textField: NO];
@@ -898,42 +1110,39 @@
 
 - (void) retryButtonPressed: (id) sender
 {
-	[self playButtonSound];
+	[DialogLayer playButtonSound];
 	
 	[callbackObj performSelector: selector withObject: [NSNumber numberWithBool: YES]];
 }
 
 - (void) nextStageButtonPressed: (id) sender
 {
-	[self playButtonSound];
+	[DialogLayer playButtonSound];
 	
 	[callbackObj performSelector: selector withObject: [NSNumber numberWithBool: NO]];
 }
 
 - (void) okButtonPressed:(id) sender
 {
-    [self playButtonSound];
+    [DialogLayer playButtonSound];
     
     [callbackObj performSelector: selector withObject: self];
     
-    [self.textField removeFromSuperview];
-    [self removeFromParentAndCleanup:YES];
+    [self remove];
 }
 
 - (void) cancelButtonPressed:(id) sender
 {
-    [self playButtonSound];
+    [DialogLayer playButtonSound];
     
-    [self.textField removeFromSuperview];
-	[self.textField2 removeFromSuperview];
-    [self removeFromParentAndCleanup:YES];
+    [self remove];
 }
 
 - (void) loginButtonPressed:(id) sender
 {
-    [self playButtonSound];
+    [DialogLayer playButtonSound];
     
-	NSArray *retArray = [NSArray arrayWithObjects: self.textField.text, self.textField2.text, nil];
+	NSArray *retArray = [NSArray arrayWithObjects: self.textField.text, [Director sha: self.textField2.text], nil];
 	
     [callbackObj performSelector: selector withObject: retArray];
     
@@ -944,7 +1153,7 @@
 
 - (void) editButtonPressed: (id) sender
 {
-	[self playButtonSound];
+	[DialogLayer playButtonSound];
 	
 	[Director shared].editing = YES;
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
@@ -952,7 +1161,7 @@
 
 - (void) saveButtonPressed: (id) sender
 {
-	[self playButtonSound];
+	[DialogLayer playButtonSound];
 	
 	[Director shared].stage.name = self.textField.text;
 	
@@ -968,9 +1177,9 @@
 	[callbackObj performSelector: selector withObject: currentTags];
 }
 
-- (void) playButtonSound
++ (void) playButtonSound
 {
-	
+	[[SimpleAudioEngine sharedEngine] playEffect: @"Media/Audio/general/button_press.mp3"];
 }
 
 @end

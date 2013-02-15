@@ -70,7 +70,7 @@
 
 - (void) failedServerSave
 {
-	DialogLayer *errorDialog = [[DialogLayer alloc] initWithHeader: @"Server Error" andLine1: @"There was an error saving your level to the server. This usually means that a level by your name already exists." target: self selector: @selector(goToStage) textField: NO];
+	DialogLayer *errorDialog = [[DialogLayer alloc] initNotificationWithMessage: @"There was an error saving your level to the server. This usually means that a level by your name already exists or you entered an invalid name."];
 	[self addChild: errorDialog z: 9000];
 }
 
