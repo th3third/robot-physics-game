@@ -32,8 +32,16 @@
 	CCSprite *background;
 	CCSprite *botEditorBackground;
 	CCSprite *leftEditorBackground;
-	CCMenuAdvanced *helpMenu;
+	
 	CCMenuItemSprite *gear;
+	
+	//Help menu
+	UIPanGestureRecognizer *pan;
+	bool pageTurning;
+	int helpPageNum;
+	CCMenu *helpCloseMenu;
+	CCMenu *pageMenu;
+	CCMenu *helpMenu;
 	
 	//Dialogs
 	DialogLayer *winDialog;

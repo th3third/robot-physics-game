@@ -763,41 +763,17 @@ static Director *shared = nil;
 {
     _paused = paused;
     
-    if (paused)
-    {
-		[[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume: 1.00];
-		if (self.world)
+	if (self.editing)
+	{
+		if (paused)
 		{
-			b2Vec2 gravity;
-			gravity.Set(0.0f, 0.0f);
-			[Director shared].world->SetGravity(gravity);
+			[[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume: 1.00];
 		}
-        
-        for (Object *object in self.stage.objects)
-        {
-            if (object.class != @"Rope")
-            {
-                object.alive = NO;
-            }
-        }
-    }
-    else
-    {
-		[[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume: 0.25];
-		if (self.world)
+		else
 		{
-			b2Vec2 gravity;
-			gravity.Set(0.0f, -10.0f);
-			[Director shared].world->SetGravity(gravity);
+			[[SimpleAudioEngine sharedEngine] setBackgroundMusicVolume: 0.25];
 		}
-		
-        [self awakeAll];
-        
-        for (Object *object in self.stage.objects)
-        {
-            [object reset];
-        }
-    }
+	}
 }
 
 #pragma  mark ENCRYPTION

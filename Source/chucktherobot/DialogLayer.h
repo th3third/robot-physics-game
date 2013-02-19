@@ -32,6 +32,7 @@
 - (id) initNotificationWithMessage: (NSString *) message;
 - (id) initNotificationWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew;
 - (id) initChoiceWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew;
+- (id) initChoiceWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew selectorCancel: (SEL) selectorCancel;
 - (id) initLoader;
 - (id) initLoginWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew;
 - (id) initWinnerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andTimeElapsed: (float) timeElapsed andScore: (int) score;

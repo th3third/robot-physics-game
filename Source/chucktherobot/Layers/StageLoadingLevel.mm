@@ -101,7 +101,7 @@
 	spinner = [CCSprite spriteWithFile: @"Media/Buttons/general/button_gear.png"];
 	[spinner setPosition: ccp(s.width / 2, s.height / 2)];
 	[spinner setRotation: 0.00];
-	[spinner setScale: 0.50];
+	[spinner setScale: ((s.width)) * 0.40 / spinner.contentSize.width];
 	[self addChild: spinner];
 	
 	spinnerTween = [CCActionTween actionWithDuration: 2.0 key: @"rotation" from: 0.00 to: 360.00];

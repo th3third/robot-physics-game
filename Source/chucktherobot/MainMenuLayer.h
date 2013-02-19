@@ -15,7 +15,6 @@
 {
     CCTexture2D *spriteTexture_;
 	DialogLayer *purchaseDialog;
-	DialogLayer *creditsDialog;
 	DialogLayer *loadingDialog;
 }
 

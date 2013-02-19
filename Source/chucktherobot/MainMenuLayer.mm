@@ -9,6 +9,7 @@
 // Import the interfaces
 #import "Layers.h"
 #import "MToolsAppSettings.h"
+#import "MToolsPurchaseManager.h"
 
 @interface MainMenuLayer()
 -(void) createMenu;
@@ -93,7 +94,8 @@
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_create.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_create.png"];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
-		[self scheduleOnce:@selector(goToStage) delay:0];
+		[Director shared].editing = YES;
+		[self goToStage];
 	}];
 	[menuItem setScale: scale];
     [menuItems addObject: menuItem];
@@ -101,6 +103,8 @@
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_online_levels.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_online_levels.png"];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		
+		[Director shared].fullVersion = [[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"];
 		
 		if (![Director shared].fullVersion)
 		{
@@ -118,7 +122,8 @@
 		else
 		{
 			[Director shared].online = YES;
-			[self scheduleOnce:@selector(goToStageSelect) delay:0];
+			[self performSelector: @selector(createLoadingBox)];
+			[self scheduleOnce:@selector(goToStageSelect) delay:0.2];
 		}
 	}];
 	[menuItem setScale: scale];
@@ -152,13 +157,8 @@
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_question_mark.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_question_mark.png"];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
-		if (!creditsDialog)
-			creditsDialog = [[DialogLayer alloc] initCreditsWithCallbackObj: self selector: @selector(madePurchase:)];
-		
-		if (!creditsDialog.parent)
-			[self addChild: creditsDialog z: 9000];
-		else
-			[creditsDialog removeFromParentAndCleanup: YES];
+	DialogLayer *creditsDialog = [[DialogLayer alloc] initCreditsWithCallbackObj: self selector: @selector(madePurchase:)];
+	[self addChild: creditsDialog z: 9000];
 	}];
 	[menuItem setScale: scale];
 	[menuItem setAnchorPoint: ccp(1, 0.5)];
@@ -234,12 +234,38 @@
 	[self addChild: purchaseDialog z: 9000];
 }
 
+- (void) createLoadingBox
+{
+	CGSize s = [CCDirector sharedDirector].winSize;
+	
+	CCSprite *loadingBackground = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
+	[loadingBackground setScaleX: (s.width / loadingBackground.contentSize.width)];
+	[loadingBackground setScaleY: (s.height / loadingBackground.contentSize.height)];
+	[loadingBackground setOpacity: 100];
+	[loadingBackground setPosition: ccp(s.width * 0.5, s.height * 0.5)];
+	[self addChild: loadingBackground z: 8999];
+	
+	CCLabelTTF *loadingLabel = [DialogLayer createShadowHeaderWithString: @"Loading..."
+																position: ccp(s.width * 0.5, s.height * 0.5)
+															shadowOffset: CGSizeMake(1, -1)
+																   color: ccWHITE
+															 shadowColor: ccBLACK
+															  dimensions: CGSizeMake(s.width, s.height)
+															  hAlignment: kCCTextAlignmentCenter
+															  vAlignment: kCCVerticalTextAlignmentCenter
+														   lineBreakMode: kCCLineBreakModeMiddleTruncation
+																fontSize: 48
+								];
+	
+	[self addChild: loadingLabel z: 9000];
+}
+
 #pragma mark GOTOS
 
 - (void) goToStageSelect
 {
 	[DialogLayer playButtonSound];
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageSelectLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageSelectLayer scene]]];
 }
 
 - (void) goToStage
@@ -248,7 +274,7 @@
 	[Director shared].editing = YES;
 	[Director shared].stage = nil;
 	[Director shared].stageName = nil;
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageLayer scene]]];
 }
 
 - (void) goToBotList

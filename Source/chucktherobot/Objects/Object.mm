@@ -198,6 +198,7 @@
         self.body->SetActive(NO);
         self.bodyVisible.visible = NO;
         self.alive = NO;
+		[self createPopExplosion];
 		
 		NSMutableArray *objectsToPop = [NSMutableArray array];
 		for (Object *object in [[Director shared].stage objects])
@@ -220,6 +221,45 @@
 		
 		self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/pop/pop%d.caf", arc4random() % self.popSounds]];
     }
+}
+
+-(void) createPopExplosion
+{
+	/*CCParticleSystemQuad *particleSystem = [[CCParticleSystemQuad alloc] init];
+	[particleSystem setTexture: [[CCTextureCache sharedTextureCache] addImage: @"Media/Particles/pop.png"]];
+	//[particleSystem setPosition: ccp(self.bodyVisible.position.x, self.bodyVisible.position.y)];
+	[particleSystem setStartColor: ccc4f(1, 0, 0, 1)];
+	[particleSystem setStartColorVar: ccc4f(0, 0, 0, 0.68)];
+	[particleSystem setSpeed: 196];
+	[particleSystem setSpeedVar: 59.21];
+	[particleSystem setLifeVar: 0.428];
+	[particleSystem setStartSizeVar: 20];
+	[particleSystem setEndColor: ccc4f(0.87, 0, 0, 0.54)];
+	[particleSystem setEndColorVar: ccc4f(0, 0, 0, 0.15)];
+	[particleSystem setAngleVar: 360];
+	
+	[self.bodyVisible.parent addChild: particleSystem];
+	
+	NSLog(@"POP!");*/
+	
+	CCParticleExplosion *particleSystem = [[CCParticleExplosion alloc] init];
+	[particleSystem setTexture: [[CCTextureCache sharedTextureCache] addImage: @"fire.png"]];
+	[particleSystem setPosition: ccp(self.bodyVisible.position.x, self.bodyVisible.position.y)];
+	[particleSystem setStartColor: ccc4f(1, 0, 0, 1)];
+	[particleSystem setStartColorVar: ccc4f(0, 0, 0, 0.68)];
+	[particleSystem setSpeed: 196];
+	[particleSystem setSpeedVar: 59.21];
+	[particleSystem setLife: 0.6f];
+	[particleSystem setLifeVar: 0.428];
+	[particleSystem setStartSizeVar: 20];
+	[particleSystem setEndColor: ccc4f(0.87, 0, 0, 0.54)];
+	[particleSystem setEndColorVar: ccc4f(0, 0, 0, 0.15)];
+	[particleSystem setAngleVar: 360];
+	[particleSystem setStartSize: 1.5f];
+	[particleSystem setEndSize: 0];
+	[particleSystem setRadialAccel: 10];
+	[particleSystem setTotalParticles: 100];
+	[self.bodyVisible.parent addChild: particleSystem];
 }
 
 - (void) remove
@@ -468,7 +508,7 @@
 
 - (void) hitWithForce:(float)force
 {
-	if (force <= 0.1)
+	if (force <= 0.2)
 		return;
 	
 	float massMod = MIN(self.body->GetMass(), 1.00);

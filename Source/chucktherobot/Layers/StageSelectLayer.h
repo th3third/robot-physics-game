@@ -15,6 +15,9 @@
 	bool pageTurning;
 	UIPanGestureRecognizer *pan;
 	
+	//Array with the currently loaded levels
+	NSArray *levelsList;
+	
 	//Boundries of all the major elements.
 	CGRect topBounds;
 	CGRect midBounds;
@@ -27,6 +30,14 @@
 	CCSprite *titleBackground;
 	CCSprite *creatorBackground;
 	CCSprite *thumbsUpBackground;
+	CCSprite *midBackground;
+	
+	//Loading elements.
+	bool getNewListFromServer;
+	bool updatingLevelList;
+	int selectedLevelIndex;
+	CCSprite *spinner;
+	CCActionTween *spinnerTween;
 }
 
 typedef enum

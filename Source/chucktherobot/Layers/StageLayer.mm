@@ -53,7 +53,7 @@ enum
 		self.isTouchEnabled = YES;
 		self.isAccelerometerEnabled = NO;
 		CGSize s = [CCDirector sharedDirector].winSize;
-        
+		
         //Drawing modes, snap dividers, and all those other defaults.
         self.drawingMode = 0;
 		self.snapDivider = 4;
@@ -62,6 +62,7 @@ enum
         
 		timeElapsedSinceStart = 0.0;
 		levelCompleted = NO;
+		helpPageNum = 0;
 		
         [self loadStage];
         
@@ -152,9 +153,50 @@ enum
 	[reset setPosition: ccp(topRightBackground.position.x, topRightBackground.position.y - 5)];
     
     //Menu
-	CCMenuItem *pause = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_pause.png" selectedImage: @"Media/Buttons/general/button_pause.png" block:^(id sender) {
-        DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to the main menu? If your level is not saved it will be lost." callback: self selector: @selector(quitConfirm)];
-		[self addChild: mainMenuConfirmDialog z: 9000];
+	CCMenuItem *pause = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_pause.png" selectedImage: @"Media/Buttons/general/button_pause.png" block:^(id sender) {		
+		
+		if ([Director shared].editing)
+		{
+			if (![Director shared].paused)
+			{
+				[Director shared].paused = YES;
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to the main menu? If your level is not saved it will be lost." callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
+				[self addChild: mainMenuConfirmDialog z: 9000];
+			}
+			else
+			{
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to the main menu? If your level is not saved it will be lost." callback: self selector: @selector(quitConfirm)];
+				[self addChild: mainMenuConfirmDialog z: 9000];
+			}
+		}
+		else if (![Director shared].online)
+		{
+			if (![Director shared].paused)
+			{
+				[Director shared].paused = YES;
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to level selection?" callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
+				[self addChild: mainMenuConfirmDialog z: 9000];
+			}
+			else
+			{
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to level selection?" callback: self selector: @selector(quitConfirm)];
+				[self addChild: mainMenuConfirmDialog z: 9000];
+			}
+		}
+		else
+		{
+			if (![Director shared].paused)
+			{
+				[Director shared].paused = YES;
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Hello, I am a placeholder until the online pause menu is working. Want to go back to the level select?" callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
+				[self addChild: mainMenuConfirmDialog z: 9000];
+			}
+			else
+			{
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Hello, I am a placeholder until the online pause menu is working. Want to go back to the level select?" callback: self selector: @selector(quitConfirm)];
+				[self addChild: mainMenuConfirmDialog z: 9000];
+			}
+		}
     }];
     if (pause.contentSize.width > pause.contentSize.height)
 		[pause setScale: buttonSize / pause.contentSize.width];
@@ -508,7 +550,15 @@ enum
 	//PLAY
 	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_play.png" selectedImage: @"Media/Buttons/general/button_editor_play.png" block:^(id sender) {
-		[Director shared].paused = NO;
+		if ([Director shared].paused)
+		{
+			[Director shared].paused = NO;
+		}
+		else
+		{
+			[Director shared].paused = YES;
+			[self resetStage];
+		}
     }];
 	if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorLeftButtonSize / menuItem.contentSize.width;
@@ -804,13 +854,6 @@ enum
 
 - (void) update: (ccTime) dt
 {
-	//It is recommended that a fixed time step is used with Box2D for stability
-	//of the simulation, however, we are using a variable time step here.
-	//You need to make an informed choice, the following URL is useful
-	//http://gafferongames.com/game-physics/fix-your-timestep/
-	
-	// Instruct the world to perform a single step of simulation. It is
-	// generally best to keep the time step and iterations fixed.
     if (![Director shared].paused)
     {		
 		timeElapsedSinceStart += dt;
@@ -823,8 +866,6 @@ enum
 		}
 		
         [self worldTick: dt];
-		
-		
     }
 }
 
@@ -846,6 +887,11 @@ enum
             [self winStage];
         }
     }
+}
+
+- (void) resumePlaying
+{
+	[Director shared].paused = NO;
 }
 
 - (void) winStage
@@ -912,6 +958,7 @@ enum
 
 - (void) resetStage
 {
+	[debug log: @"Resetting stage"];
 	timeElapsedSinceStart = 0.0;
 	levelCompleted = NO;
 	
@@ -1121,10 +1168,34 @@ enum
 	NSMutableArray *touchedObjects = [NSMutableArray array];
     CGPoint location = [touch locationInView: [touch view]];
     location = [[CCDirector sharedDirector] convertToGL: location];
-    
+	
     for (Object *object in [[Director shared].stage objects])
     {
-        if (CGRectContainsPoint([object.bodyVisible boundingBox], location))
+		float additionalWidth;
+		float additionalHeight;
+		CGRect adjustedRect;
+		float targetSize = 35;
+		
+		if (object.bodyVisible.boundingBox.size.width <= targetSize )
+		{
+			additionalWidth = (targetSize - object.bodyVisible.boundingBox.size.width);
+		}
+		else
+		{
+			additionalWidth = 0;
+		}
+		if (object.bodyVisible.boundingBox.size.height <= targetSize)
+		{
+			additionalHeight = (targetSize - object.bodyVisible.boundingBox.size.height);
+		}
+		else
+		{
+			additionalHeight = 0;
+		}
+		
+		adjustedRect = CGRectMake(object.bodyVisible.boundingBox.origin.x - (additionalWidth * 0.5), object.bodyVisible.boundingBox.origin.y - (additionalHeight * 0.5), object.bodyVisible.boundingBox.size.width + additionalWidth, object.bodyVisible.boundingBox.size.height + additionalHeight);
+		
+        if (CGRectContainsPoint(adjustedRect, location))
         {
 			GLubyte pColor[4];
 			CGPoint newpoint = (location);
@@ -1559,11 +1630,6 @@ enum
 	return location;
 }
 
-- (void) flashObject: (Object *) object
-{
-	
-}
-
 - (CCSprite *) sizeSelector: (CCSprite *) selectorNum WithObject: (Object *) object
 {
 	[selectorNum removeFromParentAndCleanup: YES];
@@ -1642,37 +1708,228 @@ enum
 //Loads up the help popups.
 - (void) showHelpMenu
 {
+	CCDirector* director = [CCDirector sharedDirector];
+	
+	if (!pan)
+		pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+	
 	if (helpMenu && helpMenu.parent)
 	{
+		CCDirector* director = [CCDirector sharedDirector];
+		[[director view] removeGestureRecognizer: pan];
+		
+		[helpCloseMenu removeFromParentAndCleanup: NO];
+		[pageMenu removeFromParentAndCleanup: NO];
 		[helpMenu removeFromParentAndCleanup: YES];
 		return;
 	}
 	else if (helpMenu && !helpMenu.parent)
 	{
+		//Pan gesture recognizer for swiping the menu.
+		[[director view] addGestureRecognizer:pan];
+		
 		[self addChild: helpMenu z: 9000];
+		[self addChild: helpCloseMenu z: 8999];
+		[self addChild: pageMenu z: 9000];
 		return;
 	}
 	
-	NSMutableArray *helpList = [NSMutableArray array];
-	[helpList addObjectsFromArray: [[NSBundle mainBundle] pathsForResourcesOfType: @".png" inDirectory: @"Media/Backgrounds/general/help"]];
+	//Pan gesture recognizer for swiping the menu.
+	[[director view] addGestureRecognizer:pan];
 	
 	CGSize s = [CCDirector sharedDirector].winSize;
 	NSMutableArray *menuItems = [NSMutableArray array];
-	for (NSString *helpFilePath in helpList)
-	{		
-		CCMenuItemImage *scrollableItem = [CCMenuItemImage itemWithNormalImage: helpFilePath selectedImage: helpFilePath];
-		[scrollableItem setScale: (s.width * 0.75) / scrollableItem.contentSize.width];
-		[menuItems addObject: scrollableItem];
-		//[helpFileSprite setAnchorPoint: ccp(0.5, 0.5)];
-		//[helpFileSprite setPosition: ccp(s.width / 2, s.height / 2)];
-		//[helpQueue addObject: helpFileSprite];
+
+	for (int i = 0; i <= 16; i++)
+	{
+		NSString *helpFilePath = [NSString stringWithFormat: @"Media/Backgrounds/general/help/%d.png", i];
+		CCMenuItemImage *helpMenuItem = [CCMenuItemImage itemWithNormalImage: helpFilePath selectedImage: helpFilePath block:^(id sender) {
+			//[self advanceHelpMenu];
+		}];
+		[helpMenuItem setScale: (s.width * 0.75) / helpMenuItem.contentSize.width];
+		[helpMenuItem setAnchorPoint: ccp(0.5, 0.5)];
+		[helpMenuItem setPosition: ccp(i * s.width + s.width * 0.5, s.height * 0.5)];
+		[menuItems addObject: helpMenuItem];
 	}
 	
-	helpMenu = [CCMenuAdvanced menuWithArray: menuItems];
-	[helpMenu alignItemsHorizontallyWithPadding: 10];
-	[helpMenu setBoundaryRect: CGRectMake(s.width * 0.125, s.height * 0.125, s.width * 0.75, s.height * 0.75)];
-	[helpMenu fixPosition];
+	helpMenu = [CCMenu menuWithArray: menuItems];
+	[helpMenu setAnchorPoint: ccp(0, 0)];
+	[helpMenu setPosition: CGPointZero];
 	[self addChild: helpMenu z: 9000];
+	
+	[self createHelpMenuCloser];
+	[self createPageTurners];
+}
+
+- (void) createPageTurners
+{
+	//Create the arrows to flip back and forth through the menus.
+	CGSize s = [CCDirector sharedDirector].winSize;
+	NSMutableArray *menuItems = [NSMutableArray array];
+	CCMenuItemSprite *menuItem;
+	CCSprite *menuItemSprite;
+	CCSprite *menuItemSpriteSelected;
+	
+	menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_left_arrow.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_left_arrow.png"];
+	menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[self goToPreviousPage];
+	}];
+	[menuItem setTag: 0];
+	if (helpPageNum <= 0)
+	{
+		[menuItem setVisible: NO];
+	}
+	[menuItem setScale: ((s.width * 0.1) / menuItem.contentSize.width)];
+	[menuItem setPosition: ccp((-s.width / 2) + (menuItem.contentSize.width * menuItem.scaleX) / 2, 0)];
+	[menuItems addObject: menuItem];
+	
+	menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_right_arrow.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_right_arrow.png"];
+	menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[self goToNextPage];
+	}];
+	[menuItem setTag: 1];
+	if (helpPageNum >= 16)
+	{
+		[menuItem setVisible: NO];
+	}
+	[menuItem setScale: ((s.width * 0.1) / menuItem.contentSize.width)];
+	[menuItem setPosition: ccp((s.width / 2) - (menuItem.contentSize.width * menuItem.scaleX) / 2, 0)];
+	[menuItems addObject: menuItem];
+	
+	pageMenu = [CCMenu menuWithArray: menuItems];
+	[self addChild: pageMenu z: 9000];
+}
+
+- (void) createHelpMenuCloser
+{
+	CGSize s = [CCDirector sharedDirector].winSize;
+	
+	//This is the invisible closing background which will remove the notification window if hit.
+	CCMenuItemImage *closeMenuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Backgrounds/blank.jpg" selectedImage: @"Media/Backgrounds/blank.jpg" target: self selector: @selector(showHelpMenu)];
+	[closeMenuItem setScaleX: (s.width / closeMenuItem.contentSize.width)];
+	[closeMenuItem setScaleY: (s.height / closeMenuItem.contentSize.height)];
+	[closeMenuItem setOpacity: 100];
+	
+	helpCloseMenu = [CCMenu menuWithItems: closeMenuItem, nil];
+	[self addChild: helpCloseMenu z: 8999];
+}
+
+- (void) finishedAdvancingHelpMenu
+{
+	pageTurning = NO;
+}
+
+- (void) goToNextPage
+{
+	if (pageTurning)
+		return;
+	
+	if (helpPageNum >= 15)
+	{		
+		return;
+	}
+	
+	pageTurning = YES;
+	helpPageNum++;
+	
+	[self performSelector: @selector(finishedAdvancingHelpMenu) withObject: nil afterDelay: 0.25];
+	
+	CGSize s = [CCDirector sharedDirector].winSize;
+	CCMoveTo *action = [CCMoveTo actionWithDuration: 0.25 position: ccp((helpPageNum * -s.width), helpMenu.position.y)];
+	[helpMenu stopAllActions];
+	[helpMenu runAction: action];
+	
+	if (helpPageNum >= 15)
+	{
+		[[pageMenu getChildByTag: 1] setVisible: NO];
+	}
+	else
+	{
+		[[pageMenu getChildByTag: 1] setVisible: YES];
+	}
+	
+	[[pageMenu getChildByTag: 0] setVisible: YES];
+}
+
+- (void) goToPreviousPage
+{
+	if (pageTurning)
+		return;
+	
+	if (helpPageNum <= 0)
+	{
+		return;
+	}
+	
+	pageTurning = YES;
+	helpPageNum--;
+	
+	[self performSelector: @selector(finishedAdvancingHelpMenu) withObject: nil afterDelay: 0.15];
+	
+	CGSize s = [CCDirector sharedDirector].winSize;
+	CCMoveTo *action = [CCMoveTo actionWithDuration: 0.15 position: ccp((helpPageNum * -s.width), helpMenu.position.y)];
+	[helpMenu stopAllActions];
+	[helpMenu runAction: action];
+	
+	if (helpPageNum <= 0)
+	{
+		[[pageMenu getChildByTag: 0] setVisible: NO];
+	}
+	else
+	{
+		[[pageMenu getChildByTag: 0] setVisible: YES];
+	}
+	
+	[[pageMenu getChildByTag: 1] setVisible: YES];
+}
+
+- (void)handlePanGesture:(UIGestureRecognizer*)gestureRecognizer
+{
+	if (!helpMenu.parent)
+		return;
+	
+	switch (gestureRecognizer.state)
+	{
+		case UIGestureRecognizerStateBegan:
+		{
+			break;
+		}
+		case UIGestureRecognizerStateChanged:
+		{
+			// Get pan gesture recognizer translation
+			CGPoint translation = [(UIPanGestureRecognizer*)gestureRecognizer velocityInView: gestureRecognizer.view];
+			
+			// Invert Y since position and offset are calculated in gl coordinates
+			translation = ccp(-translation.x, -translation.y);
+			
+			if (translation.x > 1000)
+			{
+				[self goToNextPage];
+			}
+			else if (translation.x < -1000)
+			{
+				[self goToPreviousPage];
+			}
+			
+			//self.selectionNode.position = ccp(self.selectionNode.position.x - translation.x, self.selectionNode.position.y);
+			
+			// Refresh pan gesture recognizer
+			[(UIPanGestureRecognizer*)gestureRecognizer setTranslation:CGPointZero inView:gestureRecognizer.view];
+			
+			break;
+		}
+		case UIGestureRecognizerStateEnded:
+		{
+			
+			break;
+		}
+		default:
+		{
+			break;
+		}
+    }
 }
 
 #pragma mark GOTOS
@@ -1685,6 +1942,9 @@ enum
 
 - (void) quitConfirm
 {
+	CCDirector* director = [CCDirector sharedDirector];
+	[[director view] removeGestureRecognizer: pan];
+	
 	[Director shared].stage = nil;
 	[Director shared].stageName = nil;
 	
@@ -1703,6 +1963,9 @@ enum
 
 - (void) goToStageSelect
 {
+	CCDirector* director = [CCDirector sharedDirector];
+	[[director view] removeGestureRecognizer: pan];
+	
 	//Play the background music.
 	[[Director shared] playMusic: @"Media/Audio/general/music/main_menu.mp3"];
 	
@@ -1711,6 +1974,9 @@ enum
 
 - (void) goToStageLoading
 {
+	CCDirector* director = [CCDirector sharedDirector];
+	[[director openGLView] removeGestureRecognizer: pan];
+	
 	[[Director shared] stopMusic];
 	[[CCDirector sharedDirector] replaceScene: [CCTransitionSlideInT transitionWithDuration: 0.0 scene: [StageLoadingLevel scene]]];
 }

@@ -147,6 +147,53 @@
 	return self;
 }
 
+- (id) initChoiceWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew selectorCancel: (SEL) selectorCancel
+{
+	if (self = [self init])
+	{
+		callbackObj = callbackObjNew;
+		selector = selectorNew;
+		
+		CCSprite *background = [self createBackground];
+		CGSize s = [CCDirector sharedDirector].winSize;
+		
+		CCLabelTTF *messageLabel = [DialogLayer createShadowHeaderWithString: message
+																	position: ccp(background.position.x, background.position.y + backgroundHeight * 0.1)
+																shadowOffset: CGSizeMake(1, -1)
+																	   color: ccWHITE
+																 shadowColor: ccBLACK
+																  dimensions: CGSizeMake(backgroundWidth * 0.8, backgroundHeight * 0.7)
+																  hAlignment: kCCTextAlignmentCenter
+																  vAlignment: kCCVerticalTextAlignmentCenter
+															   lineBreakMode: kCCLineBreakModeWordWrap
+																	fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+									];
+		[self addChild: messageLabel];
+		
+		//Cancel
+		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_dialog_cancel.png" selectedImage: @"Media/Buttons/general/button_dialog_cancel.png" block:^(id sender) {
+			[callbackObj performSelector: selectorCancel];
+			[self cancelButtonPressed: nil];
+		}];
+		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
+		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		//Okay
+		CCMenuItemImage *okButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_dialog_ok.png" selectedImage: @"Media/Buttons/general/button_dialog_ok.png" block:^(id sender) {
+			[self okButtonPressed: nil];
+		}];
+		okButton.scale = (backgroundWidth * 0.225) / okButton.contentSize.width;
+		[okButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		CCMenu *cancelAndOkMenu = [CCMenu menuWithItems: cancelButton, okButton, nil];
+		[cancelAndOkMenu setAnchorPoint: ccp(0, 0)];
+		[cancelAndOkMenu setPosition: CGPointZero];
+		[self addChild: cancelAndOkMenu];
+	}
+	
+	return self;
+}
+
 - (id) initNotificationWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew
 {
 	if (self = [self init])
@@ -289,7 +336,7 @@
         callbackObj = callbackObjNew;
         selector = selectorNew;
         
-        CCSprite *background = [self createBackground];
+        CCSprite *background = [self createBackgroundStatic];
         
 		NSMutableArray *buttons = [NSMutableArray array];
 		float okButtonPosX = background.position.x;
@@ -308,10 +355,10 @@
 		
 		if ([Director shared].online)
 		{
-			CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" selectedImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" target:self selector:@selector(nextStageButtonPressed:)];
-			okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
-			[okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
-			[buttons addObject: okButton];
+			CCMenuItemImage *nextLevelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" selectedImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" target:self selector:@selector(nextStageButtonPressed:)];
+			nextLevelButton.scale = retryButton.scale;
+			[nextLevelButton setPosition: ccp(background.position.x + (backgroundWidth / 2) * 0.55, background.position.y + (backgroundHeight / 2) * 0.425)];
+			[buttons addObject: nextLevelButton];
 			
 			if (![[Director shared].stage.creator isEqualToString: [Director shared].username])
 			{
@@ -335,7 +382,7 @@
 				[ratingThanksLabel setVisible: NO];
 				
 				dislikeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_thumbs_down.png" selectedImage:@"Media/Buttons/general/button_dialog_thumbs_down.png" target:self selector:@selector(dislikeButtonPressed:)];
-				dislikeButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
+				dislikeButton.scale = (backgroundWidth * 0.2) / dislikeButton.contentSize.width;
 				[dislikeButton setPosition: ccp(okButtonPosX - backgroundWidth / 8, background.position.y)];
 				[buttons addObject: dislikeButton];
 			}			
@@ -969,6 +1016,31 @@
 	return background;
 }
 
+- (CCSprite *) createBackgroundStatic
+{
+	CGSize s = [CCDirector sharedDirector].winSize;
+	
+	//This is the invisible closing background which will remove the notification window if hit.
+	CCSprite *backgroundDimmer = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
+	[backgroundDimmer setScaleX: (s.width / backgroundDimmer.contentSize.width)];
+	[backgroundDimmer setScaleY: (s.height / backgroundDimmer.contentSize.height)];
+	[backgroundDimmer setOpacity: 100];
+	[backgroundDimmer setPosition: ccp(s.width * 0.5, s.height * 0.5)];
+	[self addChild: backgroundDimmer z: -2];
+	
+	CCSprite *background = [CCSprite node];
+	background = [background initWithFile: @"Media/Backgrounds/general/dialog.png"];
+	float scale = (s.width * .75) / background.contentSize.width;
+	[background setScale: scale];
+	[background setPosition:ccp(s.width / 2, s.height / 2)];
+	[self addChild:background z:-1];
+	
+	backgroundWidth = background.contentSize.width * background.scale;
+	backgroundHeight = background.contentSize.height * background.scale;
+	
+	return background;
+}
+
 + (CCSprite *) createTextWithShadow: (NSString *) string textSize: (float) textSize
 {
 	CCLabelTTF *headerShadow = [CCLabelTTF labelWithString: string fontName: DIALOG_FONT fontSize: textSize * [Director shared].scaleFactor.width];
@@ -1049,7 +1121,7 @@
 {
 	[self.textField removeFromSuperview];
 	[self.textField2 removeFromSuperview];
-    [self removeFromParentAndCleanup:YES];
+    [self removeFromParentAndCleanup: YES];
 }
 
 #pragma mark BUTTON PRESSES
