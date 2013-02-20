@@ -6,7 +6,7 @@
 #define FONT_SIZE_LEVEL_LARGE 102
 #define FONT_SIZE_TITLE 18
 #define FONT_SIZE_TAG 8
-#define FONT_SIZE_FILTER 14
+#define FONT_SIZE_FILTER 11
 #define TITLE_FONT_SIZE 32
 
 @implementation StageSelectLayer
@@ -32,12 +32,13 @@
 {
 	if( (self = [super init]))
     {
+		[[CCTextureCache sharedTextureCache] removeUnusedTextures];
+		
 		// enable events
 		self.isTouchEnabled = YES;
 		
 		//Defaults
-		menuItemsPerPage = 20;
-		totalMenuItems = [[self localLevelsList] count];
+		filterType = 0;
 		
 		//Pan gesture recognizer for swiping the menu.
 		pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
@@ -76,10 +77,14 @@
 	
 	if ([Director shared].online)
 	{
+		menuItemsPerPage = 10;
+		totalMenuItems = 9000;
 		[self createOnlineLevelList];
 	}
 	else
 	{
+		menuItemsPerPage = 20;
+		totalMenuItems = [[self localLevelsList] count];
 		[self createLocalLevelList];
 	}
 	
@@ -146,6 +151,11 @@
 	
 	enabledMenuItems = MIN(totalMenuItems, highestLevel + 2);
 	
+	if (![Director shared].fullVersion)
+	{
+		enabledMenuItems = MIN(15, enabledMenuItems);
+	}
+	
 	NSDictionary *levelProgress = [MToolsAppSettings getValueWithName: @"levelProgress"];
 	for (int i = 0; i < enabledMenuItems; i++)
 	{
@@ -154,13 +164,14 @@
 		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
 		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
 		
-		CCLabelTTF *label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL_LARGE  / [Director shared].scaleFactor.width];
+		int fontSize = menuItemSprite.contentSize.width * 0.5;
+		CCLabelTTF *label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: fontSize];
 		[label setColor: ccBLACK];
 		[label setAnchorPoint: ccp(0.5, 0.5)];
 		[label setPosition: ccp((menuItemSprite.contentSize.width / 2 + 3) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2 - 3) * menuItemSprite.scale)];
 		[menuItemSprite addChild: label];
 		
-		label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: FONT_SIZE_LEVEL_LARGE / [Director shared].scaleFactor.width];
+		label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: fontSize];
 		[label setColor: ccWHITE];
 		[label setAnchorPoint: ccp(0.5, 0.5)];
 		[label setPosition: ccp((menuItemSprite.contentSize.width / 2) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2) * menuItemSprite.scale)];
@@ -184,9 +195,20 @@
 		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background_locked.png"];
 		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background_locked.png"];
 		
-		menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender)
+		if (i >= 15)
+		{
+			menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender)
+						{
+							DialogLayer *purchaseDialog = [[DialogLayer alloc] initNotificationWithMessage: @"Sorry, but playing online levels requires purchasing the Full Version in-app purchase." callback: self selector: @selector(openPurchaseDialog)];
+							[self addChild: purchaseDialog z: 9000];
+						}];
+		}
+		else
+		{
+			menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender)
 					{
 					}];
+		}
 		float scale = (s.width * 0.1) / menuItem.contentSize.width;
 		[menuItem setScale: scale];
 		[menuItems addObject: menuItem];
@@ -448,6 +470,7 @@
 	
 	[arrowLeftMenuItem setScale: (arrowBounds.size.height / arrowLeftMenuItem.contentSize.height)];
 	[arrowLeftMenuItem setPosition: ccp(arrowBounds.origin.x - (arrowLeftMenuItem.contentSize.width * arrowLeftMenuItem.scaleX) - arrowBuffer, arrowBounds.origin.y)];
+	[arrowLeftMenuItem setTag: 0];
 	
 	CCSprite *arrowRightSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_right_arrow.png"];
 	CCSprite *arrowRightSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_right_arrow.png"];
@@ -456,10 +479,12 @@
 	}];
 	[arrowRightMenuItem setScale: (arrowBounds.size.height / arrowRightMenuItem.contentSize.height)];
 	[arrowRightMenuItem setPosition: ccp(arrowBounds.origin.x + (arrowRightMenuItem.contentSize.width * arrowRightMenuItem.scaleX) + arrowBuffer, arrowBounds.origin.y)];
+	[arrowRightMenuItem setTag: 1];
 	
 	CCMenu *arrowMenu = [CCMenu menuWithItems: arrowLeftMenuItem, arrowRightMenuItem, nil];
 	[arrowMenu setAnchorPoint: ccp(0, 0)];
 	[arrowMenu setPosition: CGPointZero];
+	pageMenu = arrowMenu;
 	[self addChild: arrowMenu];
 	
 	//BUTTONS FOR SELECTION FILTERING
@@ -469,9 +494,9 @@
 	CCMenuItemSprite *backToMainMenuItem = [CCMenuItemSprite itemWithNormalSprite: backToMainSprite selectedSprite: backToMainSpriteSelected block:^(id sender) {
 		[self goToMainMenu];
 	}];
-	[backToMainMenuItem setScale: ((botBounds.size.width * .25) / backToMainMenuItem.contentSize.width)];
+	[backToMainMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
 	[backToMainMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .10), 0)];
-	CCLabelTTF *backToMainLabel = [DialogLayer createShadowHeaderWithString: @"Main Menu"
+	CCLabelTTF *backToMainLabel = [DialogLayer createShadowHeaderWithString: @"MAIN MENU"
 																   position: ccp(backToMainMenuItem.position.x, - ((backToMainMenuItem.contentSize.height * backToMainMenuItem.scale) * 0.15))
 															   shadowOffset: CGSizeMake(1, -1)
 																	  color: ccWHITE
@@ -479,40 +504,109 @@
 																 dimensions: CGSizeMake(backToMainMenuItem.contentSize.width * backToMainMenuItem.scaleX, backToMainMenuItem.contentSize.height * backToMainMenuItem.scaleY)
 																 hAlignment: kCCTextAlignmentCenter
 															  lineBreakMode: kCCLineBreakModeMiddleTruncation
-																   fontSize: FONT_SIZE_FILTER * [Director shared].scaleFactor.width
+																   fontSize: (FONT_SIZE_FILTER * [Director shared].scaleFactor.width)
 								   ];
 	[backToMainLabel setAnchorPoint: ccp(0.5, 0.5)];
 	[self addChild: backToMainLabel z: 101];
 	
-	CCSprite *newestFilter = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
-	[newestFilter setScale: ((botBounds.size.width * .2) / newestFilter.contentSize.width)];
-	[newestFilter setPosition: ccp(botButtonStart.x + (botBounds.size.width * .30), 0)];
-	[self addChild: newestFilter];
+	//Newest levels filter (default)
+	CCSprite *newestLevelsSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	CCSprite *newestLevelsSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	CCMenuItemSprite *newestLevelsMenuItem = [CCMenuItemSprite itemWithNormalSprite: newestLevelsSprite selectedSprite: newestLevelsSelectedSprite block:^(id sender) {
+		[self setFilter: 0];
+	}];
+	[newestLevelsMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
+	[newestLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .30), 0)];
+	CCLabelTTF *newestLevelsLabel = [DialogLayer createShadowHeaderWithString: @"NEWEST"
+																   position: ccp(newestLevelsMenuItem.position.x, - ((newestLevelsMenuItem.contentSize.height * newestLevelsMenuItem.scale) * 0.15))
+															   shadowOffset: CGSizeMake(1, -1)
+																	  color: ccWHITE
+																shadowColor: ccBLACK
+																 dimensions: CGSizeMake(backToMainMenuItem.contentSize.width * backToMainMenuItem.scaleX, backToMainMenuItem.contentSize.height * backToMainMenuItem.scaleY)
+																 hAlignment: kCCTextAlignmentCenter
+															  lineBreakMode: kCCLineBreakModeMiddleTruncation
+																   fontSize: (FONT_SIZE_FILTER * [Director shared].scaleFactor.width)
+								   ];
+	[newestLevelsLabel setAnchorPoint: ccp(0.5, 0.5)];
+	[self addChild: newestLevelsLabel z: 101];
 	
-	CCSprite *popularFilter = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
-	[popularFilter setScale: ((botBounds.size.width * .2) / popularFilter.contentSize.width)];
-	[popularFilter setPosition: ccp(botButtonStart.x + (botBounds.size.width * .50), 0)];
-	[self addChild: popularFilter];
+	//Popular levels filter
+	CCSprite *popularLevelsSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	CCSprite *popularLevelsSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	CCMenuItemSprite *popularLevelsMenuItem = [CCMenuItemSprite itemWithNormalSprite: popularLevelsSprite selectedSprite: popularLevelsSelectedSprite block:^(id sender) {
+		[self setFilter: 1];
+	}];
+	[popularLevelsMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
+	[popularLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .50), 0)];
+	CCLabelTTF *popularLevelsLabel = [DialogLayer createShadowHeaderWithString: @"POPULAR"
+																	 position: ccp(popularLevelsMenuItem.position.x, - ((popularLevelsMenuItem.contentSize.height * popularLevelsMenuItem.scale) * 0.15))
+																 shadowOffset: CGSizeMake(1, -1)
+																		color: ccWHITE
+																  shadowColor: ccBLACK
+																   dimensions: CGSizeMake(backToMainMenuItem.contentSize.width * backToMainMenuItem.scaleX, backToMainMenuItem.contentSize.height * backToMainMenuItem.scaleY)
+																   hAlignment: kCCTextAlignmentCenter
+																lineBreakMode: kCCLineBreakModeMiddleTruncation
+																	 fontSize: (FONT_SIZE_FILTER * [Director shared].scaleFactor.width)
+									 ];
+	[popularLevelsLabel setAnchorPoint: ccp(0.5, 0.5)];
+	[self addChild: popularLevelsLabel z: 101];
 	
-	CCSprite *bestRatedFilter = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
-	[bestRatedFilter setScale: ((botBounds.size.width * .2) / bestRatedFilter.contentSize.width)];
-	[bestRatedFilter setPosition: ccp(botButtonStart.x + (botBounds.size.width * .70), 0)];
-	[self addChild: bestRatedFilter];
+	//Best rated
+	CCSprite *bestRatedLevelsSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	CCSprite *bestRatedLevelsSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	CCMenuItemSprite *bestRatedLevelsMenuItem = [CCMenuItemSprite itemWithNormalSprite: bestRatedLevelsSprite selectedSprite: bestRatedLevelsSelectedSprite block:^(id sender) {
+		[self setFilter: 2];
+	}];
+	[bestRatedLevelsMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
+	[bestRatedLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .70), 0)];
+	CCLabelTTF *bestRatedLevelsLabel = [DialogLayer createShadowHeaderWithString: @"TOP RATED"
+																	  position: ccp(bestRatedLevelsMenuItem.position.x, - ((bestRatedLevelsMenuItem.contentSize.height * bestRatedLevelsMenuItem.scale) * 0.15))
+																  shadowOffset: CGSizeMake(1, -1)
+																		 color: ccWHITE
+																   shadowColor: ccBLACK
+																	dimensions: CGSizeMake(backToMainMenuItem.contentSize.width * backToMainMenuItem.scaleX, backToMainMenuItem.contentSize.height * backToMainMenuItem.scaleY)
+																	hAlignment: kCCTextAlignmentCenter
+																 lineBreakMode: kCCLineBreakModeMiddleTruncation
+																	  fontSize: (FONT_SIZE_FILTER * [Director shared].scaleFactor.width)
+									  ];
+	[bestRatedLevelsLabel setAnchorPoint: ccp(0.5, 0.5)];
+	[self addChild: bestRatedLevelsLabel z: 101];
 	
-	CCSprite *byTagFilter = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
-	[byTagFilter setScale: ((botBounds.size.width * .2) / byTagFilter.contentSize.width)];
-	[byTagFilter setPosition: ccp(botButtonStart.x + (botBounds.size.width * .90), 0)];
-	[self addChild: byTagFilter];
+	//By tag
+	CCSprite *tagLevelsSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	CCSprite *tagLevelsSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	CCMenuItemSprite *tagLevelsMenuItem = [CCMenuItemSprite itemWithNormalSprite: tagLevelsSprite selectedSprite: tagLevelsSelectedSprite block:^(id sender) {
+		[self setFilter: 3];
+	}];
+	[tagLevelsMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
+	[tagLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .90), 0)];
+	CCLabelTTF *tagLevelsLabel = [DialogLayer createShadowHeaderWithString: @"BY TAG"
+																		position: ccp(tagLevelsMenuItem.position.x, - ((tagLevelsMenuItem.contentSize.height * tagLevelsMenuItem.scale) * 0.15))
+																	shadowOffset: CGSizeMake(1, -1)
+																		   color: ccWHITE
+																	 shadowColor: ccBLACK
+																	  dimensions: CGSizeMake(backToMainMenuItem.contentSize.width * backToMainMenuItem.scaleX, backToMainMenuItem.contentSize.height * backToMainMenuItem.scaleY)
+																	  hAlignment: kCCTextAlignmentCenter
+																   lineBreakMode: kCCLineBreakModeMiddleTruncation
+																		fontSize: (FONT_SIZE_FILTER * [Director shared].scaleFactor.width)
+										];
+	[tagLevelsLabel setAnchorPoint: ccp(0.5, 0.5)];
+	[self addChild: tagLevelsLabel z: 101];
 	
-	CCMenu *botMenu = [CCMenu menuWithItems: backToMainMenuItem, nil];
+	CCMenu *botMenu = [CCMenu menuWithItems: backToMainMenuItem, newestLevelsMenuItem, popularLevelsMenuItem, bestRatedLevelsMenuItem, tagLevelsMenuItem, nil];
 	[botMenu setAnchorPoint: ccp(0, 0)];
 	[botMenu setPosition: CGPointZero];
 	[self addChild: botMenu];
 	
 	//Update all the menus!
-	selectedLevelIndex = 0;
-	[self performSelectorInBackground: @selector(setUpdating:) withObject: [NSNumber numberWithBool: YES]];
-	[self updateOnlineLevelList];
+	if ([levelsList count] > 0)
+	{
+		NSArray *level = [levelsList objectAtIndex: 0];
+		[self setOnlineLevelName: [level objectAtIndex: 0]];
+		selectedLevelIndex = 0;
+		[self performSelectorInBackground: @selector(setUpdating:) withObject: [NSNumber numberWithBool: YES]];
+		[self updateOnlineLevelList];
+	}
 }
 
 - (void) updateOnlineLevelList
@@ -524,6 +618,13 @@
 	
 	if (getNewListFromServer)
 		levelsList = [self onlineLevelsList];
+	
+	if (!levelsList || [levelsList count] <= 0)
+	{
+		DialogLayer *noLevelsDialog = [[DialogLayer alloc] initNotificationWithMessage: @"No levels were obtained from the server. You probably reached the end of the list."];
+		[self addChild: noLevelsDialog z: 9000];
+		 return;
+	}
 	
 	NSMutableArray *menuItems = [NSMutableArray array];
 	
@@ -582,7 +683,13 @@
 		[rating visit];
 		
 		//Date modified
-		CCLabelTTF *date = [DialogLayer createShadowHeaderWithString: [level objectAtIndex: 3]
+		NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+		[dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+		NSDate *formattedDate = [dateFormat dateFromString: [level objectAtIndex: 3]];
+		[dateFormat setDateFormat: @"MMM d, yyyy"];
+		NSString *formattedDateString = [dateFormat stringFromDate: formattedDate];
+		
+		CCLabelTTF *date = [DialogLayer createShadowHeaderWithString: formattedDateString
 															   position: ccp(midBounds.size.width * 0.65, -s.height / 2)
 														   shadowOffset: CGSizeMake(1, -1)
 																  color: ccWHITE
@@ -621,6 +728,18 @@
 	
 	//Update the details.
 	[self updateLevelDetails: [levelsList objectAtIndex: selectedLevelIndex]];
+	
+	[[pageMenu getChildByTag: 0] setVisible: YES];
+	[[pageMenu getChildByTag: 1] setVisible: YES];
+	
+	if ([Director shared].levelSelectPageNum <= 0)
+	{
+		[[pageMenu getChildByTag: 0] setVisible: NO];
+	}
+	if ([levelsList count] < 10)
+	{
+		[[pageMenu getChildByTag: 1] setVisible: NO];
+	}
 }
 
 - (void) updateLevelDetails: (NSArray *) level
@@ -704,11 +823,11 @@
 	
 	//Thumbs up rating.
 	CCLabelTTF *thumbsUpAmount = [DialogLayer createShadowHeaderWithString: [NSString stringWithFormat: @"%@%%", [level objectAtIndex: 2]]
-															   position: ccp(topBounds.origin.x + topBounds.size.width * 0.095, topBounds.origin.y + topBounds.size.height * 0.025)
+															   position: ccp(topBounds.origin.x + topBounds.size.width * -0.025, topBounds.origin.y + topBounds.size.height * 0.025)
 														   shadowOffset: CGSizeMake(1, -1)
 																  color: ccWHITE
 															shadowColor: ccBLACK
-															 dimensions: CGSizeMake(thumbsUpBackground.contentSize.width * 0.5 * thumbsUpBackground.scaleX, thumbsUpBackground.contentSize.height * creatorBackground.scaleY)
+															 dimensions: CGSizeMake(thumbsUpBackground.contentSize.width * thumbsUpBackground.scaleX, thumbsUpBackground.contentSize.height * creatorBackground.scaleY)
 															 hAlignment: kCCTextAlignmentRight
 														  lineBreakMode: kCCLineBreakModeMiddleTruncation
 															   fontSize: FONT_SIZE_TITLE * [Director shared].scaleFactor.width
@@ -806,12 +925,32 @@
 - (NSArray *) onlineLevelsList
 {
 	NSMutableArray *levelsList = [NSMutableArray array];
-	[levelsList addObjectsFromArray: [[Director shared] onlineLevelsList: [Director shared].levelSelectPageNum * 10 withSorting: 0]];
+	NSArray *newLevels = [[Director shared] onlineLevelsList: ([Director shared].levelSelectPageNum * 10) withSorting: filterType];
+	
+	if (!newLevels || [newLevels count] <= 0)
+	{
+		DialogLayer *noLevelsDialog = [[DialogLayer alloc] initNotificationWithMessage: @"No levels were obtained from the server. There may be issues right now, sorry!"];
+		[self addChild: noLevelsDialog z: 9000];
+		return nil;
+	}
+	
+	[levelsList addObjectsFromArray: newLevels];
 	
 	return levelsList;
 }
 
 #pragma mark ONLINE LEVEL CONTROLS
+
+- (void) setFilter: (int) newFilter
+{
+	[Director shared].levelSelectPageNum = 0;
+	filterType = newFilter;
+	[onlineLevelListSprite removeAllChildrenWithCleanup: YES];
+	[midBackground setZOrder: -1];
+	selectedLevelIndex = 0;
+	getNewListFromServer = YES;
+	[self performSelector: @selector(updateOnlineLevelList) withObject: nil afterDelay: 0.1];
+}
 
 - (void) setOnlineLevelName: (NSString *) name
 {
@@ -964,6 +1103,15 @@
 		}
     }
 }
+
+#pragma mark PURCHASING
+
+- (void) openPurchaseDialog
+{
+	DialogLayer *purchaseDialog = [[DialogLayer alloc] initPurchaseWithCallbackObj: self selector: @selector(madePurchase:)];
+	[self addChild: purchaseDialog z: 9000];
+}
+
 
 #pragma mark GOTOS
 

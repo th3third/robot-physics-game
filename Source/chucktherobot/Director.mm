@@ -120,14 +120,16 @@ static Director *shared = nil;
 		
 		[self calcNumOfBackgrounds];
 		
-		//TODO: REMOVE THIS AFTER TESTING!!!
+		//Set the full version value to the stored value.
 		self.fullVersion = [[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"];
 		
 		//This is going to be the music player delegate.
 		[[CDAudioManager sharedManager] setBackgroundMusicCompletionListener: self selector: @selector(musicFinished)];
 		
 		//The default bot type.
-		self.botType = @"general";
+		//Set the first skin to on since it will always be available.
+		[MToolsAppSettings setValue: @"purchased" withName: @"botskin1Receipt"];
+		self.botType = @"1";
 		
 		//Set up the scaling factor.
 		CGSize winSize = [CCDirector sharedDirector].winSize;
@@ -297,9 +299,6 @@ static Director *shared = nil;
 //TODO: Strip out the | character in the level name. You can't do that!
 - (bool) saveLevelToServer
 {
-	if (!self.loggedIn || self.processingNetworkRequest)
-		return NO;
-
 	self.dataState = DATA_STATE_SAVING_LEVEL;
 	self.processingNetworkRequest = YES;
 	
@@ -350,7 +349,7 @@ static Director *shared = nil;
 
 - (bool) getLevelFromServer
 {
-	if (!self.loggedIn || self.processingNetworkRequest)
+	if (!self.loggedIn)
 		return NO;
 	
 	self.dataState = DATA_STATE_LOADING_LEVEL;
@@ -502,10 +501,9 @@ static Director *shared = nil;
 
 - (void) rateLevel: (NSString *) name withRating: (int) rating
 {
-	if (!name || !rating)
+	if (!name || rating < 0 || rating > 1)
 		return;
-	NSLog(@"Sending flag for %@", name);
-	self.dataState = DATA_STATE_SAVING_LEVEL;
+	
 	self.processingNetworkRequest = YES;
 	
 	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@&value4=%d", self.hashedPassword, self.username, name, rating];
@@ -517,13 +515,15 @@ static Director *shared = nil;
 	[request setHTTPBody: requestData];
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
 	
-	NSURLResponse *response = [[NSURLResponse alloc] init];
-	NSString *responseString;
-	NSError *error;
-	NSData *returnData = [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
-	responseString = [[NSString alloc] initWithData: returnData encoding: NSUTF8StringEncoding];
-	
-	[self cleanupConnection];
+	NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+	[NSURLConnection sendAsynchronousRequest: request queue: queue completionHandler:^(NSURLResponse *responseString, NSData *returnData, NSError *error) {
+		if (error)
+		{
+			[debug log: [NSString stringWithFormat: @"There was an error sending the rating: %@", error]];
+		}
+		
+		self.processingNetworkRequest = NO;
+	}];
 }
 
 #pragma mark MUSIC
@@ -565,6 +565,7 @@ static Director *shared = nil;
 		[[SimpleAudioEngine sharedEngine] setMute: NO];
 	}
 	
+	self.soundEnabled = ![[SimpleAudioEngine sharedEngine] mute];	
 	[MToolsAppSettings setValue: [NSNumber numberWithBool: [[SimpleAudioEngine sharedEngine] mute]] withName: @"soundEnabled"];
 }
 
@@ -740,7 +741,7 @@ static Director *shared = nil;
 	NSError *error;
 	NSData *returnData = [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
 	responseString = [[NSString alloc] initWithData: returnData encoding: NSUTF8StringEncoding];
-	
+
 	[self cleanupConnection];
 	
 	//TODO: Parse out the listing returned.

@@ -30,7 +30,6 @@
 	if( (self = [super init]))
     {
 		// enable events
-		
 		self.isTouchEnabled = YES;
 		
 		CGSize size = [[CCDirector sharedDirector] winSize];
@@ -73,7 +72,7 @@
 
 - (void) failedLoading
 {
-	DialogLayer *errorDialog = [[DialogLayer alloc] initNotificationWithMessage: @"There was an error loading the level from the server. This could mean the file is corrupt or the server is currently down. Sorry about that!"];
+	DialogLayer *errorDialog = [[DialogLayer alloc] initNotificationWithMessage: @"There was an error loading the level from the server. This could mean the file is corrupt or the server is currently down. Sorry about that!" callback: self selector: @selector(goToStageSelect)];
 	[self addChild: errorDialog z: 9000];
 }
 
@@ -132,7 +131,7 @@
 
 - (void) goToStageSelect
 {
-	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.0 scene: [StageSelectLayer scene]]];
+	[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [StageSelectLayer scene]]];
 }
 
 @end

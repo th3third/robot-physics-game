@@ -49,6 +49,8 @@ enum
 {
 	if( (self = [super init]))
     {
+		[[CCTextureCache sharedTextureCache] removeUnusedTextures];
+		
 		// enable events
 		self.isTouchEnabled = YES;
 		self.isAccelerometerEnabled = NO;
@@ -188,12 +190,12 @@ enum
 			if (![Director shared].paused)
 			{
 				[Director shared].paused = YES;
-				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Hello, I am a placeholder until the online pause menu is working. Want to go back to the level select?" callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initStageMenuWithHeader: @"ASDFASD" target: self selector: @selector(quitConfirm)];
 				[self addChild: mainMenuConfirmDialog z: 9000];
 			}
 			else
 			{
-				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Hello, I am a placeholder until the online pause menu is working. Want to go back to the level select?" callback: self selector: @selector(quitConfirm)];
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initStageMenuWithHeader: @"ASDFASD" target: self selector: @selector(quitConfirm)];
 				[self addChild: mainMenuConfirmDialog z: 9000];
 			}
 		}
@@ -549,7 +551,7 @@ enum
 	
 	//PLAY
 	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
-    menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_play.png" selectedImage: @"Media/Buttons/general/button_editor_play.png" block:^(id sender) {
+    playButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_play.png" selectedImage: @"Media/Buttons/general/button_editor_stop.png" block:^(id sender) {
 		if ([Director shared].paused)
 		{
 			[Director shared].paused = NO;
@@ -559,15 +561,20 @@ enum
 			[Director shared].paused = YES;
 			[self resetStage];
 		}
+		
+		id ni = [CCSprite spriteWithTexture:[(CCSprite*)playButton.normalImage texture]];
+		id si = [CCSprite spriteWithTexture:[(CCSprite*)playButton.selectedImage texture]];
+		[playButton setNormalImage: si];
+		[playButton setSelectedImage: ni];
     }];
 	if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorLeftButtonSize / menuItem.contentSize.width;
 	else
 		scale = editorLeftButtonSize / menuItem.contentSize.height;
-	[menuItem setScale: scale];
-	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
-	[menuItem setPosition: menuItemPos];
-    [menuItems addObject: menuItem];
+	[playButton setScale: scale];
+	[playButton setAnchorPoint: ccp(0.5, 0.5)];
+	[playButton setPosition: menuItemPos];
+    [menuItems addObject: playButton];
 	
 	//SAVE
 	menuItemPos = ccp(startingPoint.x, (gear.contentSize.height / 1.5 * gear.scale) + startingPoint.y + ((editorLeftButtonSize + editorButtonPadding) * [menuItems count]));
@@ -935,8 +942,21 @@ enum
 
 - (void) showWinScreen
 {
-	winDialog = [[DialogLayer alloc] initWinnerWithHeader: @"" target: self selector: @selector(goToNextStage:) andTimeElapsed: timeElapsedSinceStart andScore: score];
+	DialogLayer *winDialog = [[DialogLayer alloc] initWinnerWithHeader: @"" target: self selector: @selector(goToNextStage:) andTimeElapsed: timeElapsedSinceStart andScore: score];
 	[self addChild: winDialog z: 9000];
+}
+
+- (void) flagButtonPressed
+{
+	DialogLayer *flaggerDialog = [[DialogLayer alloc] initChoiceWithMessage: @"You are about to flag this level for inappropriate content." callback: self selector: @selector(flagConfirm) selectorCancel: @selector(showWinScreen)];
+	[self addChild: flaggerDialog z: 9000];
+}
+
+- (void) flagConfirm
+{
+	[[Director shared] flagLevel: [Director shared].stage.name];
+	DialogLayer *flaggerDialog = [[DialogLayer alloc] initNotificationWithMessage: @"Thank you for notifying us about this level's inappropriate contents." callback: self selector: @selector(showWinScreen)];
+	[self addChild: flaggerDialog z: 9000];
 }
 
 - (void) goToNextStage: (NSNumber *) retry
@@ -958,7 +978,6 @@ enum
 
 - (void) resetStage
 {
-	[debug log: @"Resetting stage"];
 	timeElapsedSinceStart = 0.0;
 	levelCompleted = NO;
 	
@@ -975,12 +994,6 @@ enum
     for (Object *object in [[Director shared].stage objects])
     {
         [object reset];
-        //world->Step(0.0001, 0, 1);
-        
-        /*for (Object *object in [[Director shared].stage objects])
-        {
-            [object tick: 0.0001];
-        }*/
     } 
 }
 

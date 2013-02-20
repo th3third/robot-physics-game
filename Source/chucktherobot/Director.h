@@ -60,6 +60,7 @@ enum DataState
 @property (nonatomic) bool processingNetworkRequest;
 @property (nonatomic) NSArray *localLevelsList;
 @property (nonatomic) NSArray *defaultLevelsList;
+@property (nonatomic) int onlineLevelsListCount;
 @property (nonatomic) CGSize scaleFactor;
 @property NSDictionary *presetScores;
 @property DialogLayer *currentDialog;

@@ -29,8 +29,9 @@
 {
 	if( (self = [super init]))
     {
-		// enable events
+		[[CCTextureCache sharedTextureCache] removeUnusedTextures];
 		
+		// enable events
 		self.isTouchEnabled = YES;
 		
 		CGSize size = [[CCDirector sharedDirector] winSize];

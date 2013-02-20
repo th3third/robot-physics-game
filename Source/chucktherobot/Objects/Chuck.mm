@@ -21,8 +21,8 @@
 - (id) initWithPos: (CGPoint) pos
 {
 	if ((self = [super init]))
-    {
-        // Initialize man variables
+    {		
+        // Initialize main variables
         self.startPos = pos;
 		self.curPos = self.startPos;
         

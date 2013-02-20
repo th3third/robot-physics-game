@@ -142,6 +142,8 @@
 // purge memory
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
 {
+	NSLog(@"Received memory warning - flushing cache.");
+	[[CCTextureCache sharedTextureCache] removeUnusedTextures];
 	[[CCDirector sharedDirector] purgeCachedData];
 }
 

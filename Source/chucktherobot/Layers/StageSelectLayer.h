@@ -10,6 +10,7 @@
 
 @interface StageSelectLayer : Layer
 {
+	int filterType;
     int totalMenuItems;
 	int menuItemsPerPage;
 	bool pageTurning;

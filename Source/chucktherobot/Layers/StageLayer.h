@@ -50,6 +50,7 @@
 	//Saving vars
 	CCMenuItemFont *stageNameItem;
 	CCMenuItemSprite *sound;
+	CCMenuItemImage *playButton;
 }
 
 typedef enum

@@ -36,6 +36,8 @@
 {
 	if( (self=[super init]))
     {
+		[[CCTextureCache sharedTextureCache] removeUnusedTextures];
+		
 		// enable events
 		
 		self.isTouchEnabled = YES;
