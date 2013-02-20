@@ -145,26 +145,41 @@
 	
 	menuItems = [NSMutableArray array];
 	
+	//Purchases
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_cart.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_cart.png"];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender)
 	{
 		[self openPurchaseDialog];
 	}];
-	[menuItem setScale: scale];
-	[menuItem setAnchorPoint: ccp(0, 0.5)];
-	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.15), lowerLeftMenuBackground.position.y)];
+	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.60) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
+	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
+	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.2), lowerLeftMenuBackground.position.y)];
     [menuItems addObject: menuItem];
 	
+	//Credits
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_question_mark.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_question_mark.png"];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 	DialogLayer *creditsDialog = [[DialogLayer alloc] initCreditsWithCallbackObj: self selector: @selector(madePurchase:)];
 	[self addChild: creditsDialog z: 9000];
 	}];
-	[menuItem setScale: scale];
-	[menuItem setAnchorPoint: ccp(1, 0.5)];
-	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.80), lowerLeftMenuBackground.position.y)];
+	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.60) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
+	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
+	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.50), lowerLeftMenuBackground.position.y)];
+    [menuItems addObject: menuItem];
+	
+	//Logout
+	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_logout.png"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_logout.png"];
+    menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[[Director shared] logout];
+		DialogLayer *logoutDialog = [[DialogLayer alloc] initNotificationWithMessage: @"You have been logged out."];
+		[self addChild: logoutDialog z: 9000];
+	}];
+	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.60) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
+	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
+	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.8), lowerLeftMenuBackground.position.y)];
     [menuItems addObject: menuItem];
 	
 	menu = [CCMenu menuWithArray: menuItems];

@@ -13,6 +13,18 @@
 #import "MToolsPurchaseManager.h"
 #import <CommonCrypto/CommonDigest.h>
 
+#ifdef PREPAID
+
+#define PREPAID_VERSION true
+
+#endif
+
+#ifndef PREPAID
+
+#define PREPAID_VERSION false
+
+#endif
+
 @implementation Director
 
 static CGSize designSize = {480, 320};
@@ -99,14 +111,14 @@ static Director *shared = nil;
 						[NSNumber numberWithFloat: 10.0f], @"Level 60.ctr",
 						nil];
 		
-		self.levelsServerURL = [NSURL URLWithString: @"http://gearsprout.com/content/com.gearsprout.chucktherobot/levels"];
-		self.loginScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/auth_user.php", [self.levelsServerURL absoluteString]]];
-		self.createUserScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/new_user.php", [self.levelsServerURL absoluteString]]];
-		self.saveLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/save_level.php", [self.levelsServerURL absoluteString]]];
-		self.loadLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/load_level.php", [self.levelsServerURL absoluteString]]];
-		self.listingsScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/listing.php", [self.levelsServerURL absoluteString]]];
-		self.flagLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/flag.php", [self.levelsServerURL absoluteString]]];
-		self.rateLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/rate.php", [self.levelsServerURL absoluteString]]];
+		self.levelsServerURL = [NSURL URLWithString: @"http://gearsprout.com/content/com.gearsprout.chuckthebot/levels"];
+		self.loginScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/scripts/auth_user.php", [self.levelsServerURL absoluteString]]];
+		self.createUserScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/scripts/new_user.php", [self.levelsServerURL absoluteString]]];
+		self.saveLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/scripts/save_level.php", [self.levelsServerURL absoluteString]]];
+		self.loadLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/scripts/load_level.php", [self.levelsServerURL absoluteString]]];
+		self.listingsScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/scripts/listing.php", [self.levelsServerURL absoluteString]]];
+		self.flagLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/scripts/flag.php", [self.levelsServerURL absoluteString]]];
+		self.rateLevelScriptURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/scripts/rate.php", [self.levelsServerURL absoluteString]]];
 		self.objID = 0;
 		self.globalFont = @"Segoe Print";
 		self.drawDebugData = NO;
@@ -119,9 +131,6 @@ static Director *shared = nil;
 		}
 		
 		[self calcNumOfBackgrounds];
-		
-		//Set the full version value to the stored value.
-		self.fullVersion = [[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"];
 		
 		//This is going to be the music player delegate.
 		[[CDAudioManager sharedManager] setBackgroundMusicCompletionListener: self selector: @selector(musicFinished)];
@@ -216,7 +225,7 @@ static Director *shared = nil;
 
 //Upon creation these are stored in the app settings for future use.
 //The password is immediately hashed although the username needs to remain intact in plain text until transmission.
-- (bool) createUsername: (NSString *) username andPassword: (NSString *) password
+- (bool) createUsername: (NSString *) username andPassword: (NSString *) password andEmail: (NSString *) email
 {
 	if (self.processingNetworkRequest)
 		return NO;
@@ -230,7 +239,7 @@ static Director *shared = nil;
 	self.username = username;
 	self.hashedPassword = encryptedPassword;
 	
-	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@", encryptedPassword, username];
+	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@", encryptedPassword, username, email];
 	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
 	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.createUserScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
@@ -294,6 +303,15 @@ static Director *shared = nil;
 	}
 	
 	return NO;
+}
+
+- (void) logout
+{
+	self.username = NULL;
+	self.hashedPassword = NULL;
+	
+	[MToolsAppSettings setValue: self.username withName: NULL];
+	[MToolsAppSettings setValue: self.hashedPassword withName: NULL];
 }
 
 //TODO: Strip out the | character in the level name. You can't do that!
@@ -758,6 +776,18 @@ static Director *shared = nil;
 	}
 	
 	return finalLevelsList;
+}
+
+- (bool) fullVersion
+{
+	if (PREPAID_VERSION)
+	{
+		return true;
+	}
+	else
+	{
+		return [[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"];
+	}
 }
 
 - (void) setPaused:(bool)paused

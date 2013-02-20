@@ -40,8 +40,20 @@
 		background.scaleY = size.height / background.contentSize.height;
 		[self addChild: background z: -2];
 		
+		NSArray *statusMessage = [NSArray arrayWithObjects:
+								  @"Constructing circles out of toothpicks",
+								  @"Untangling ropes from each other",
+								  @"Welding robot back together",
+								  @"Throwing blocks in to level",
+								  @"Double-checking safety parameters",
+								  @"Unpopping potential poppable poppers",
+								  @"Inflating all balloons in level",
+								  @"Janitor is sweeping level - stand by",
+								  @"Chuck Enrichment & Testing Initiative",
+								  nil];
+		
 		[self scheduleUpdate];
-		[self setStatusLabel: @"Constructing level out of toothpicks..."];
+		[self setStatusLabel: [statusMessage objectAtIndex: arc4random() % [statusMessage count]]];
 		[self createSpinner];
 		[self loadLevel];
 	}
@@ -82,14 +94,18 @@
 	{
 		CGSize s = [CCDirector sharedDirector].winSize;
 		
-		statusLabel = [CCLabelTTF labelWithString: message fontName: [Director shared].globalFont fontSize: 24];
-        [statusLabel setColor:ccc3(255, 255, 255)];
-        [statusLabel setPosition: ccp(s.width / 2, 50)];
-        [self addChild:statusLabel z: 0];
-	}
-	else
-	{
-		[statusLabel setString: message];
+		[statusLabel removeFromParentAndCleanup:YES];
+		statusLabel = [DialogLayer createShadowHeaderWithString: message
+													   position: ccp(s.width * 0.5, s.height * 0.1)
+												   shadowOffset: CGSizeMake(1, -1)
+														  color: ccWHITE
+													shadowColor: ccBLACK
+													 dimensions: CGSizeMake(s.width, 50)
+													 hAlignment: kCCTextAlignmentCenter
+												  lineBreakMode: kCCLineBreakModeMiddleTruncation
+													   fontSize: 22
+					   ];
+		[self addChild: statusLabel];
 	}
 }
 
@@ -116,7 +132,6 @@
 	
 	if (finishedDownloadingLevel)
 	{
-		[self setStatusLabel: @"Loading level..."];
 		finishedDownloadingLevel = NO;
 		[self scheduleOnce: @selector(goToStage) delay: 1.0];
 	}

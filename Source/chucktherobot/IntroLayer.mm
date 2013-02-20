@@ -55,6 +55,7 @@
 	//Init the purchase stuff.
 	[[MToolsPurchaseManager sharedManager] setVocal: YES];
 	[[MToolsPurchaseManager sharedManager] loadStore];
+	[MToolsPurchaseManager sharedManager].appID = @"com.gearsprout.chuckthebot"; //override the default app ID because we're running the free version on this ID for content.
 	
     //Create the levels folder if it doesn't exist already.
     NSFileManager *fm = [NSFileManager defaultManager];

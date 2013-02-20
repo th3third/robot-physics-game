@@ -54,7 +54,7 @@
         callbackObj = callbackObjNew;
         selector = selectorNew;
         
-        CCSprite *background = [self createBackground];
+        CCSprite *background = [self createBackgroundStatic];
         
         CCLabelTTF *line1Label = [CCLabelTTF labelWithString: line1 fontName: DIALOG_FONT fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width];
         line1Label.color = ccBLACK;
@@ -112,7 +112,7 @@
 		callbackObj = callbackObjNew;
 		selector = selectorNew;
 		
-		CCSprite *background = [self createBackground];
+		CCSprite *background = [self createBackgroundStatic];
 		CGSize s = [CCDirector sharedDirector].winSize;
 		
 		CCLabelTTF *messageLabel = [DialogLayer createShadowHeaderWithString: message
@@ -154,7 +154,7 @@
 		callbackObj = callbackObjNew;
 		selector = selectorNew;
 		
-		CCSprite *background = [self createBackground];
+		CCSprite *background = [self createBackgroundStatic];
 		CGSize s = [CCDirector sharedDirector].winSize;
 		
 		CCLabelTTF *messageLabel = [DialogLayer createShadowHeaderWithString: message
@@ -302,7 +302,8 @@
 		//Flag and edit buttons.
 		if ([Director shared].online)
 		{
-			if ([[Director shared].stage.creator isEqualToString: [Director shared].username])
+			NSLog(@"Comparing %@ to %@", [[Director shared].stage.creator lowercaseString], [[Director shared].username lowercaseString]);
+			if ([[[Director shared].stage.creator lowercaseString] isEqualToString: [[Director shared].username lowercaseString]])
 			{
 				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_edit.png" selectedImage:@"Media/Buttons/general/button_dialog_edit.png" target:self selector:@selector(editButtonPressed:)];
 				flagButton.scale = (backgroundWidth * 0.2) / flagButton.contentSize.width;
@@ -333,6 +334,7 @@
     return self;
 }
 
+//Winner, winner, chicken dinner.
 - (id) initWinnerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andTimeElapsed: (float) timeElapsed andScore:(int)score
 {
 	self.dialogType = 2;
@@ -723,6 +725,7 @@
 	{		
 		callbackObj = callbackObjNew;
 		selector = selectorNew;
+		[MToolsPurchaseManager sharedManager].callback = self;
 		
 		CCSprite *background = [self createBackground];
 		
@@ -785,7 +788,6 @@
 			CCSprite *purchasedIcon = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_icon.png"];
 			[purchasedIcon setScale: (purchaseFullGameMenuItem.contentSize.width * purchaseFullGameMenuItem.scaleX) / purchasedIcon.contentSize.width];
 			[purchasedIcon setPosition: purchaseFullGameMenuItem.position];
-			[purchasedIcon setOpacity: 100];
 			[purchaseFullGameMenuItem setOpacity: 150];
 			[self addChild: purchasedIcon];
 		}
@@ -815,12 +817,28 @@
 			CCSprite *botSelectedSprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Buttons/general/purchase/button_purchase_bot_%@.png", [botsForPurchase objectAtIndex: i]]];
 			[botSelectedSprite setScale: 0.95];
 			
+			if ([[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@", [botsForPurchase objectAtIndex: i]]])
+			{
+				CCSprite *boughtOverlaySprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_overlay.png"];
+				CCSprite *boughtOverlaySelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_overlay.png"];
+				[boughtOverlaySprite setAnchorPoint: ccp(0, 0)];
+				[boughtOverlaySelectedSprite setAnchorPoint: ccp(0, 0)];
+				
+				[botSprite addChild: boughtOverlaySprite];
+				[botSelectedSprite addChild: boughtOverlaySelectedSprite];
+			}
+			
 			CCMenuItemSprite *botMenuItem;
 			CCSprite *purchasedIcon = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_icon.png"];
 			
-			if ([[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@", [botsForPurchase objectAtIndex: i]]])
-			{
-				botMenuItem = [CCMenuItemSprite itemWithNormalSprite: botSprite selectedSprite: botSelectedSprite block:^(id sender) {
+			botMenuItem = [CCMenuItemSprite itemWithNormalSprite: botSprite selectedSprite: botSelectedSprite block:^(id sender) {
+
+				if (![[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@", [botsForPurchase objectAtIndex: i]]])
+				{
+					[[MToolsPurchaseManager sharedManager] purchaseProductByName: [NSString stringWithFormat:@"botskin%@", [botsForPurchase objectAtIndex: i]]];
+				}
+				else
+				{
 					[Director shared].botType = [botsForPurchase objectAtIndex: i];
 					
 					for (int j = 0; j < [botsForPurchase count]; j++)
@@ -828,27 +846,9 @@
 						[[selectionIcons getChildByTag: j] setVisible: NO];
 					}
 					[[selectionIcons getChildByTag: i] setVisible: YES];
-				}];
-			}
-			else
-			{
-				botMenuItem = [CCMenuItemSprite itemWithNormalSprite: botSprite selectedSprite: botSelectedSprite block:^(id sender) {
-					//[[MToolsPurchaseManager sharedManager] purchaseProductByName: [NSString stringWithFormat:@"botskin%@", [botsForPurchase objectAtIndex: i]]];
-					
-					[Director shared].botType = [botsForPurchase objectAtIndex: i];
-					for (int j = 0; j < [botsForPurchase count]; j++)
-					{
-						[[selectionIcons getChildByTag: j] setVisible: NO];
-					}
-					[[selectionIcons getChildByTag: i] setVisible: YES];
-				}];
-			}
-			
-			if ([[Director shared].botType isEqualToString: [botsForPurchase objectAtIndex: i]])
-			{
-				[[selectionIcons getChildByTag: i] setVisible: YES];
-			}
-			
+				}
+			}];
+
 			[botMenuItem setScale: ((backgroundWidth * 0.12) / botMenuItem.contentSize.width)];
 			[botMenuItem setPosition: ccp(background.position.x - backgroundWidth * 0.3 + (i * (botMenuItem.contentSize.width * botMenuItem.scale)), background.position.y - backgroundHeight * 0.25)];
 			
@@ -858,6 +858,11 @@
 			[purchasedIcon setTag: i];
 			[purchasedIcon setVisible: NO];
 			[selectionIcons addChild: purchasedIcon z: 9001];
+			
+			if ([[Director shared].botType intValue] == [[botsForPurchase objectAtIndex: i] intValue])
+			{
+				[[selectionIcons getChildByTag: i] setVisible: YES];
+			}
 			
 			[botMenuItems addObject: botMenuItem];
 		}
@@ -883,6 +888,124 @@
 	return self;
 }
 
+- (id) initCreateAccountWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	self.dialogType = 5;
+	
+    if((self = [self init]))
+    {
+        callbackObj = callbackObjNew;
+        selector = selectorNew;
+        
+        CCSprite *background = [self createBackground];
+		background.position = ccp(background.position.x, background.position.y + 30);
+		
+		CGSize s = [CCDirector sharedDirector].winSize;
+		NSMutableArray *buttons = [NSMutableArray array];
+		float okButtonPosX = background.position.x;
+		okButtonPosX += backgroundWidth / 4;
+		
+		CCSprite *loginTitleSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/create_account/button_create_account_title.png"];
+		[loginTitleSprite setScale: (backgroundWidth * 0.40) / loginTitleSprite.contentSize.width];
+		[loginTitleSprite setPosition:ccp(background.position.x, background.position.y + (backgroundHeight / 2) * 0.625)];
+		[self addChild: loginTitleSprite];
+		
+		//Username input background
+		CCSprite *usernameInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_name_background.png"];
+		[usernameInputBackground setScale: (backgroundWidth * 0.6) / usernameInputBackground.contentSize.width];
+		[usernameInputBackground setPosition: ccp(background.position.x, background.position.y + backgroundHeight * 0.1)];
+		[self addChild: usernameInputBackground];
+		
+		//Username input text box
+		self.textField = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (usernameInputBackground.contentSize.width * usernameInputBackground.scale * 0.9), (usernameInputBackground.contentSize.height * usernameInputBackground.scale) * 0.75)];
+		self.textField.center = ccp(background.position.x, (background.position.y - backgroundHeight * 0.125) - 60);
+		self.textField.borderStyle = UITextBorderStyleNone;
+		[self.textField setBackgroundColor: [UIColor clearColor]];
+		[self.textField setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
+		[self.textField setPlaceholder: @"Username"
+		 ];
+		self.textField.delegate = self;
+		[self.textField becomeFirstResponder];
+		self.textField.keyboardType = UIKeyboardAppearanceDefault;
+		self.textField.returnKeyType = UIReturnKeyNext;
+		self.textField.autocorrectionType = UITextAutocapitalizationTypeNone;
+		self.textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
+		self.textField.tag = 0;
+		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField];
+		
+		//Password input background
+		CCSprite *passwordInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_creator_background.png"];
+		[passwordInputBackground setScale: (backgroundWidth * 0.6) / passwordInputBackground.contentSize.width];
+		[passwordInputBackground setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.05)];
+		[self addChild: passwordInputBackground];
+		
+		//Password input text box
+		self.textField2 = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (passwordInputBackground.contentSize.width * passwordInputBackground.scale * 0.9), (passwordInputBackground.contentSize.height * passwordInputBackground.scale) * 0.75)];
+		self.textField2.center = ccp(background.position.x, background.position.y + backgroundHeight * 0.025 - 60);
+		self.textField2.borderStyle = UITextBorderStyleNone;
+		[self.textField2 setBackgroundColor: [UIColor clearColor]];
+		[self.textField2 setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
+		[self.textField2 setPlaceholder: @"Password"
+		 ];
+		self.textField2.delegate = self;
+		self.textField2.keyboardType = UIKeyboardAppearanceDefault;
+		self.textField2.returnKeyType = UIReturnKeyDone;
+		self.textField2.autocorrectionType = UITextAutocapitalizationTypeNone;
+		self.textField2.autocapitalizationType = UITextAutocapitalizationTypeNone;
+		self.textField2.secureTextEntry = YES;
+		self.textField2.tag = 1;
+		[[[CCDirector sharedDirector] view] addSubview: self.textField2];
+		
+		//Email input background
+		CCSprite *emailInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_name_background.png"];
+		[emailInputBackground setScale: (backgroundWidth * 0.6) / emailInputBackground.contentSize.width];
+		[emailInputBackground setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.20)];
+		[self addChild: emailInputBackground];
+		
+		//Email input text box
+		self.textField3 = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (passwordInputBackground.contentSize.width * passwordInputBackground.scale * 0.9), (passwordInputBackground.contentSize.height * passwordInputBackground.scale) * 0.75)];
+		self.textField3.center = ccp(background.position.x, background.position.y + backgroundHeight * 0.175 - 60);
+		self.textField3.borderStyle = UITextBorderStyleNone;
+		[self.textField3 setBackgroundColor: [UIColor clearColor]];
+		[self.textField3 setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
+		[self.textField3 setPlaceholder: @"Optional Email Address"
+		 ];
+		self.textField3.delegate = self;
+		self.textField3.keyboardType = UIKeyboardAppearanceDefault;
+		self.textField3.returnKeyType = UIReturnKeyDone;
+		self.textField3.autocorrectionType = UITextAutocapitalizationTypeNone;
+		self.textField3.autocapitalizationType = UITextAutocapitalizationTypeNone;
+		self.textField3.secureTextEntry = YES;
+		self.textField3.tag = 2;
+		[[[CCDirector sharedDirector] view] addSubview: self.textField3];
+		
+		//Cancel
+		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
+		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
+		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		//Create account
+		CCMenuItemImage *createAccountButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/login/button_create_account.png" selectedImage: @"Media/Buttons/general/login/button_create_account.png" block:^(id sender) {
+			[self createAccountButtonPressed];
+			
+		}];
+		[createAccountButton setScale: (backgroundWidth * 0.225) / createAccountButton.contentSize.width];
+		[createAccountButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.35)];
+		
+		//Next
+		CCMenuItemImage *nextButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(sendNewAccountInfoButtonPressed:)];
+		nextButton.scale = (backgroundWidth * 0.225) / nextButton.contentSize.width;
+		[nextButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		CCMenu *cancelAndNextMenu = [CCMenu menuWithItems: cancelButton, createAccountButton, nextButton, nil];
+		[cancelAndNextMenu setAnchorPoint: ccp(0, 0)];
+		[cancelAndNextMenu setPosition: CGPointZero];
+		[self addChild: cancelAndNextMenu];
+    }
+    
+    return self;
+}
+
 - (id) initLoginWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
 {
 	self.dialogType = 4;
@@ -893,7 +1016,102 @@
         selector = selectorNew;
         
         CCSprite *background = [self createBackground];
+		background.position = ccp(background.position.x, background.position.y + 30);
      
+		CGSize s = [CCDirector sharedDirector].winSize;
+		NSMutableArray *buttons = [NSMutableArray array];
+		float okButtonPosX = background.position.x;
+		okButtonPosX += backgroundWidth / 4;
+		
+		CCSprite *loginTitleSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/login/button_login_title.png"];
+		[loginTitleSprite setScale: (backgroundWidth * 0.40) / loginTitleSprite.contentSize.width];
+		[loginTitleSprite setPosition:ccp(background.position.x, background.position.y + (backgroundHeight / 2) * 0.625)];
+		[self addChild: loginTitleSprite];
+		
+		//Username input background
+		CCSprite *usernameInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_name_background.png"];
+		[usernameInputBackground setScale: (backgroundWidth * 0.6) / usernameInputBackground.contentSize.width];
+		[usernameInputBackground setPosition: ccp(background.position.x, background.position.y + backgroundHeight * 0.1)];
+		[self addChild: usernameInputBackground];
+		
+		//Username input text box
+		self.textField = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (usernameInputBackground.contentSize.width * usernameInputBackground.scale * 0.9), (usernameInputBackground.contentSize.height * usernameInputBackground.scale) * 0.75)];
+		self.textField.center = ccp(background.position.x, (background.position.y - backgroundHeight * 0.125) - 60);
+		self.textField.borderStyle = UITextBorderStyleNone;
+		[self.textField setBackgroundColor: [UIColor clearColor]];
+		[self.textField setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
+		[self.textField setPlaceholder: @"Username"
+		 ];
+		self.textField.delegate = self;
+		[self.textField becomeFirstResponder];
+		self.textField.keyboardType = UIKeyboardAppearanceDefault;
+		self.textField.returnKeyType = UIReturnKeyNext;
+		self.textField.autocorrectionType = UITextAutocapitalizationTypeNone;
+		self.textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
+		self.textField.tag = 0;
+		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField];
+		
+		//Password input background
+		CCSprite *passwordInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_creator_background.png"];
+		[passwordInputBackground setScale: (backgroundWidth * 0.6) / passwordInputBackground.contentSize.width];
+		[passwordInputBackground setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.05)];
+		[self addChild: passwordInputBackground];
+		
+		//Password input text box
+		self.textField2 = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (passwordInputBackground.contentSize.width * passwordInputBackground.scale * 0.9), (passwordInputBackground.contentSize.height * passwordInputBackground.scale) * 0.75)];
+		self.textField2.center = ccp(background.position.x, background.position.y + backgroundHeight * 0.025 - 60);
+		self.textField2.borderStyle = UITextBorderStyleNone;
+		[self.textField2 setBackgroundColor: [UIColor clearColor]];
+		[self.textField2 setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
+		[self.textField2 setPlaceholder: @"Password"
+		 ];
+		self.textField2.delegate = self;
+		self.textField2.keyboardType = UIKeyboardAppearanceDefault;
+		self.textField2.returnKeyType = UIReturnKeyDone;
+		self.textField2.autocorrectionType = UITextAutocapitalizationTypeNone;
+		self.textField2.autocapitalizationType = UITextAutocapitalizationTypeNone;
+		self.textField2.secureTextEntry = YES;
+		self.textField2.tag = 1;
+		[[[CCDirector sharedDirector] view] addSubview: self.textField2];
+		
+		//Cancel
+		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
+		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
+		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		//Create account
+		CCMenuItemImage *createAccountButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/login/button_create_account.png" selectedImage: @"Media/Buttons/general/login/button_create_account.png" block:^(id sender) {
+			[self createAccountButtonPressed];
+			
+		}];
+		[createAccountButton setScale: (backgroundWidth * 0.225) / createAccountButton.contentSize.width];
+		[createAccountButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.35)];
+		
+		//Next
+		CCMenuItemImage *nextButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(loginButtonPressed:)];
+		nextButton.scale = (backgroundWidth * 0.225) / nextButton.contentSize.width;
+		[nextButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		
+		CCMenu *cancelAndNextMenu = [CCMenu menuWithItems: cancelButton, createAccountButton, nextButton, nil];
+		[cancelAndNextMenu setAnchorPoint: ccp(0, 0)];
+		[cancelAndNextMenu setPosition: CGPointZero];
+		[self addChild: cancelAndNextMenu];
+    }
+    
+    return self;
+}
+
+- (id) initNewUserWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
+{
+	self.dialogType = 5;
+	
+    if((self = [self init]))
+    {
+        callbackObj = callbackObjNew;
+        selector = selectorNew;
+        
+        CCSprite *background = [self createBackground];
+		
 		CGSize s = [CCDirector sharedDirector].winSize;
 		NSMutableArray *buttons = [NSMutableArray array];
 		float okButtonPosX = background.position.x;
@@ -967,6 +1185,20 @@
     }
     
     return self;
+}
+
+#pragma mark UITextField Delegate Methods
+
+- (BOOL)textField:(UITextField *)field shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)characters
+{
+	if (field.tag != 1)
+	{
+		NSCharacterSet *blockedCharacters = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
+	
+		return ([characters rangeOfCharacterFromSet:blockedCharacters].location == NSNotFound);
+	}
+	
+	return YES;
 }
 
 #pragma mark MISC JUNK BUTT FART
@@ -1122,6 +1354,15 @@
     return NO;
 }
 
+- (void) retrievedProduct
+{
+	id parent = self.parent;
+	[self remove];
+	
+	DialogLayer *refreshPurchaseDialog = [[DialogLayer alloc] initPurchaseWithCallbackObj: callbackObj selector: selector];
+	[parent addChild: refreshPurchaseDialog z: 9000];
+}
+
 - (void) remove
 {
 	[self.textField removeFromSuperview];
@@ -1141,6 +1382,20 @@
 }
 
 #pragma mark L ratings
+
+- (void) sendNewAccountInfoButtonPressed
+{
+	[[Director shared] createUsername: self.textField.text andPassword: self.textField2.text andEmail: self.textField3.text];
+}
+
+- (void) createAccountButtonPressed
+{
+	id parent = self.parent;
+	[self remove];
+	
+	DialogLayer *createAccountDialog = [[DialogLayer alloc] initCreateAccountWithCallbackObj: callbackObj selector: selector];
+	[parent addChild: createAccountDialog z: 9000];
+}
 
 - (void) likeButtonPressed: (id) sender
 {

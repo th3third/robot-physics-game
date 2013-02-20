@@ -20,7 +20,6 @@
 {
     SKProduct *product;
     SKProductsRequest *productsRequest;
-    NSString *appID;
     UIActivityIndicatorView *spinner;
     bool downloading;
     bool purchasing;
@@ -33,8 +32,12 @@
 @property (unsafe_unretained) NSString* contentServerURL;
 @property (unsafe_unretained) NSString* contentListName;
 
+@property NSString *appID;
+
+@property id callback;
 @property bool retrievingProductList;
 @property bool vocal;
+@property bool downloadableMode;
 @property (unsafe_unretained) NSString *libPath;
 
 + (MToolsPurchaseManager *) sharedManager;

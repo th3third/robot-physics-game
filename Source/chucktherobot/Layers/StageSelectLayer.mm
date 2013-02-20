@@ -199,8 +199,7 @@
 		{
 			menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender)
 						{
-							DialogLayer *purchaseDialog = [[DialogLayer alloc] initNotificationWithMessage: @"Sorry, but playing online levels requires purchasing the Full Version in-app purchase." callback: self selector: @selector(openPurchaseDialog)];
-							[self addChild: purchaseDialog z: 9000];
+							[self openPurchaseAd];
 						}];
 		}
 		else
@@ -319,6 +318,11 @@
 	[self addChild: botMenu];
 	
 	[self createPageTurners];
+	
+	if (![Director shared].fullVersion && enabledMenuItems >= 15)
+	{
+		[self openPurchaseAd];
+	}
 }
 
 - (void) createOnlineLevelList
@@ -516,7 +520,7 @@
 		[self setFilter: 0];
 	}];
 	[newestLevelsMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
-	[newestLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .30), 0)];
+	[newestLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .50), 0)];
 	CCLabelTTF *newestLevelsLabel = [DialogLayer createShadowHeaderWithString: @"NEWEST"
 																   position: ccp(newestLevelsMenuItem.position.x, - ((newestLevelsMenuItem.contentSize.height * newestLevelsMenuItem.scale) * 0.15))
 															   shadowOffset: CGSizeMake(1, -1)
@@ -537,7 +541,7 @@
 		[self setFilter: 1];
 	}];
 	[popularLevelsMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
-	[popularLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .50), 0)];
+	[popularLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .70), 0)];
 	CCLabelTTF *popularLevelsLabel = [DialogLayer createShadowHeaderWithString: @"POPULAR"
 																	 position: ccp(popularLevelsMenuItem.position.x, - ((popularLevelsMenuItem.contentSize.height * popularLevelsMenuItem.scale) * 0.15))
 																 shadowOffset: CGSizeMake(1, -1)
@@ -558,7 +562,7 @@
 		[self setFilter: 2];
 	}];
 	[bestRatedLevelsMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
-	[bestRatedLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .70), 0)];
+	[bestRatedLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .90), 0)];
 	CCLabelTTF *bestRatedLevelsLabel = [DialogLayer createShadowHeaderWithString: @"TOP RATED"
 																	  position: ccp(bestRatedLevelsMenuItem.position.x, - ((bestRatedLevelsMenuItem.contentSize.height * bestRatedLevelsMenuItem.scale) * 0.15))
 																  shadowOffset: CGSizeMake(1, -1)
@@ -572,28 +576,7 @@
 	[bestRatedLevelsLabel setAnchorPoint: ccp(0.5, 0.5)];
 	[self addChild: bestRatedLevelsLabel z: 101];
 	
-	//By tag
-	CCSprite *tagLevelsSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
-	CCSprite *tagLevelsSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
-	CCMenuItemSprite *tagLevelsMenuItem = [CCMenuItemSprite itemWithNormalSprite: tagLevelsSprite selectedSprite: tagLevelsSelectedSprite block:^(id sender) {
-		[self setFilter: 3];
-	}];
-	[tagLevelsMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
-	[tagLevelsMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .90), 0)];
-	CCLabelTTF *tagLevelsLabel = [DialogLayer createShadowHeaderWithString: @"BY TAG"
-																		position: ccp(tagLevelsMenuItem.position.x, - ((tagLevelsMenuItem.contentSize.height * tagLevelsMenuItem.scale) * 0.15))
-																	shadowOffset: CGSizeMake(1, -1)
-																		   color: ccWHITE
-																	 shadowColor: ccBLACK
-																	  dimensions: CGSizeMake(backToMainMenuItem.contentSize.width * backToMainMenuItem.scaleX, backToMainMenuItem.contentSize.height * backToMainMenuItem.scaleY)
-																	  hAlignment: kCCTextAlignmentCenter
-																   lineBreakMode: kCCLineBreakModeMiddleTruncation
-																		fontSize: (FONT_SIZE_FILTER * [Director shared].scaleFactor.width)
-										];
-	[tagLevelsLabel setAnchorPoint: ccp(0.5, 0.5)];
-	[self addChild: tagLevelsLabel z: 101];
-	
-	CCMenu *botMenu = [CCMenu menuWithItems: backToMainMenuItem, newestLevelsMenuItem, popularLevelsMenuItem, bestRatedLevelsMenuItem, tagLevelsMenuItem, nil];
+	CCMenu *botMenu = [CCMenu menuWithItems: backToMainMenuItem, newestLevelsMenuItem, popularLevelsMenuItem, bestRatedLevelsMenuItem, nil];
 	[botMenu setAnchorPoint: ccp(0, 0)];
 	[botMenu setPosition: CGPointZero];
 	[self addChild: botMenu];
@@ -1105,6 +1088,12 @@
 }
 
 #pragma mark PURCHASING
+
+- (void) openPurchaseAd
+{
+	DialogLayer *purchaseDialog = [[DialogLayer alloc] initNotificationWithMessage: @"To play more than 15 levels you will need the full game, available from the in-app purchase menu." callback: self selector: @selector(openPurchaseDialog)];
+	[self addChild: purchaseDialog z: 9000];
+}
 
 - (void) openPurchaseDialog
 {

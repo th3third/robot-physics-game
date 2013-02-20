@@ -32,7 +32,7 @@ enum DataState
 }
 
 @property MyContactListener *_contactListener;
-@property bool fullVersion;
+@property (nonatomic) bool fullVersion;
 @property NSURL *levelsServerURL;
 @property NSURL *loginScriptURL;
 @property NSURL *createUserScriptURL;
@@ -81,8 +81,9 @@ enum DataState
 - (int) getNewObjectID;
 
 //User stuffz.
-- (bool) createUsername: (NSString *) username andPassword: (NSString *) password;
+- (bool) createUsername: (NSString *) username andPassword: (NSString *) password andEmail: (NSString *) email;
 - (bool) logInWithUsername: (NSString *) username andPassword: (NSString *) encryptedPassword;
+- (void) logout;
 - (bool) saveLevelToServer;
 - (bool) getLevelFromServer;
 - (void) loadCurrentStage;

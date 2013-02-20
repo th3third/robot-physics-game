@@ -26,6 +26,7 @@
 @property SEL selector;
 @property CustomTextField *textField;
 @property CustomTextField *textField2;
+@property CustomTextField *textField3;
 @property int buttonPressedIndex;
 @property int dialogType;
 
@@ -34,6 +35,7 @@
 - (id) initChoiceWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew;
 - (id) initChoiceWithMessage: (NSString *) message callback: (id) callbackObjNew selector: (SEL) selectorNew selectorCancel: (SEL) selectorCancel;
 - (id) initLoader;
+- (id) initCreateAccountWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew;
 - (id) initLoginWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew;
 - (id) initWinnerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andTimeElapsed: (float) timeElapsed andScore: (int) score;
 - (id) initFlaggerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andLevelName: (NSString *) levelName;

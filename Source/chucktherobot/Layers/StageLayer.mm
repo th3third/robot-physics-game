@@ -967,8 +967,15 @@ enum
 	}
 	else if (![retry boolValue] && ![Director shared].online)
 	{
-		[[Director shared] nextLocalLevel];
-		[self scheduleOnce: @selector(goToStageLoading) delay: 0.0];
+		if (![Director shared].fullVersion && [Director shared].localLevelIndex >= 14)
+		{
+			[self goToStageSelect];
+		}
+		else
+		{
+			[[Director shared] nextLocalLevel];
+			[self scheduleOnce: @selector(goToStageLoading) delay: 0.0];
+		}
 	}
 	else
 	{

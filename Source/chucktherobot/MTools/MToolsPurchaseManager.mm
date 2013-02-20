@@ -36,7 +36,7 @@
 
 @implementation MToolsPurchaseManager
 
-@synthesize contentListName, contentServerURL, retrievingProductList, vocal, libPath;
+@synthesize contentListName, contentServerURL, retrievingProductList, vocal, libPath, appID;
 
 //Singleton implementation.
 static MToolsPurchaseManager *sharedManager = nil;
@@ -151,17 +151,27 @@ static MToolsPurchaseManager *sharedManager = nil;
 //Provided the content.
 - (void) provideContent: (NSString *) productID
 {
-    [[MToolsAlertViewManager sharedManager] alertWithMessage: @"Thank you for your purchase! Your item is now being downloaded and activated. This may take a few minutes depending on your connection speed"];
-    
+	if (self.downloadableMode)
+		[[MToolsAlertViewManager sharedManager] alertWithMessage: @"Thank you for your purchase! Your item is now being downloaded and activated. For large files, this may take a few minutes depending on your connection speed"];
+	else
+		[[MToolsAlertViewManager sharedManager] alertWithMessage: @"Thank you for your purchase! Your item has been activated and are ready to use."];
+	
     if (vocal)
         NSLog(@"%@ was purchased.", productID);
     [[NSUserDefaults standardUserDefaults] setBool: YES forKey:[NSString stringWithFormat:@"is%@Purchased", productID]];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    //Start the spinner.
-    [self startActivity];
+	if (self.downloadableMode)
+	{
+		//Start the spinner.
+		[self startActivity];
     
-    [self performSelectorInBackground: @selector(downloadProduct:) withObject: productID];
+		[self performSelectorInBackground: @selector(downloadProduct:) withObject: productID];
+	}
+	else
+	{
+		[self performSelectorOnMainThread:@selector(didRetrieveProduct) withObject:nil waitUntilDone:YES];
+	}
 }
 
 //Finish up the transaction.
@@ -406,13 +416,25 @@ static MToolsPurchaseManager *sharedManager = nil;
     {
         if (vocal)
             NSLog(@"Finished download queue.");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Download completed" message:@"Your purchases have finished downloading. Thank you again!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil];
-        alert.alertViewStyle = UIAlertViewStyleDefault;
-        [alert show];
+		
+		if (self.downloadableMode)
+		{
+			UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Download completed" message:@"Your purchases have finished downloading. Thank you again!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil];
+			alert.alertViewStyle = UIAlertViewStyleDefault;
+			[alert show];
+		}
         
         [spinner stopAnimating];
         [spinner setAlpha: 0.00f];
     }
+	
+	if (self.callback)
+	{
+		if ([self.callback respondsToSelector: @selector(retrievedProduct)])
+		{
+			[self.callback performSelector: @selector(retrievedProduct)];
+		}
+	}
 }
 
 - (void) didRetrieveProductList
