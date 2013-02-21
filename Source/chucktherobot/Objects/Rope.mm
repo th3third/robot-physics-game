@@ -44,7 +44,7 @@
         }
 			
         // Initialize main variables.
-        ropeLength = 0.25 * [Director shared].scaleFactor.width;
+        ropeLength = (0.25 * [Director shared].scaleFactor.width) / [Director shared].scaleFactor.width;
         ropeWidth = 0.05 * [Director shared].scaleFactor.width;
         self.bodyA = bodyA;
         self.bodyB = bodyB;
@@ -154,7 +154,7 @@
 		CGFloat dy = (self.bodyA.body->GetPosition().y * PTM_RATIO) - (self.bodyB.body->GetPosition().y * PTM_RATIO);
 		float distance = sqrt(dx*dx + dy*dy);
 		
-		if (distance > self.maxLength * 3)
+		if (distance > self.maxLength * 2)
 		{
 			b2Vec2 aLinVel = self.bodyA.body->GetLinearVelocity();
 			b2Vec2 bLinVel = self.bodyB.body->GetLinearVelocity();
@@ -222,22 +222,14 @@
     if (self.body)
         self.world->DestroyBody(self.body);
     
-	self.startPos = ccp(self.bodyA.body->GetPosition().x * PTM_RATIO, self.bodyA.body->GetPosition().y * PTM_RATIO);
+	self.startPos = self.bodyA.centerPos;
 	self.curPos = self.startPos;
 	
-	/*CGFloat dx = self.midPoint.x - bodyA->GetPosition().x * PTM_RATIO;
-	 CGFloat dy = self.midPoint.y - bodyA->GetPosition().y * PTM_RATIO;
-	 float d1 = sqrt(dx*dx + dy*dy);
-	 
-	 dx = self.midPoint.x - bodyB->GetPosition().x * PTM_RATIO;
-	 dy = self.midPoint.y - bodyB->GetPosition().y * PTM_RATIO;
-	 float d2 = sqrt(dx*dx + dy*dy);*/
-	
-	CGFloat dx = self.bodyB.body->GetPosition().x * PTM_RATIO - self.bodyA.body->GetPosition().x * PTM_RATIO;
-	CGFloat dy = self.bodyB.body->GetPosition().y * PTM_RATIO - self.bodyA.body->GetPosition().y * PTM_RATIO;
+	CGFloat dx = self.bodyB.centerPos.x - self.bodyA.centerPos.x;
+	CGFloat dy = self.bodyB.centerPos.y - self.bodyA.centerPos.y;
 	float d1 = sqrt(dx*dx + dy*dy);
 	
-	self.maxLength = (d1) / 2;
+	self.maxLength = ((d1) / 2) / [Director shared].scaleFactor.width;
 	
     //Find the bodies that we need to attach the rope to.
     b2Body *bodyA;
@@ -304,18 +296,18 @@
     float cosAngle;
     float sinAngle;
     
-    dy = (bodyB->GetPosition().y * PTM_RATIO - bodyA->GetPosition().y * PTM_RATIO);
-    dx = (bodyB->GetPosition().x * PTM_RATIO - bodyA->GetPosition().x * PTM_RATIO);
+    dx = self.bodyB.centerPos.x - self.bodyA.centerPos.x;
+	dy = self.bodyB.centerPos.y - self.bodyA.centerPos.y;
     atan2Angle = atan2(dy, dx);
     cosAngle = cos(atan2Angle);
     sinAngle = sin(atan2Angle);
-    
+	
     b2Body *newLink;
     for (int i = 0; i < totalSegments; i++)
     {                
         //NSLog(@"Angle: %f, cos: %f, sin: %f", CC_RADIANS_TO_DEGREES(atan2Angle), cosAngle, sinAngle);
         
-        bodyDef.position.Set(bodyA->GetPosition().x + (ropeLength * 2 * cosAngle) * (i), bodyA->GetPosition().y + (ropeLength * 2 * sinAngle) * (i));
+        bodyDef.position.Set(((self.bodyA.centerPos.x / PTM_RATIO) + (ropeLength * 2 * cosAngle) * (i)) / [Director shared].scaleFactor.width, ((self.bodyA.centerPos.y / PTM_RATIO) + (ropeLength * 2 * sinAngle) * (i)) / [Director shared].scaleFactor.width);
         //NSLog(@"%f, %f", bodyDef.position.x, bodyDef.position.y);
         bodyDef.angle = atan2Angle;
         
@@ -346,6 +338,7 @@
     jointDef.localAnchorB.Set(0, 0);
     RopeSegment *seg = [segments objectAtIndex: [segments count] - 1];
 	seg.joint = self.world->CreateJoint(&jointDef);
+	[self recalcPositions];
 }
 
 - (void) createVisibleBody
@@ -357,7 +350,7 @@
         {
             newSprite = part.bodyVisible;
 			newSprite.visible = YES;
-            newSprite.position = ccp((part.body->GetPosition().x * PTM_RATIO), ((part.body->GetPosition().y * PTM_RATIO)));
+            newSprite.position = ccp(((part.body->GetPosition().x * PTM_RATIO) * [Director shared].scaleFactor.width), ((part.body->GetPosition().y * PTM_RATIO) * [Director shared].scaleFactor.width));
             newSprite.rotation = -CC_RADIANS_TO_DEGREES(part.body->GetAngle());
             newSprite.anchorPoint = ccp(0.5, 0.5);
             
@@ -391,8 +384,8 @@
     {
 		RopeSegment *seg = [segments objectAtIndex: i];
 		
-		dy = (bodyB->GetPosition().y * PTM_RATIO - bodyA->GetPosition().y * PTM_RATIO);
-		dx = (bodyB->GetPosition().y * PTM_RATIO - bodyA->GetPosition().x * PTM_RATIO);
+		dx = self.bodyB.centerPos.x - self.bodyA.centerPos.x;
+		dy = self.bodyB.centerPos.y - self.bodyA.centerPos.y;
 
 		atan2Angle = atan2(dy, dx);
 		cosAngle = cos(atan2Angle);
@@ -400,7 +393,7 @@
 		
 		seg.body->SetLinearVelocity(b2Vec2(0, 0));
         seg.body->SetAngularVelocity(0);
-        seg.body->SetTransform(b2Vec2((seg.startPos.x + seg.body->GetLocalCenter().x) / PTM_RATIO, (seg.startPos.y + seg.body->GetLocalCenter().y) / PTM_RATIO), seg.angle);
+        seg.body->SetTransform(b2Vec2((seg.startPos.x) / PTM_RATIO + seg.body->GetLocalCenter().x, (seg.startPos.y) / PTM_RATIO + seg.body->GetLocalCenter().y), seg.angle);
     }
 }
 
@@ -414,8 +407,8 @@
 	
     RopeSegment *ropeSeg = [[RopeSegment alloc] init];
     ropeSeg.bodyVisible = [CCSprite spriteWithFile: @"Media/Objects/rope.jpg"];
-    ropeSeg.bodyVisible.scaleX = (ropeLength * PTM_RATIO) * 2.25 / ropeSeg.bodyVisible.contentSize.width;
-    ropeSeg.bodyVisible.scaleY = (ropeWidth * PTM_RATIO) * 2 / ropeSeg.bodyVisible.contentSize.height;
+    ropeSeg.bodyVisible.scaleX = ((ropeLength * PTM_RATIO) * [Director shared].scaleFactor.width) * 2.25 / ropeSeg.bodyVisible.contentSize.width;
+    ropeSeg.bodyVisible.scaleY = ((ropeWidth * PTM_RATIO)) * 2 / ropeSeg.bodyVisible.contentSize.height;
     ropeSeg.body = newLink;
     ropeSeg.startPos = CGPointMake((bodyDef.position.x + (ropeLength * 2 * cosAngle)) * PTM_RATIO, (bodyDef.position.y + (ropeLength * 2 * sinAngle)) * PTM_RATIO);
     //ropeSeg.curPos = ropeSeg.startPos;

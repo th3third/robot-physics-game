@@ -152,7 +152,7 @@
 	{
 		[self openPurchaseDialog];
 	}];
-	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.60) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
+	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.50) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
 	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.2), lowerLeftMenuBackground.position.y)];
     [menuItems addObject: menuItem];
@@ -164,7 +164,7 @@
 	DialogLayer *creditsDialog = [[DialogLayer alloc] initCreditsWithCallbackObj: self selector: @selector(madePurchase:)];
 	[self addChild: creditsDialog z: 9000];
 	}];
-	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.60) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
+	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.50) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
 	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.50), lowerLeftMenuBackground.position.y)];
     [menuItems addObject: menuItem];
@@ -177,7 +177,7 @@
 		DialogLayer *logoutDialog = [[DialogLayer alloc] initNotificationWithMessage: @"You have been logged out."];
 		[self addChild: logoutDialog z: 9000];
 	}];
-	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.60) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
+	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.50) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
 	[menuItem setPosition: ccp(lowerLeftMenuBackground.position.x + ((lowerLeftMenuBackground.contentSize.width * lowerLeftMenuBackground.scale) * 0.8), lowerLeftMenuBackground.position.y)];
     [menuItems addObject: menuItem];
@@ -305,7 +305,9 @@
 - (void) logInWith:(NSArray *)loginInfo
 {
 	[super logInWith: loginInfo];
-	[self goToStageSelect];
+	
+	if ([Director shared].loggedIn)
+		[self goToStageSelect];
 }
 
 #pragma mark MFMail delegate

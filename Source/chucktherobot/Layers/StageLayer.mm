@@ -146,6 +146,18 @@ enum
 
     //Reset
 	CCMenuItem *reset = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_restart.png" selectedImage: @"Media/Buttons/general/button_restart.png" block:^(id sender) {
+		
+		if ([Director shared].editing)
+		{
+			if (![Director shared].paused)
+			{
+				id ni = [CCSprite spriteWithTexture:[(CCSprite*)playButton.normalImage texture]];
+				id si = [CCSprite spriteWithTexture:[(CCSprite*)playButton.selectedImage texture]];
+				[playButton setNormalImage: si];
+				[playButton setSelectedImage: ni];
+			}
+		}
+		
         [self resetStage];
     }];
     if (reset.contentSize.width > reset.contentSize.height)

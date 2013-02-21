@@ -9,6 +9,6 @@
 #ifndef chucktherobot_Constants_h
 #define chucktherobot_Constants_h
 
-#define PTM_RATIO 32
+#define PTM_RATIO ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 64.0 : 32.0)
 
 #endif

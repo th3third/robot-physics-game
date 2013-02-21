@@ -906,7 +906,7 @@
 		okButtonPosX += backgroundWidth / 4;
 		
 		CCSprite *loginTitleSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/create_account/button_create_account_title.png"];
-		[loginTitleSprite setScale: (backgroundWidth * 0.40) / loginTitleSprite.contentSize.width];
+		[loginTitleSprite setScale: (backgroundWidth * 0.70) / loginTitleSprite.contentSize.width];
 		[loginTitleSprite setPosition:ccp(background.position.x, background.position.y + (backgroundHeight / 2) * 0.625)];
 		[self addChild: loginTitleSprite];
 		
@@ -918,7 +918,6 @@
 		
 		//Username input text box
 		self.textField = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (usernameInputBackground.contentSize.width * usernameInputBackground.scale * 0.9), (usernameInputBackground.contentSize.height * usernameInputBackground.scale) * 0.75)];
-		self.textField.center = ccp(background.position.x, (background.position.y - backgroundHeight * 0.125) - 60);
 		self.textField.borderStyle = UITextBorderStyleNone;
 		[self.textField setBackgroundColor: [UIColor clearColor]];
 		[self.textField setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
@@ -931,7 +930,12 @@
 		self.textField.autocorrectionType = UITextAutocapitalizationTypeNone;
 		self.textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
 		self.textField.tag = 0;
-		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField];
+		
+		self.textFieldWrapper = [CCUIViewWrapper wrapperForUIView: self.textField];
+		[self.textFieldWrapper setContentSize: CGSizeMake((usernameInputBackground.contentSize.width * usernameInputBackground.scale * 0.85), (usernameInputBackground.contentSize.height * usernameInputBackground.scale) * 0.75)];
+		[self.textFieldWrapper setPosition: ccp(usernameInputBackground.position.x, usernameInputBackground.position.y + self.textFieldWrapper.contentSize.height * 0.25)];
+		[self.textFieldWrapper setAnchorPoint: ccp(0.5, 0.5)];
+		[self addChild: self.textFieldWrapper];
 		
 		//Password input background
 		CCSprite *passwordInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_creator_background.png"];
@@ -941,7 +945,6 @@
 		
 		//Password input text box
 		self.textField2 = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (passwordInputBackground.contentSize.width * passwordInputBackground.scale * 0.9), (passwordInputBackground.contentSize.height * passwordInputBackground.scale) * 0.75)];
-		self.textField2.center = ccp(background.position.x, background.position.y + backgroundHeight * 0.025 - 60);
 		self.textField2.borderStyle = UITextBorderStyleNone;
 		[self.textField2 setBackgroundColor: [UIColor clearColor]];
 		[self.textField2 setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
@@ -954,7 +957,12 @@
 		self.textField2.autocapitalizationType = UITextAutocapitalizationTypeNone;
 		self.textField2.secureTextEntry = YES;
 		self.textField2.tag = 1;
-		[[[CCDirector sharedDirector] view] addSubview: self.textField2];
+		
+		self.textFieldWrapper2 = [CCUIViewWrapper wrapperForUIView: self.textField2];
+		[self.textFieldWrapper2 setContentSize: CGSizeMake((passwordInputBackground.contentSize.width * passwordInputBackground.scale * 0.85), (passwordInputBackground.contentSize.height * passwordInputBackground.scale) * 0.75)];
+		[self.textFieldWrapper2 setPosition: ccp(passwordInputBackground.position.x, passwordInputBackground.position.y + self.textFieldWrapper2.contentSize.height * 0.25)];
+		[self.textFieldWrapper2 setAnchorPoint: ccp(0.5, 0.5)];
+		[self addChild: self.textFieldWrapper2];
 		
 		//Email input background
 		CCSprite *emailInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_name_background.png"];
@@ -963,8 +971,7 @@
 		[self addChild: emailInputBackground];
 		
 		//Email input text box
-		self.textField3 = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (passwordInputBackground.contentSize.width * passwordInputBackground.scale * 0.9), (passwordInputBackground.contentSize.height * passwordInputBackground.scale) * 0.75)];
-		self.textField3.center = ccp(background.position.x, background.position.y + backgroundHeight * 0.175 - 60);
+		self.textField3 = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (emailInputBackground.contentSize.width * emailInputBackground.scale * 0.9), (emailInputBackground.contentSize.height * emailInputBackground.scale) * 0.75)];
 		self.textField3.borderStyle = UITextBorderStyleNone;
 		[self.textField3 setBackgroundColor: [UIColor clearColor]];
 		[self.textField3 setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
@@ -977,27 +984,24 @@
 		self.textField3.autocapitalizationType = UITextAutocapitalizationTypeNone;
 		self.textField3.secureTextEntry = YES;
 		self.textField3.tag = 2;
-		[[[CCDirector sharedDirector] view] addSubview: self.textField3];
+		
+		self.textFieldWrapper3 = [CCUIViewWrapper wrapperForUIView: self.textField3];
+		[self.textFieldWrapper3 setContentSize: CGSizeMake((emailInputBackground.contentSize.width * emailInputBackground.scale * 0.85), (emailInputBackground.contentSize.height * emailInputBackground.scale) * 0.75)];
+		[self.textFieldWrapper3 setPosition: ccp(emailInputBackground.position.x, emailInputBackground.position.y + self.textFieldWrapper3.contentSize.height * 0.25)];
+		[self.textFieldWrapper3 setAnchorPoint: ccp(0.5, 0.5)];
+		[self addChild: self.textFieldWrapper3];
 		
 		//Cancel
 		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
 		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
-		//Create account
-		CCMenuItemImage *createAccountButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/login/button_create_account.png" selectedImage: @"Media/Buttons/general/login/button_create_account.png" block:^(id sender) {
-			[self createAccountButtonPressed];
-			
-		}];
-		[createAccountButton setScale: (backgroundWidth * 0.225) / createAccountButton.contentSize.width];
-		[createAccountButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.35)];
-		
 		//Next
-		CCMenuItemImage *nextButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(sendNewAccountInfoButtonPressed:)];
+		CCMenuItemImage *nextButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(sendNewAccountInfoButtonPressed)];
 		nextButton.scale = (backgroundWidth * 0.225) / nextButton.contentSize.width;
 		[nextButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
-		CCMenu *cancelAndNextMenu = [CCMenu menuWithItems: cancelButton, createAccountButton, nextButton, nil];
+		CCMenu *cancelAndNextMenu = [CCMenu menuWithItems: cancelButton, nextButton, nil];
 		[cancelAndNextMenu setAnchorPoint: ccp(0, 0)];
 		[cancelAndNextMenu setPosition: CGPointZero];
 		[self addChild: cancelAndNextMenu];
@@ -1077,20 +1081,20 @@
 		//Cancel
 		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
 		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
-		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.325, background.position.y - backgroundHeight * 0.35)];
 		
 		//Create account
 		CCMenuItemImage *createAccountButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/login/button_create_account.png" selectedImage: @"Media/Buttons/general/login/button_create_account.png" block:^(id sender) {
 			[self createAccountButtonPressed];
 			
 		}];
-		[createAccountButton setScale: (backgroundWidth * 0.225) / createAccountButton.contentSize.width];
+		[createAccountButton setScale: (backgroundWidth * 0.35) / createAccountButton.contentSize.width];
 		[createAccountButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.35)];
 		
 		//Next
 		CCMenuItemImage *nextButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(loginButtonPressed:)];
 		nextButton.scale = (backgroundWidth * 0.225) / nextButton.contentSize.width;
-		[nextButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
+		[nextButton setPosition: ccp(background.position.x + backgroundWidth * 0.325, background.position.y - backgroundHeight * 0.35)];
 		
 		CCMenu *cancelAndNextMenu = [CCMenu menuWithItems: cancelButton, createAccountButton, nextButton, nil];
 		[cancelAndNextMenu setAnchorPoint: ccp(0, 0)];
@@ -1329,6 +1333,8 @@
 
 - (BOOL) textFieldShouldReturn:(UITextField *)textField
 {
+	CGSize s = [CCDirector sharedDirector].winSize;
+	
 	if (self.dialogType == 0)
 		[self okButtonPressed: self];
 	else if (self.dialogType == 1)
@@ -1341,13 +1347,36 @@
 		UIResponder *nextResponder = [textField.superview viewWithTag: nextTag];
 		
 		if (nextResponder)
-		{
+		{			
+			[nextResponder becomeFirstResponder];
+		}
+		else
+		{			
+			[textField resignFirstResponder];
+			[self loginButtonPressed: self];
+		}
+	}
+	
+	else if (self.dialogType == 5)
+	{
+		NSInteger nextTag = textField.tag + 1;
+		UIResponder *nextResponder = [textField.superview viewWithTag: nextTag];
+		
+		if (nextResponder)
+		{			
 			[nextResponder becomeFirstResponder];
 		}
 		else
 		{
+			CCMoveTo *keyboardMovementTween;
+			keyboardMovementTween = [CCMoveTo actionWithDuration: 0.2 position: ccp(self.position.x, 0)];
+			[self runAction: keyboardMovementTween];
+			[self.textFieldWrapper runAction: keyboardMovementTween];
+			[self.textFieldWrapper2 runAction: keyboardMovementTween];
+			[self.textFieldWrapper3 runAction: keyboardMovementTween];
+			
 			[textField resignFirstResponder];
-			[self loginButtonPressed: self];
+			[self sendNewAccountInfoButtonPressed];
 		}
 	}
 	
@@ -1367,6 +1396,7 @@
 {
 	[self.textField removeFromSuperview];
 	[self.textField2 removeFromSuperview];
+	[self.textField3 removeFromSuperview];
     [self removeFromParentAndCleanup: YES];
 }
 
@@ -1385,7 +1415,18 @@
 
 - (void) sendNewAccountInfoButtonPressed
 {
-	[[Director shared] createUsername: self.textField.text andPassword: self.textField2.text andEmail: self.textField3.text];
+	if ([[Director shared] createUsername: self.textField.text andPassword: self.textField2.text andEmail: self.textField3.text])
+	{
+		id parent = self.parent;
+		[self remove];
+		
+		DialogLayer *successDialog = [[DialogLayer alloc] initNotificationWithMessage: @"Your account has been successfully created." callback: callbackObj selector: selector];
+		[parent addChild: successDialog z: 9000];
+	}
+	else
+	{
+		
+	}
 }
 
 - (void) createAccountButtonPressed
@@ -1486,9 +1527,7 @@
 	
     [callbackObj performSelector: selector withObject: retArray];
     
-    [self.textField removeFromSuperview];
-	[self.textField2 removeFromSuperview];
-    [self removeFromParentAndCleanup:YES];
+    [self remove];
 }
 
 - (void) editButtonPressed: (id) sender

@@ -395,7 +395,6 @@
 		CE7E2F5416D568500094A4CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEE02BE4169640BA00264586 /* Foundation.framework */; };
 		CE7E2F5516D568500094A4CF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEE02BE6169640BA00264586 /* CoreGraphics.framework */; };
 		CE7E2F5616D568500094A4CF /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEE02BE8169640BA00264586 /* GameKit.framework */; };
-		CE7E2F5816D568500094A4CF /* Audio in Resources */ = {isa = PBXBuildFile; fileRef = CEA1E13A16964B6200835AAA /* Audio */; };
 		CE7E2F5916D568500094A4CF /* Graphics in Resources */ = {isa = PBXBuildFile; fileRef = CEA1E13B16964B6200835AAA /* Graphics */; };
 		CE7E2F5A16D568500094A4CF /* Box2DConfig.cmake in Resources */ = {isa = PBXBuildFile; fileRef = CE685A6416964F11001B8774 /* Box2DConfig.cmake */; };
 		CE7E2F5B16D568500094A4CF /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = CE685A6516964F11001B8774 /* CMakeLists.txt */; };
@@ -481,8 +480,9 @@
 		CEA1E1341696479800835AAA /* Object.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E1301696479800835AAA /* Object.mm */; };
 		CEA1E1351696479800835AAA /* Rectangle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E1321696479800835AAA /* Rectangle.mm */; };
 		CEA1E139169647E900835AAA /* StageLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E138169647E900835AAA /* StageLayer.mm */; };
-		CEA1E13D16964B6200835AAA /* Audio in Resources */ = {isa = PBXBuildFile; fileRef = CEA1E13A16964B6200835AAA /* Audio */; };
 		CEA1E13E16964B6200835AAA /* Graphics in Resources */ = {isa = PBXBuildFile; fileRef = CEA1E13B16964B6200835AAA /* Graphics */; };
+		CEE012A116D5752700791964 /* CCUIViewWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = CEE012A016D5752700791964 /* CCUIViewWrapper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		CEE012A216D5752700791964 /* CCUIViewWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = CEE012A016D5752700791964 /* CCUIViewWrapper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CEE02BD9169640BA00264586 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEE02BD8169640BA00264586 /* QuartzCore.framework */; };
 		CEE02BDB169640BA00264586 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEE02BDA169640BA00264586 /* OpenGLES.framework */; };
 		CEE02BDD169640BA00264586 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEE02BDC169640BA00264586 /* OpenAL.framework */; };
@@ -960,8 +960,9 @@
 		CEA1E1321696479800835AAA /* Rectangle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Rectangle.mm; sourceTree = "<group>"; };
 		CEA1E137169647E900835AAA /* StageLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StageLayer.h; path = Layers/StageLayer.h; sourceTree = "<group>"; };
 		CEA1E138169647E900835AAA /* StageLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StageLayer.mm; path = Layers/StageLayer.mm; sourceTree = "<group>"; };
-		CEA1E13A16964B6200835AAA /* Audio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Audio; path = Resources/Audio; sourceTree = "<group>"; };
 		CEA1E13B16964B6200835AAA /* Graphics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Graphics; path = Resources/Graphics; sourceTree = "<group>"; };
+		CEE0129F16D5752700791964 /* CCUIViewWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCUIViewWrapper.h; sourceTree = "<group>"; };
+		CEE012A016D5752700791964 /* CCUIViewWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCUIViewWrapper.m; sourceTree = "<group>"; };
 		CEE02BD4169640BA00264586 /* Chuck the Bot (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chuck the Bot (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEE02BD8169640BA00264586 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CEE02BDA169640BA00264586 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -1849,7 +1850,6 @@
 			isa = PBXGroup;
 			children = (
 				CE7E9A4E16D2EC1B0021A76C /* fire.png */,
-				CEA1E13A16964B6200835AAA /* Audio */,
 				CEA1E13B16964B6200835AAA /* Graphics */,
 			);
 			name = Resources;
@@ -1899,6 +1899,8 @@
 				CEE1383516A76E7E00A8BACF /* DialogLayer.mm */,
 				CE7DA19916CC1F2B00DDCC7A /* CustomTextField.h */,
 				CE7DA19A16CC1F2B00DDCC7A /* CustomTextField.mm */,
+				CEE0129F16D5752700791964 /* CCUIViewWrapper.h */,
+				CEE012A016D5752700791964 /* CCUIViewWrapper.m */,
 			);
 			name = "Custom Cocos2D Objects";
 			sourceTree = "<group>";
@@ -2010,7 +2012,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE7E2F5816D568500094A4CF /* Audio in Resources */,
 				CE7E2F5916D568500094A4CF /* Graphics in Resources */,
 				CE7E2F5A16D568500094A4CF /* Box2DConfig.cmake in Resources */,
 				CE7E2F5B16D568500094A4CF /* CMakeLists.txt in Resources */,
@@ -2045,7 +2046,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CEA1E13D16964B6200835AAA /* Audio in Resources */,
 				CEA1E13E16964B6200835AAA /* Graphics in Resources */,
 				CE685BBB16964F12001B8774 /* Box2DConfig.cmake in Resources */,
 				CE685BBC16964F12001B8774 /* CMakeLists.txt in Resources */,
@@ -2294,6 +2294,7 @@
 				CE7E2F4616D568500094A4CF /* MyContactListener.mm in Sources */,
 				CE7E2F4716D568500094A4CF /* BotSelectLayer.mm in Sources */,
 				CE7E2F4816D568500094A4CF /* CustomTextField.mm in Sources */,
+				CEE012A216D5752700791964 /* CCUIViewWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2512,6 +2513,7 @@
 				CE66A24316C5BDEE003AD7C9 /* MyContactListener.mm in Sources */,
 				CE7C1A0216C95721002BE715 /* BotSelectLayer.mm in Sources */,
 				CE7DA19B16CC1F2B00DDCC7A /* CustomTextField.mm in Sources */,
+				CEE012A116D5752700791964 /* CCUIViewWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

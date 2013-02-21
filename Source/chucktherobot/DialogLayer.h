@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"
 #import "CustomTextField.h"
+#import "CCUIViewWrapper.h"
 
 @interface DialogLayer : CCLayer <UITextFieldDelegate>
 {
@@ -27,6 +28,9 @@
 @property CustomTextField *textField;
 @property CustomTextField *textField2;
 @property CustomTextField *textField3;
+@property CCUIViewWrapper *textFieldWrapper;
+@property CCUIViewWrapper *textFieldWrapper2;
+@property CCUIViewWrapper *textFieldWrapper3;
 @property int buttonPressedIndex;
 @property int dialogType;
 

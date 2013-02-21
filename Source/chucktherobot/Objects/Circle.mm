@@ -146,7 +146,7 @@
     
     b2FixtureDef fixtureDef;
     fixtureDef.shape = circle;
-    fixtureDef.density = self.density;
+    fixtureDef.density = 1.0;
     fixtureDef.friction = 0.3f;
 	fixtureDef.restitution = self.restitution;
 	

@@ -142,8 +142,9 @@ static Director *shared = nil;
 		
 		//Set up the scaling factor.
 		CGSize winSize = [CCDirector sharedDirector].winSize;
-		scaleFactor = CGSizeMake(winSize.width / designSize.width,
-						  winSize.height / designSize.height);
+		scaleFactor = CGSizeMake((PTM_RATIO / 32), (PTM_RATIO / 32));
+		//scaleFactor = CGSizeMake((winSize.width / designSize.width), (winSize.height / designSize.height));
+		//scaleFactor = CGSizeMake(1, 1);
 		NSLog(@"SCALING FACTOR: %f x %f", scaleFactor.width, scaleFactor.height);
 		
 		if ([MToolsAppSettings getValueWithName: @"username"])
@@ -226,13 +227,10 @@ static Director *shared = nil;
 //Upon creation these are stored in the app settings for future use.
 //The password is immediately hashed although the username needs to remain intact in plain text until transmission.
 - (bool) createUsername: (NSString *) username andPassword: (NSString *) password andEmail: (NSString *) email
-{
-	if (self.processingNetworkRequest)
-		return NO;
-	
+{	
 	if (!username || !password)
 		return NO;
-	
+	NSLog(@"Creating user: %@, password: %@, email: %@", username, password, email);
 	self.dataState = DATA_STATE_CREATING_USERNAME;
 	
 	NSString *encryptedPassword = [Director sha: password];
@@ -247,7 +245,37 @@ static Director *shared = nil;
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
 	[request setHTTPBody: requestData];
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-	[NSURLConnection connectionWithRequest: request delegate: self];
+	
+	NSURLResponse *response = [[NSURLResponse alloc] init];
+	NSString *responseString;
+	NSError *error;
+	NSData *returnData = [NSURLConnection sendSynchronousRequest: request returningResponse: &response error: &error];
+	responseString = [[NSString alloc] initWithData: returnData encoding: NSUTF8StringEncoding];
+	
+	[self cleanupConnection];
+	
+	if ([responseString isEqualToString: @"failed"])
+	{
+		self.username = nil;
+		self.hashedPassword = nil;
+		
+		return NO;
+	}
+	else if ([responseString isEqualToString: @"exists"])
+	{
+		[debug log: @"A user by that name already exists."];
+		self.username = nil;
+		self.hashedPassword = nil;
+		
+		return NO;
+	}
+	else
+	{
+		[MToolsAppSettings setValue: self.username withName: @"username"];
+		[MToolsAppSettings setValue: self.hashedPassword withName: @"password"];
+		
+		return YES;
+	}
 	
 	return NO;
 }

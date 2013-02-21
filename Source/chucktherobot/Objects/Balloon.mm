@@ -107,7 +107,7 @@
     self.bodyVisible.scaleX = newWidth / startWidth;
     self.bodyVisible.scaleY = newHeight / startHeight;
     self.bodyVisible.position = ccp((self.body->GetPosition().x) * PTM_RATIO, (self.body->GetPosition().y) * PTM_RATIO);
-    self.bodyVisible.rotation = -CC_RADIANS_TO_DEGREES(self.body->GetAngle());
+    self.bodyVisible.rotation = 0;
 	
 	self.dropShadow.scaleX = newWidth / self.dropShadow.contentSize.width * 1.1;
 	self.dropShadow.scaleY = newHeight / self.dropShadow.contentSize.height * 1.1;
