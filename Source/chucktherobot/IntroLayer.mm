@@ -11,6 +11,7 @@
 #import "MToolsFileManager.h"
 #import "Director.h"
 #import "MToolsPurchaseManager.h"
+#import "MToolsAppSettings.h"
 
 #pragma mark - IntroLayer
 
@@ -33,29 +34,32 @@
 	return scene;
 }
 
-// 
 -(void) onEnter
 {
 	[super onEnter];
 
-	// ask director for the window size
+	// enable events
+	self.isTouchEnabled = YES;
+	
 	CGSize size = [[CCDirector sharedDirector] winSize];
-
-	CCSprite *background = [CCSprite spriteWithFile:@"Media/Backgrounds/general/loading.jpg"];
-	[background setScaleX: (size.width / background.contentSize.width)];
-	[background setScaleY: (size.height / background.contentSize.height)];
-	background.position = ccp(size.width/2, size.height/2);
-
-	// add the label as a child to this Layer
-	[self addChild: background];
-
-	//Init the director right away.
-	[[Director shared] init];
+	
+	CCSprite *background = [CCSprite spriteWithFile: @"Media/Backgrounds/general/main_menu.jpg"];
+	background.anchorPoint = ccp(0.5, 0.5);
+	background.position = ccp(size.width / 2, size.height / 2);
+	background.scaleX = size.width / background.contentSize.width;
+	background.scaleY = size.height / background.contentSize.height;
+	[self addChild: background z: -2];
+	
+	[self setStatusLabel: @"Loading..."];
 	
 	//Init the purchase stuff.
-	[[MToolsPurchaseManager sharedManager] setVocal: YES];
+	[[MToolsPurchaseManager sharedManager] setVocal: NO];
 	[[MToolsPurchaseManager sharedManager] loadStore];
 	[MToolsPurchaseManager sharedManager].appID = @"com.gearsprout.chuckthebot"; //override the default app ID because we're running the free version on this ID for content.
+	
+	//Init the standard keys and increment anything that needs to be done.
+	[[MToolsAppSettings sharedManager] standardKeys];
+	
 	
     //Create the levels folder if it doesn't exist already.
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -94,7 +98,7 @@
 	
 	
 	// In one second transition to the new scene
-	[self scheduleOnce:@selector(makeTransition:) delay:1];
+	[self scheduleOnce:@selector(makeTransition:) delay: 0];
 }
 
 -(void) makeTransition:(ccTime)dt
@@ -104,4 +108,50 @@
 	[[Director shared] playMusic: @"Media/Audio/general/music/main_menu.mp3"];
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration: 1.0 scene:[MainMenuLayer scene] withColor: ccBLACK]];
 }
+
+- (void) setStatusLabel: (NSString *) message
+{
+	if (!statusLabel)
+	{
+		CGSize s = [CCDirector sharedDirector].winSize;
+		
+		[statusLabel removeFromParentAndCleanup:YES];
+		statusLabel = [DialogLayer createShadowHeaderWithString: message
+													   position: ccp(s.width * 0.5, s.height * 0.5)
+												   shadowOffset: CGSizeMake(1, -1)
+														  color: ccWHITE
+													shadowColor: ccBLACK
+													 dimensions: CGSizeMake(s.width, s.height * 0.5)
+													 hAlignment: kCCTextAlignmentCenter
+													 vAlignment: kCCVerticalTextAlignmentCenter
+												  lineBreakMode: kCCLineBreakModeMiddleTruncation
+													   fontSize: 42 * [Director shared].scaleFactor.width
+					   ];
+		[self addChild: statusLabel];
+	}
+}
+
+- (void) createSpinner
+{
+	CGSize s = [CCDirector sharedDirector].winSize;
+	
+	spinner = [CCSprite spriteWithFile: @"Media/Buttons/general/button_gear.png"];
+	[spinner setPosition: ccp(s.width / 2, s.height / 2)];
+	[spinner setRotation: 0.00];
+	[spinner setScale: ((s.width)) * 0.40 / spinner.contentSize.width];
+	[self addChild: spinner];
+	
+	spinnerTween = [CCActionTween actionWithDuration: 2.0 key: @"rotation" from: 0.00 to: 360.00];
+	[spinner runAction: spinnerTween];
+}
+
+- (void) update: (ccTime) dt
+{
+	if (spinnerTween.isDone)
+	{
+		[spinner runAction: spinnerTween];
+	}
+}
+
+
 @end

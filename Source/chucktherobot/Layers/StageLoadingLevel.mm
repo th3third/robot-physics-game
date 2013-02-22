@@ -96,13 +96,13 @@
 		
 		[statusLabel removeFromParentAndCleanup:YES];
 		statusLabel = [DialogLayer createShadowHeaderWithString: message
-													   position: ccp(s.width * 0.5, s.height * 0.1 * [Director shared].scaleFactor.width)
+													   position: ccp(s.width * 0.5, s.height * 0.1)
 												   shadowOffset: CGSizeMake(1, -1)
 														  color: ccWHITE
 													shadowColor: ccBLACK
-													 dimensions: CGSizeMake(s.width, 50)
+													 dimensions: CGSizeMake(s.width, s.height * 0.5)
 													 hAlignment: kCCTextAlignmentCenter
-					    vAlignment: kCCVerticalTextAlignmentBottom
+					    vAlignment: kCCVerticalTextAlignmentCenter
 												  lineBreakMode: kCCLineBreakModeMiddleTruncation
 													   fontSize: 22 * [Director shared].scaleFactor.width
 					   ];

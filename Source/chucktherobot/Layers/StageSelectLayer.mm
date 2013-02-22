@@ -47,7 +47,7 @@
 		
 		CGSize s = [CCDirector sharedDirector].winSize;
 		
-		//Crate the background.
+		//Create the background.
 		CCSprite *background = [CCSprite spriteWithFile: @"Media/Backgrounds/general/main_menu.jpg"];
 		float scaleX = s.width / background.contentSize.width;
 		float scaleY = s.height / background.contentSize.height;
@@ -57,7 +57,17 @@
 		[self addChild: background z: -3];
 		
 		//Create the list of levels.
-		[self showLevelList];
+		
+		//Show the storyboard if this is the first time going to this screen.
+		if (![[MToolsAppSettings getValueWithName: @"storyboardPlayed"] boolValue])
+		{
+			[self startStoryboard];
+			[MToolsAppSettings setValue: [NSNumber numberWithBool: YES] withName: @"storyboardPlayed"];
+		}
+		else
+		{
+			[self showLevelList];
+		}
 		
 		//Blank out the existing stage, since we're selecting a new one.
 		[Director shared].stage = nil;
@@ -195,7 +205,7 @@
 		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background_locked.png"];
 		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background_locked.png"];
 		
-		if (i >= 15)
+		if (i >= 15 && ![Director shared].fullVersion)
 		{
 			menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender)
 						{
@@ -299,7 +309,7 @@
 	}];
 	[backToMainMenuItem setScale: ((botBounds.size.width * .25) / backToMainMenuItem.contentSize.width)];
 	[backToMainMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .10), 0)];
-	CCLabelTTF *backToMainLabel = [DialogLayer createShadowHeaderWithString: @"Main Menu"
+	CCLabelTTF *backToMainLabel = [DialogLayer createShadowHeaderWithString: @"MAIN MENU"
 																   position: ccp(backToMainMenuItem.position.x, - ((backToMainMenuItem.contentSize.height * backToMainMenuItem.scale) * 0.15))
 															   shadowOffset: CGSizeMake(1, -1)
 																	  color: ccWHITE
@@ -498,7 +508,7 @@
 	CCMenuItemSprite *backToMainMenuItem = [CCMenuItemSprite itemWithNormalSprite: backToMainSprite selectedSprite: backToMainSpriteSelected block:^(id sender) {
 		[self goToMainMenu];
 	}];
-	[backToMainMenuItem setScale: ((botBounds.size.width * .2) / backToMainMenuItem.contentSize.width)];
+	[backToMainMenuItem setScale: ((botBounds.size.width * .25) / backToMainMenuItem.contentSize.width)];
 	[backToMainMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .10), 0)];
 	CCLabelTTF *backToMainLabel = [DialogLayer createShadowHeaderWithString: @"MAIN MENU"
 																   position: ccp(backToMainMenuItem.position.x, - ((backToMainMenuItem.contentSize.height * backToMainMenuItem.scale) * 0.15))
@@ -508,7 +518,7 @@
 																 dimensions: CGSizeMake(backToMainMenuItem.contentSize.width * backToMainMenuItem.scaleX, backToMainMenuItem.contentSize.height * backToMainMenuItem.scaleY)
 																 hAlignment: kCCTextAlignmentCenter
 															  lineBreakMode: kCCLineBreakModeMiddleTruncation
-																   fontSize: (FONT_SIZE_FILTER * [Director shared].scaleFactor.width)
+																   fontSize: FONT_SIZE_FILTER * [Director shared].scaleFactor.width
 								   ];
 	[backToMainLabel setAnchorPoint: ccp(0.5, 0.5)];
 	[self addChild: backToMainLabel z: 101];
@@ -922,6 +932,133 @@
 	return levelsList;
 }
 
+#pragma mark STORYBOARD
+
+//Display the storyboard and start off all of the other methods that we will need to advance through it.
+//This should play automatically the first time they run the game.
+- (void) startStoryboard
+{
+	playingStoryboard = YES;
+	
+	CCSprite *container = [[CCSprite alloc] init];
+	
+	CGSize s = [CCDirector sharedDirector].winSize;
+
+	CCSprite *storyboardBackground = [CCSprite spriteWithFile: @"Media/Backgrounds/wallpaper/1.jpg"];
+	CCSprite *panel1 = [CCSprite spriteWithFile: @"Media/Backgrounds/general/storyboard/1.png"];
+	CCSprite *panel2 = [CCSprite spriteWithFile: @"Media/Backgrounds/general/storyboard/2.png"];
+	CCSprite *panel3 = [CCSprite spriteWithFile: @"Media/Backgrounds/general/storyboard/3.png"];
+	CCSprite *panel4 = [CCSprite spriteWithFile: @"Media/Backgrounds/general/storyboard/4.png"];
+	CCSprite *panel5 = [CCSprite spriteWithFile: @"Media/Backgrounds/general/storyboard/5.png"];
+	
+	//Add all the sprites to the container.
+	[container addChild: storyboardBackground z: 0];
+	[container addChild: panel1 z: 5];
+	[container addChild: panel2 z: 4];
+	[container addChild: panel3 z: 3];
+	[container addChild: panel4 z: 2];
+	[container addChild: panel5 z: 1];
+	
+	//Tag the panels to keep track of them.
+	[storyboardBackground setTag: 0];
+	[panel1 setTag: 1];
+	[panel2 setTag: 2];
+	[panel3 setTag: 3];
+	[panel4 setTag: 4];
+	[panel5 setTag: 5];
+	
+	//Positioning for all the elements.
+	[storyboardBackground setPosition: ccp(s.width * 0.5, s.height * 0.5)];
+	[panel1 setPosition:ccp(123 * [Director shared].scaleFactor.width, (320 - 84) * [Director shared].scaleFactor.height)];
+	[panel2 setPosition:ccp(337 * [Director shared].scaleFactor.width, (320 - 90) * [Director shared].scaleFactor.height)];
+	[panel3 setPosition:ccp(323 * [Director shared].scaleFactor.width, (320 - 189) * [Director shared].scaleFactor.height)];
+	[panel4 setPosition:ccp(110 * [Director shared].scaleFactor.width, (320 - 215) * [Director shared].scaleFactor.height)];
+	[panel5 setPosition:ccp(257 * [Director shared].scaleFactor.width, (320 - 284) * [Director shared].scaleFactor.height)];
+	
+	//Scaling for everyone!
+	float scale = ((0.46f * s.width) / panel1.contentSize.width);
+	[storyboardBackground setScaleX: (s.width / storyboardBackground.contentSize.width)];
+	[storyboardBackground setScaleY: (s.height / storyboardBackground.contentSize.height)];
+	[panel1 setScale: scale];
+	[panel2 setScale: scale];
+	[panel3 setScale: scale];
+	[panel4 setScale: scale];
+	[panel5 setScale: scale];
+	
+	//Opacity for everyone starts at 0.
+	[panel1 setOpacity: 0];
+	[panel2 setOpacity: 0];
+	[panel3 setOpacity: 0];
+	[panel4 setOpacity: 0];
+	[panel5 setOpacity: 0];
+	
+	CCSprite *itemSprite = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
+	CCSprite *itemSpriteSelected = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
+	CCMenuItemSprite *containerMenuItem = [CCMenuItemSprite itemWithNormalSprite: itemSprite selectedSprite: itemSpriteSelected block:^(id sender) {
+		for (int i = 0; i < [[container children] count]; i++)
+		{			
+			CCSprite *child = (CCSprite *)[container getChildByTag: i];
+			if (child.tag != 0 && child.opacity <= 0)
+			{
+				[DialogLayer playButtonSound];
+				CCSprite *prevChild = (CCSprite *)[container getChildByTag: i - 1];
+				[prevChild setOpacity: 255];
+				
+				[self fadeInSprite: child duration: 1.0f];
+				
+				return;
+			}
+			
+			if (i == [[container children] count] - 1)
+			{
+				[DialogLayer playButtonSound];
+				playingStoryboard = NO;
+				[container removeFromParentAndCleanup: YES];
+				[self showLevelList];
+				
+				return;
+			}
+		}
+	}];
+	[containerMenuItem setScaleX: (s.width / containerMenuItem.contentSize.width)];
+	[containerMenuItem setScaleY: (s.height / containerMenuItem.contentSize.height)];
+	[containerMenuItem setOpacity: 0];
+	[containerMenuItem setPosition: ccp(s.width * 0.5, s.height * 0.5)];
+	
+	CCMenu *menu = [CCMenu menuWithItems: containerMenuItem, nil];
+	[menu setAnchorPoint: ccp(0, 0)];
+	[menu setPosition: CGPointZero];
+	
+	[self addChild: container z: 8999];
+	[self performSelector: @selector(fadeInSprite:duration:) withObject: panel1 afterDelay: 1.0f];
+	
+	[container addChild: menu z: 9000];
+}
+
+- (void) fadeInSprite: (CCSprite *) sprite duration: (float) duration
+{
+	if (!sprite)
+		return;
+
+	if (!duration || duration <= 0.01f)
+		duration = 1.0f;
+
+	CCActionTween *tween = [CCActionTween actionWithDuration: duration key: @"opacity" from: 0 to: 255];
+	[sprite runAction: tween];
+}
+
+- (void) fadeOutSprite: (CCSprite *) sprite duration: (float) duration
+{
+	if (!sprite)
+		return;
+	
+	if (!duration || duration <= 0.01f)
+		duration = 1.0f;
+	
+	CCActionTween *tween = [CCActionTween actionWithDuration: duration key: @"opacity" from: 255 to: 0];
+	[sprite runAction: tween];
+}
+
 #pragma mark ONLINE LEVEL CONTROLS
 
 - (void) setFilter: (int) newFilter
@@ -978,7 +1115,7 @@
 #pragma mark PAGE CONTROLS
 - (void) goToPreviousPage: (id) caller
 {
-	if (pageTurning || [Director shared].levelSelectPageNum <= 0)
+	if (pageTurning || [Director shared].levelSelectPageNum <= 0 || playingStoryboard)
 		return;
 	
 	[Director shared].levelSelectPageNum = MAX(0, [Director shared].levelSelectPageNum - 1);
@@ -998,13 +1135,13 @@
 
 - (void) goToNextPage: (id) caller
 {
-	if (pageTurning || [Director shared].levelSelectPageNum >= totalMenuItems / menuItemsPerPage)
+	if (pageTurning || [Director shared].levelSelectPageNum >= (totalMenuItems - 1) / menuItemsPerPage || playingStoryboard)
 		return;
 	
 	[Director shared].levelSelectPageNum = ([Director shared].levelSelectPageNum + 1);
 	[[pageMenu getChildByTag: 0] setVisible: YES];
 	
-	if ([Director shared].levelSelectPageNum >= totalMenuItems / menuItemsPerPage)
+	if ([Director shared].levelSelectPageNum >= (totalMenuItems - 1) / menuItemsPerPage)
 	{
 		[[pageMenu getChildByTag: 1] setVisible: NO];
 	}

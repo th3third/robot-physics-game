@@ -13,18 +13,6 @@
 #import "MToolsPurchaseManager.h"
 #import <CommonCrypto/CommonDigest.h>
 
-#ifdef PREPAID
-
-#define PREPAID_VERSION true
-
-#endif
-
-#ifndef PREPAID
-
-#define PREPAID_VERSION false
-
-#endif
-
 @implementation Director
 
 static CGSize designSize = {480, 320};
@@ -49,66 +37,66 @@ static Director *shared = nil;
 	{
 		//Set up the preset scores.
 		presetScores = [NSDictionary dictionaryWithObjectsAndKeys:
-						[NSNumber numberWithFloat: 10.0f], @"Level 01.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 02.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 03.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 04.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 05.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 06.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 07.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 08.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 09.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 10.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 11.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 12.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 13.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 14.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 15.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 16.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 17.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 18.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 19.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 20.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 21.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 22.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 23.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 24.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 25.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 26.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 27.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 28.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 29.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 30.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 31.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 32.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 33.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 34.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 35.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 36.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 37.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 38.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 39.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 40.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 41.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 42.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 43.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 44.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 45.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 46.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 47.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 48.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 49.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 50.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 51.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 52.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 53.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 54.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 55.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 01.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 02.ctr",
+						[NSNumber numberWithFloat: 9.0f], @"Level 03.ctr",
+						[NSNumber numberWithFloat: 6.0f], @"Level 04.ctr",
+						[NSNumber numberWithFloat: 6.0f], @"Level 05.ctr",
+						[NSNumber numberWithFloat: 3.0f], @"Level 06.ctr",
+						[NSNumber numberWithFloat: 9.0f], @"Level 07.ctr",
+						[NSNumber numberWithFloat: 8.0f], @"Level 08.ctr",
+						[NSNumber numberWithFloat: 7.0f], @"Level 09.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 10.ctr",
+						[NSNumber numberWithFloat: 4.0f], @"Level 11.ctr",
+						[NSNumber numberWithFloat: 6.0f], @"Level 12.ctr",
+						[NSNumber numberWithFloat: 12.0f], @"Level 13.ctr",
+						[NSNumber numberWithFloat: 4.0f], @"Level 14.ctr",
+						[NSNumber numberWithFloat: 3.0f], @"Level 15.ctr",
+						[NSNumber numberWithFloat: 9.0f], @"Level 16.ctr",
+						[NSNumber numberWithFloat: 6.0f], @"Level 17.ctr",
+						[NSNumber numberWithFloat: 7.0f], @"Level 18.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 19.ctr",
+						[NSNumber numberWithFloat: 6.0f], @"Level 20.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 21.ctr",
+						[NSNumber numberWithFloat: 3.0f], @"Level 22.ctr",
+						[NSNumber numberWithFloat: 8.0f], @"Level 23.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 24.ctr",
+						[NSNumber numberWithFloat: 7.0f], @"Level 25.ctr",
+						[NSNumber numberWithFloat: 4.0f], @"Level 26.ctr",
+						[NSNumber numberWithFloat: 14.0f], @"Level 27.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 28.ctr",
+						[NSNumber numberWithFloat: 4.0f], @"Level 29.ctr",
+						[NSNumber numberWithFloat: 12.0f], @"Level 30.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 31.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 32.ctr",
+						[NSNumber numberWithFloat: 4.0f], @"Level 33.ctr",
+						[NSNumber numberWithFloat: 3.0f], @"Level 34.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 35.ctr",
+						[NSNumber numberWithFloat: 7.0f], @"Level 36.ctr",
+						[NSNumber numberWithFloat: 6.0f], @"Level 37.ctr",
+						[NSNumber numberWithFloat: 11.0f], @"Level 38.ctr",
+						[NSNumber numberWithFloat: 2.0f], @"Level 39.ctr",
+						[NSNumber numberWithFloat: 13.0f], @"Level 40.ctr",
+						[NSNumber numberWithFloat: 8.0f], @"Level 41.ctr",
+						[NSNumber numberWithFloat: 3.0f], @"Level 42.ctr",
+						[NSNumber numberWithFloat: 14.0f], @"Level 43.ctr",
+						[NSNumber numberWithFloat: 4.0f], @"Level 44.ctr",
+						[NSNumber numberWithFloat: 4.0f], @"Level 45.ctr",
+						[NSNumber numberWithFloat: 9.0f], @"Level 46.ctr",
+						[NSNumber numberWithFloat: 9.0f], @"Level 47.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 48.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 49.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 50.ctr",
+						[NSNumber numberWithFloat: 8.0f], @"Level 51.ctr",
+						[NSNumber numberWithFloat: 8.0f], @"Level 52.ctr",
+						[NSNumber numberWithFloat: 7.0f], @"Level 53.ctr",
+						[NSNumber numberWithFloat: 3.0f], @"Level 54.ctr",
+						[NSNumber numberWithFloat: 15.0f], @"Level 55.ctr",
 						[NSNumber numberWithFloat: 10.0f], @"Level 56.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 57.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 58.ctr",
+						[NSNumber numberWithFloat: 5.0f], @"Level 57.ctr",
+						[NSNumber numberWithFloat: 8.0f], @"Level 58.ctr",
 						[NSNumber numberWithFloat: 10.0f], @"Level 59.ctr",
-						[NSNumber numberWithFloat: 10.0f], @"Level 60.ctr",
+						[NSNumber numberWithFloat: 16.0f], @"Level 60.ctr",
 						nil];
 		
 		self.levelsServerURL = [NSURL URLWithString: @"http://gearsprout.com/content/com.gearsprout.chuckthebot/levels"];
@@ -123,6 +111,9 @@ static Director *shared = nil;
 		self.globalFont = @"Segoe Print";
 		self.drawDebugData = NO;
 		self.levelSelectPageNum = 0;
+		
+		//Default timeout for all network operations.
+		timeoutInterval = 15.0f;
 		
 		self.soundEnabled = [[MToolsAppSettings getValueWithName: @"soundEnabled"] boolValue];
 		if (!self.soundEnabled)
@@ -240,7 +231,7 @@ static Director *shared = nil;
 	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@", encryptedPassword, username, email];
 	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
 	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.createUserScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.createUserScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: timeoutInterval];
 	[request setHTTPMethod: @"POST"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
 	[request setHTTPBody: requestData];
@@ -299,7 +290,7 @@ static Director *shared = nil;
 	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@", encryptedPassword, username];
 	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
 	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.loginScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.loginScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: timeoutInterval];
 	[request setHTTPMethod: @"POST"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
 	[request setHTTPBody: requestData];
@@ -338,8 +329,8 @@ static Director *shared = nil;
 	self.username = NULL;
 	self.hashedPassword = NULL;
 	
-	[MToolsAppSettings setValue: self.username withName: NULL];
-	[MToolsAppSettings setValue: self.hashedPassword withName: NULL];
+	[MToolsAppSettings setValue: @"" withName: @"username"];
+	[MToolsAppSettings setValue: @"" withName: @"password"];
 }
 
 //TODO: Strip out the | character in the level name. You can't do that!
@@ -352,7 +343,7 @@ static Director *shared = nil;
 	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@&value4=%@&value5=%@", self.hashedPassword, self.username, [Director shared].stage.serialized, [Director shared].stage.name, compiledTags];
 	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
 	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.saveLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.saveLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: timeoutInterval];
 	[request setHTTPMethod: @"POST"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
 	[request setHTTPBody: requestData];
@@ -416,7 +407,7 @@ static Director *shared = nil;
 	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@", [Director shared].stageName, [[Director shared].stage.lastModified description]];
 	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
 	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.loadLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.loadLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: timeoutInterval];
 	[request setHTTPMethod: @"POST"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
 	[request setHTTPBody: requestData];
@@ -529,7 +520,7 @@ static Director *shared = nil;
 	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@", self.hashedPassword, self.username, name];
 	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
 	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.flagLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.flagLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: timeoutInterval];
 	[request setHTTPMethod: @"POST"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
 	[request setHTTPBody: requestData];
@@ -555,7 +546,7 @@ static Director *shared = nil;
 	NSString *requestString = [NSString stringWithFormat: @"value1=%@&value2=%@&value3=%@&value4=%d", self.hashedPassword, self.username, name, rating];
 	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
 	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.rateLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: 60.0];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: self.rateLevelScriptURL cachePolicy: NSURLRequestReloadIgnoringLocalCacheData timeoutInterval: timeoutInterval];
 	[request setHTTPMethod: @"POST"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
 	[request setHTTPBody: requestData];
@@ -707,7 +698,7 @@ static Director *shared = nil;
 
 - (bool) loggedIn
 {
-	return (self.username && self.hashedPassword);
+	return ((self.username && self.hashedPassword) && (![self.username isEqualToString: @""] && ![self.hashedPassword isEqualToString: @""]));
 }
 
 - (NSArray *) localLevelsList

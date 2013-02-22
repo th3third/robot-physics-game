@@ -15,7 +15,6 @@
 	
 	CCActionTween *spinnerTween;
 	CCSprite *spinner;
-	
 	CCLabelTTF *statusLabel;
 }
 

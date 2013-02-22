@@ -12,5 +12,10 @@
 
 // HelloWorldLayer
 @interface IntroLayer : Layer
+{
+	CCActionTween *spinnerTween;
+	CCSprite *spinner;
+	CCLabelTTF *statusLabel;
+}
 
 @end

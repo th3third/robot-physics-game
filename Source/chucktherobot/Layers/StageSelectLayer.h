@@ -14,6 +14,7 @@
     int totalMenuItems;
 	int menuItemsPerPage;
 	bool pageTurning;
+	bool playingStoryboard;
 	UIPanGestureRecognizer *pan;
 	
 	//Array with the currently loaded levels

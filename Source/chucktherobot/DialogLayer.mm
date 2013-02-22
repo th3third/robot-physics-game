@@ -499,7 +499,7 @@
 		callbackObj = callbackObjNew;
         selector = selectorNew;
 		
-		CCSprite *background = [self createBackground];
+		CCSprite *background = [self createBackgroundStatic];
 		
 		//Name your level title
 		CCLabelTTF *nameYourLevelTitle = [DialogLayer createShadowHeaderWithString: @"Name Your Level"
@@ -754,7 +754,7 @@
 		[self addChild: purchaseFullGameLabel];
 		
 		//Full game description label.
-		CCLabelTTF *fullGameDescLabel = [DialogLayer createShadowHeaderWithString: @"- All levels become playable!\n- Access to Online Levels!\n- Save and upload your own custom made Online Levels!\n- Support indie developers!"
+		CCLabelTTF *fullGameDescLabel = [DialogLayer createShadowHeaderWithString: @"- All levels become playable!\n- Access to Online Levels!\n- Save and upload your own\n  custom made Online Levels!\n- Support indie developers!"
 																			 position: ccp(background.position.x - backgroundWidth * 0.2, background.position.y + backgroundHeight * 0.350)
 																		 shadowOffset: CGSizeMake(1, -1)
 																				color: ccWHITE
@@ -770,9 +770,13 @@
 		//Full game purchase button.
 		CCSprite *purchaseFullGameSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_full_game_purchase.png"];
 		CCSprite *purchaseFullGameSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_full_game_purchase.png"];
-		[purchaseFullGameSelectedSprite setScale: 0.95];
+		
+		if (!PREPAID)
+			[purchaseFullGameSelectedSprite setScale: 0.95];
+		
 		CCMenuItemSprite *purchaseFullGameMenuItem = [CCMenuItemSprite itemWithNormalSprite: purchaseFullGameSprite selectedSprite: purchaseFullGameSelectedSprite block:^(id sender) {
-			[[MToolsPurchaseManager sharedManager] purchaseProductByName: @"fullversion"];
+			if (!PREPAID)
+				[[MToolsPurchaseManager sharedManager] purchaseProductByName: @"fullversion"];
 		}];
 		[purchaseFullGameMenuItem setScale: (backgroundWidth * 0.33) / purchaseFullGameMenuItem.contentSize.width];
 		[purchaseFullGameMenuItem setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y + backgroundHeight * 0.2)];
@@ -783,13 +787,15 @@
 		[self addChild: purchaseMenu];
 		
 		//Icon to overlay on the purchase button if we've already got the full version.
-		if ([[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"])
+		if ([[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"] || PREPAID)
 		{
 			CCSprite *purchasedIcon = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_icon.png"];
 			[purchasedIcon setScale: (purchaseFullGameMenuItem.contentSize.width * purchaseFullGameMenuItem.scaleX) / purchasedIcon.contentSize.width];
 			[purchasedIcon setPosition: purchaseFullGameMenuItem.position];
 			[purchaseFullGameMenuItem setOpacity: 150];
 			[self addChild: purchasedIcon];
+			
+			[purchaseFullGameMenuItem setColor: ccc3(150, 150, 150)];
 		}
 		
 		//Unlock Chuck's Friends label
@@ -850,7 +856,7 @@
 			}];
 
 			[botMenuItem setScale: ((backgroundWidth * 0.12) / botMenuItem.contentSize.width)];
-			[botMenuItem setPosition: ccp(background.position.x - backgroundWidth * 0.3 + (i * (botMenuItem.contentSize.width * botMenuItem.scale)), background.position.y - backgroundHeight * 0.25)];
+			[botMenuItem setPosition: ccp(background.position.x - backgroundWidth * ([botsForPurchase count] * .0475) + (i * (botMenuItem.contentSize.width * botMenuItem.scale)), background.position.y - backgroundHeight * 0.25)];
 			
 			[purchasedIcon setScale: (botMenuItem.contentSize.width * botMenuItem.scaleX) / purchasedIcon.contentSize.width];
 			[purchasedIcon setPosition: botMenuItem.position];
@@ -883,6 +889,78 @@
 	if (self = [self init])
 	{
 		CCSprite *background = [self createBackground];
+		
+		//"Other GearSprout Apps"
+		CCLabelTTF *titleLabel = [DialogLayer createShadowHeaderWithString: @"Other GearSprout Apps"
+																	position: ccp(background.position.x, background.position.y + backgroundHeight * 0.375)
+																shadowOffset: CGSizeMake(1, -1)
+																	   color: ccWHITE
+																 shadowColor: ccBLACK
+																  dimensions: CGSizeMake(backgroundWidth * 0.8, backgroundHeight * 0.7)
+																  hAlignment: kCCTextAlignmentCenter
+																  vAlignment: kCCVerticalTextAlignmentCenter
+															   lineBreakMode: kCCLineBreakModeWordWrap
+																	fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+									];
+		[self addChild: titleLabel];
+		
+		//Pictures and links to other GearSprout apps.
+		NSMutableArray *menuItems = [NSMutableArray array];
+		CCSprite *appIcon;
+		CCSprite *appIconSelected;
+		CCMenuItemSprite *appMenuItem;
+		
+		NSArray *apps = [NSArray arrayWithObjects: @"mouth-mover", @"rodent's-revenge", @"skifree", @"symmetry-hd", @"tunepad", nil];
+		
+		for (int i = 0; i < [apps count]; i++)
+		{
+			appIcon = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Buttons/general/credits/%@.png", [apps objectAtIndex: i]]];
+			appIconSelected = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Buttons/general/credits/%@.png", [apps objectAtIndex: i]]];
+			[appIconSelected setScale: 0.95];
+			
+			appMenuItem = [CCMenuItemSprite itemWithNormalSprite: appIcon selectedSprite: appIconSelected block:^(id sender)
+			{
+				
+			}];
+			[appMenuItem setScale: (backgroundWidth * 0.115) / appIcon.contentSize.width];
+			[appMenuItem setPosition: ccp(background.position.x - backgroundWidth * 0.225 + (i * (appMenuItem.contentSize.width * appMenuItem.scale)), background.position.y + backgroundHeight * 0.225)];
+			
+			[menuItems addObject: appMenuItem];
+		}		
+		
+		CCMenu *menu = [CCMenu menuWithArray: menuItems];
+		[menu setAnchorPoint: ccp(0, 0)];
+		[menu setPosition: CGPointZero];
+		[self addChild: menu];
+		
+		//Credits label
+		CCLabelTTF *creditsLabel = [DialogLayer createShadowHeaderWithString: @"Credits"
+																	position: ccp(background.position.x, background.position.y - backgroundHeight * 0.2)
+																shadowOffset: CGSizeMake(1, -1)
+																	   color: ccWHITE
+																 shadowColor: ccBLACK
+																  dimensions: CGSizeMake(backgroundWidth * 0.8, backgroundHeight * 0.7)
+																  hAlignment: kCCTextAlignmentLeft
+																  vAlignment: kCCVerticalTextAlignmentTop
+															   lineBreakMode: kCCLineBreakModeWordWrap
+																	fontSize: DIALOG_FONT_SIZE * [Director shared].scaleFactor.width
+									];
+		[self addChild: creditsLabel];
+		
+		//Credits body label
+		CCLabelTTF *creditsBodyLabel = [DialogLayer createShadowHeaderWithString: @"Developed By: GearSprout, LLC\nTommy Tornroos & Marshall Miller\n\nHead Developer: Marshall Miller\n\nGraphics and Testing: Tommy Tornroos\n\n\n\n\nMusic: \"Toy of Fury\" by Thiaz Itch\n(http://thiazitch.prootrecords.com)\n\n\"Air Hockey Saloon\" by Chris Zabriskie\n(http://chriszabriskie.com)\n\n\"Robot Anthem Part II\" by Learning Music\n(http://www.learningmusicmonthly.com/)\n\n\"FB-01 2\" by Christian Bjoerklund\n(http://freemusicarchive.org/music/Christian_Bjoerklund/Skapmat/)\n\nSound Effects: Tommy Tornroos & Marshall Miller"
+																  position: ccp(background.position.x, background.position.y + backgroundHeight * 0.05)
+															  shadowOffset: CGSizeMake(1, -1)
+																	 color: ccWHITE
+															   shadowColor: ccBLACK
+																dimensions: CGSizeMake(backgroundWidth * 0.8, backgroundHeight)
+																hAlignment: kCCTextAlignmentLeft
+																vAlignment: kCCVerticalTextAlignmentTop
+															 lineBreakMode: kCCLineBreakModeWordWrap
+																  fontSize: DIALOG_FONT_SIZE * 0.8 * [Director shared].scaleFactor.width
+								  ];
+		[creditsBodyLabel setAnchorPoint: ccp(0.5, 1)];		
+		[self addChild: creditsBodyLabel];
 	}
 	
 	return self;
@@ -897,8 +975,8 @@
         callbackObj = callbackObjNew;
         selector = selectorNew;
         
-        CCSprite *background = [self createBackground];
-		background.position = ccp(background.position.x, background.position.y + 30);
+        CCSprite *background = [self createBackgroundStatic];
+		background.position = ccp(background.position.x, background.position.y + 70);
 		
 		CGSize s = [CCDirector sharedDirector].winSize;
 		NSMutableArray *buttons = [NSMutableArray array];
@@ -952,7 +1030,7 @@
 		 ];
 		self.textField2.delegate = self;
 		self.textField2.keyboardType = UIKeyboardAppearanceDefault;
-		self.textField2.returnKeyType = UIReturnKeyDone;
+		self.textField2.returnKeyType = UIReturnKeyNext;
 		self.textField2.autocorrectionType = UITextAutocapitalizationTypeNone;
 		self.textField2.autocapitalizationType = UITextAutocapitalizationTypeNone;
 		self.textField2.secureTextEntry = YES;
@@ -1019,7 +1097,7 @@
         callbackObj = callbackObjNew;
         selector = selectorNew;
         
-        CCSprite *background = [self createBackground];
+        CCSprite *background = [self createBackgroundStatic];
 		background.position = ccp(background.position.x, background.position.y + 30);
      
 		CGSize s = [CCDirector sharedDirector].winSize;
@@ -1262,12 +1340,13 @@
 	CGSize s = [CCDirector sharedDirector].winSize;
 	
 	//This is the invisible closing background which will remove the notification window if hit.
-	CCSprite *backgroundDimmer = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
-	[backgroundDimmer setScaleX: (s.width / backgroundDimmer.contentSize.width)];
-	[backgroundDimmer setScaleY: (s.height / backgroundDimmer.contentSize.height)];
-	[backgroundDimmer setOpacity: 100];
-	[backgroundDimmer setPosition: ccp(s.width * 0.5, s.height * 0.5)];
-	[self addChild: backgroundDimmer z: -2];
+	CCMenuItemImage *closeMenuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Backgrounds/blank.jpg" selectedImage: @"Media/Backgrounds/blank.jpg" target: self selector: @selector(resign)];
+	[closeMenuItem setScaleX: (s.width / closeMenuItem.contentSize.width)];
+	[closeMenuItem setScaleY: (s.height / closeMenuItem.contentSize.height)];
+	[closeMenuItem setOpacity: 100];
+	
+	CCMenu *closeMenu = [CCMenu menuWithItems: closeMenuItem, nil];
+	[self addChild: closeMenu z: -2];
 	
 	CCSprite *background = [CCSprite node];
 	background = [background initWithFile: @"Media/Backgrounds/general/dialog.png"];
@@ -1331,6 +1410,11 @@
     return shadow;
 }
 
+- (BOOL) textFieldShouldEndEditing:(UITextField *)textField
+{
+	return YES;
+}
+
 - (BOOL) textFieldShouldReturn:(UITextField *)textField
 {
 	CGSize s = [CCDirector sharedDirector].winSize;
@@ -1363,18 +1447,15 @@
 		UIResponder *nextResponder = [textField.superview viewWithTag: nextTag];
 		
 		if (nextResponder)
-		{			
+		{
+			CCMoveTo *keyboardMovementTween;
+			keyboardMovementTween = [CCMoveTo actionWithDuration: 0.2 position: ccp(self.position.x, self.position.y + 25)];
+			[self runAction: keyboardMovementTween];
+			
 			[nextResponder becomeFirstResponder];
 		}
 		else
-		{
-			CCMoveTo *keyboardMovementTween;
-			keyboardMovementTween = [CCMoveTo actionWithDuration: 0.2 position: ccp(self.position.x, 0)];
-			[self runAction: keyboardMovementTween];
-			[self.textFieldWrapper runAction: keyboardMovementTween];
-			[self.textFieldWrapper2 runAction: keyboardMovementTween];
-			[self.textFieldWrapper3 runAction: keyboardMovementTween];
-			
+		{			
 			[textField resignFirstResponder];
 			[self sendNewAccountInfoButtonPressed];
 		}
@@ -1394,10 +1475,19 @@
 
 - (void) remove
 {
+	[self resign];
+	
 	[self.textField removeFromSuperview];
 	[self.textField2 removeFromSuperview];
 	[self.textField3 removeFromSuperview];
     [self removeFromParentAndCleanup: YES];
+}
+
+- (void) resign
+{
+	[self.textField resignFirstResponder];
+	[self.textField2 resignFirstResponder];
+	[self.textField3 resignFirstResponder];
 }
 
 #pragma mark BUTTON PRESSES
@@ -1425,7 +1515,11 @@
 	}
 	else
 	{
+		id parent = self.parent;
+		[self remove];
 		
+		DialogLayer *successDialog = [[DialogLayer alloc] initNotificationWithMessage: @"That username already exists." callback: callbackObj selector: selector];
+		[parent addChild: successDialog z: 9000];
 	}
 }
 

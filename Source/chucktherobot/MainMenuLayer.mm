@@ -137,10 +137,10 @@
 	[self addChild: menu z:-1];
 	
 	//LOWER-LEFT MENU
-	CCSprite *lowerLeftMenuBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_lower_left_background.png"];
+	CCSprite *lowerLeftMenuBackground = [CCSprite spriteWithFile: @"Media/Backgrounds/general/social_menu.png"];
 	[lowerLeftMenuBackground setAnchorPoint: ccp(0, 0.5)];
-	[lowerLeftMenuBackground setScale: (s.width * 0.2) / lowerLeftMenuBackground.contentSize.width];
-	[lowerLeftMenuBackground setPosition: ccp(0, (lowerLeftMenuBackground.contentSize.height * lowerLeftMenuBackground.scale) * 0.5)];
+	[lowerLeftMenuBackground setScale: (s.width * 0.225) / lowerLeftMenuBackground.contentSize.width];
+	[lowerLeftMenuBackground setPosition: ccp(2, (lowerLeftMenuBackground.contentSize.height * lowerLeftMenuBackground.scale) * 0.5)];
 	[self addChild: lowerLeftMenuBackground];
 	
 	menuItems = [NSMutableArray array];
@@ -302,7 +302,7 @@
 
 #pragma mark LOGIN
 
-- (void) logInWith:(NSArray *)loginInfo
+- (void) logInWith: (NSArray *) loginInfo
 {
 	[super logInWith: loginInfo];
 	

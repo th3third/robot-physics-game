@@ -15,6 +15,18 @@
 
 #define trimEnds( object ) [object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet] ]
 
+#ifdef PREPAID
+
+#define PREPAID_VERSION true
+
+#endif
+
+#ifndef PREPAID
+
+#define PREPAID_VERSION false
+
+#endif
+
 enum DataState
 {
 	DATA_STATE_LOGGING_IN = 0,
@@ -29,6 +41,7 @@ enum DataState
 @interface Director : NSObject <NSURLConnectionDelegate, NSURLConnectionDataDelegate, NSURLConnectionDownloadDelegate>
 {
 	GLESDebugDraw *m_debugDraw;
+	float timeoutInterval;
 }
 
 @property MyContactListener *_contactListener;

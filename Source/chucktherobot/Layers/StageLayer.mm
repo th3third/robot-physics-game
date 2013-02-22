@@ -174,12 +174,12 @@ enum
 			if (![Director shared].paused)
 			{
 				[Director shared].paused = YES;
-				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to the main menu? If your level is not saved it will be lost." callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to the menu? If your level is not saved it will be lost." callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
 				[self addChild: mainMenuConfirmDialog z: 9000];
 			}
 			else
 			{
-				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to the main menu? If your level is not saved it will be lost." callback: self selector: @selector(quitConfirm)];
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to the menu? If your level is not saved it will be lost." callback: self selector: @selector(quitConfirm)];
 				[self addChild: mainMenuConfirmDialog z: 9000];
 			}
 		}
@@ -188,12 +188,12 @@ enum
 			if (![Director shared].paused)
 			{
 				[Director shared].paused = YES;
-				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to level selection?" callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: [NSString stringWithFormat: @"You are playing level %d.\nAre you sure you wish to go back to level selection?", [Director shared].localLevelIndex + 1] callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
 				[self addChild: mainMenuConfirmDialog z: 9000];
 			}
 			else
 			{
-				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: @"Are you sure you wish to go back to level selection?" callback: self selector: @selector(quitConfirm)];
+				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: [NSString stringWithFormat: @"You are playing level %d.\nAre you sure you wish to go back to level selection?", [Director shared].localLevelIndex + 1] callback: self selector: @selector(quitConfirm)];
 				[self addChild: mainMenuConfirmDialog z: 9000];
 			}
 		}
@@ -535,7 +535,8 @@ enum
     //HELP
 	menuItemPos = ccp((gear.contentSize.width / 1.5 * gear.scale) + startingPoint.x + ((editorButtonSize + editorButtonPadding) * [menuItems count]), startingPoint.y);
     menuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_editor_help.png" selectedImage: @"Media/Buttons/general/button_editor_help.png" block:^(id sender) {
-        [self showHelpMenu];
+		[self performSelector: @selector(createLoadingBox)];
+        [self performSelector: @selector(showHelpMenu) withObject: Nil afterDelay: 0.2];
     }];
     if (menuItem.contentSize.width > menuItem.contentSize.height)
 		scale = editorButtonSize / menuItem.contentSize.width;
@@ -1659,6 +1660,14 @@ enum
 	location.x -= ((int)location.x % (int)gridSpacing);
 	location.y -= ((int)location.y % (int)gridSpacing);
 	
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	{
+		if (location.y > ([CCDirector sharedDirector].winSize.height - 80))
+		{
+			location.y -= (location.y - ([CCDirector sharedDirector].winSize.height - 80));
+		}
+	}
+	
 	return location;
 }
 
@@ -1738,6 +1747,32 @@ enum
 #pragma mark HELP
 
 //Loads up the help popups.
+- (void) createLoadingBox
+{
+	CGSize s = [CCDirector sharedDirector].winSize;
+	
+	loadingBackground = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
+	[loadingBackground setScaleX: (s.width / loadingBackground.contentSize.width)];
+	[loadingBackground setScaleY: (s.height / loadingBackground.contentSize.height)];
+	[loadingBackground setOpacity: 100];
+	[loadingBackground setPosition: ccp(s.width * 0.5, s.height * 0.5)];
+	[self addChild: loadingBackground z: 8999];
+	
+	loadingLabel = [DialogLayer createShadowHeaderWithString: @"Loading..."
+																position: ccp(s.width * 0.5, s.height * 0.5)
+															shadowOffset: CGSizeMake(1, -1)
+																   color: ccWHITE
+															 shadowColor: ccBLACK
+															  dimensions: CGSizeMake(s.width, s.height)
+															  hAlignment: kCCTextAlignmentCenter
+															  vAlignment: kCCVerticalTextAlignmentCenter
+														   lineBreakMode: kCCLineBreakModeMiddleTruncation
+																fontSize: 48
+								];
+	
+	[self addChild: loadingLabel z: 9000];
+}
+
 - (void) showHelpMenu
 {
 	CCDirector* director = [CCDirector sharedDirector];
@@ -1753,6 +1788,8 @@ enum
 		[helpCloseMenu removeFromParentAndCleanup: NO];
 		[pageMenu removeFromParentAndCleanup: NO];
 		[helpMenu removeFromParentAndCleanup: YES];
+		[loadingBackground removeFromParentAndCleanup: YES];
+		[loadingLabel removeFromParentAndCleanup: YES];
 		return;
 	}
 	else if (helpMenu && !helpMenu.parent)
@@ -1763,6 +1800,8 @@ enum
 		[self addChild: helpMenu z: 9000];
 		[self addChild: helpCloseMenu z: 8999];
 		[self addChild: pageMenu z: 9000];
+		[loadingBackground removeFromParentAndCleanup: YES];
+		[loadingLabel removeFromParentAndCleanup: YES];
 		return;
 	}
 	
@@ -1791,6 +1830,9 @@ enum
 	
 	[self createHelpMenuCloser];
 	[self createPageTurners];
+	
+	[loadingBackground removeFromParentAndCleanup: YES];
+	[loadingLabel removeFromParentAndCleanup: YES];
 }
 
 - (void) createPageTurners
@@ -1858,7 +1900,7 @@ enum
 	if (pageTurning)
 		return;
 	
-	if (helpPageNum >= 15)
+	if (helpPageNum >= 16)
 	{		
 		return;
 	}
@@ -1873,7 +1915,7 @@ enum
 	[helpMenu stopAllActions];
 	[helpMenu runAction: action];
 	
-	if (helpPageNum >= 15)
+	if (helpPageNum >= 16)
 	{
 		[[pageMenu getChildByTag: 1] setVisible: NO];
 	}

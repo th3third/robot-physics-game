@@ -36,6 +36,8 @@
 	CCMenuItemSprite *gear;
 	
 	//Help menu
+	CCSprite *loadingBackground;
+	CCLabelTTF *loadingLabel;
 	UIPanGestureRecognizer *pan;
 	bool pageTurning;
 	int helpPageNum;
