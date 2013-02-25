@@ -115,11 +115,16 @@ static Director *shared = nil;
 		//Default timeout for all network operations.
 		timeoutInterval = 15.0f;
 		
-		self.soundEnabled = [[MToolsAppSettings getValueWithName: @"soundEnabled"] boolValue];
-		if (!self.soundEnabled)
+		if ([MToolsAppSettings getValueWithName: @"soundEnabled"])
 		{
-			[SimpleAudioEngine sharedEngine].mute = YES;
+			self.soundEnabled = [[MToolsAppSettings getValueWithName: @"soundEnabled"] boolValue];
 		}
+		else
+		{
+			self.soundEnabled = YES;
+		}
+		
+		[[SimpleAudioEngine sharedEngine] setMute: !self.soundEnabled];
 		
 		[self calcNumOfBackgrounds];
 		
