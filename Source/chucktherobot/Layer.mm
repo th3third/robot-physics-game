@@ -15,14 +15,14 @@
 - (id) init
 {
 	if (self = [super init])
-	{		
-		[self scheduleUpdate];
+	{
+		[self schedule: @selector(updateFrame) interval: 0.05f];
 	}
 	
 	return self;
 }
 
-- (void) update: (ccTime) dt
+- (void) updateFrame
 {
     //MOVE THE VIEW, PLEASE
 	UIView *glView = [CCDirector sharedDirector].view;

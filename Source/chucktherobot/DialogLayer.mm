@@ -967,7 +967,7 @@
 		[creditsTextView setText: @"Developed By: GearSprout, LLC\nTommy Tornroos & Marshall Miller\n\nHead Developer: Marshall Miller\n\nGraphics and Testing: Tommy Tornroos\n\n\n\n\nMusic: \"Toy of Fury\" by Thiaz Itch\n(http://thiazitch.prootrecords.com)\n\n\"Air Hockey Saloon\" by Chris Zabriskie\n(http://chriszabriskie.com)\n\n\"Robot Anthem Part II\" by Learning Music\n(http://www.learningmusicmonthly.com/)\n\n\"FB-01 2\" by Christian Bjoerklund\n(http://freemusicarchive.org/music/Christian_Bjoerklund/Skapmat/)\n\nSound Effects: Tommy Tornroos & Marshall Miller"];
 		[creditsTextView setBackgroundColor: [UIColor clearColor]];
 		[creditsTextView setTextColor: [UIColor whiteColor]];
-		[creditsTextView setFont: [UIFont fontWithName: [Director shared].globalFont size: 12]];
+		[creditsTextView setFont: [UIFont fontWithName: [Director shared].globalFont size: 12 * [Director shared].scaleFactor.width]];
 		[UIScrollView beginAnimations:@"scrollAnimation" context:nil];
 		[UIScrollView setAnimationDuration: 24.0f];
 		[creditsTextView setContentOffset:CGPointMake(0, backgroundHeight * 2)];
