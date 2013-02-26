@@ -12,6 +12,30 @@
 
 @implementation Layer
 
+- (id) init
+{
+	if (self = [super init])
+	{		
+		[self scheduleUpdate];
+	}
+	
+	return self;
+}
+
+- (void) update: (ccTime) dt
+{
+    //MOVE THE VIEW, PLEASE
+	UIView *glView = [CCDirector sharedDirector].view;
+	
+	if ([CCDirector sharedDirector].isWidescreen && glView.frame.origin.x != 44)
+	{
+		CGRect newFrame = CGRectMake(44, 0, glView.frame.size.width, glView.frame.size.height);
+		[UIView animateWithDuration: 0 animations:^{
+			glView.frame = newFrame;
+		}];
+	}
+}
+
 - (void) logInWith: (NSArray *) loginInfo
 {
 	if (!loginInfo || ![loginInfo isKindOfClass: [NSArray class]])

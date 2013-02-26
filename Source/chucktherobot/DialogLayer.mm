@@ -171,9 +171,12 @@
 		[self addChild: messageLabel];
 		
 		//Cancel
-		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_dialog_cancel.png" selectedImage: @"Media/Buttons/general/button_dialog_cancel.png" block:^(id sender) {
+		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_dialog_cancel.png" selectedImage: @"Media/Buttons/general/button_dialog_cancel.png" block:^(id sender) {			
+			if ((callbackObj && selectorCancel) && [callbackObj respondsToSelector: selectorCancel])
+			{
+				[callbackObj performSelector: selectorCancel];
+			}
 			[self cancelButtonPressed: nil];
-			[callbackObj performSelector: selectorCancel];
 		}];
 		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
@@ -911,6 +914,13 @@
 		CCMenuItemSprite *appMenuItem;
 		
 		NSArray *apps = [NSArray arrayWithObjects: @"mouth-mover", @"rodent's-revenge", @"skifree", @"symmetry-hd", @"tunepad", nil];
+		NSArray *appURLs = [NSArray arrayWithObjects:
+							@"https://itunes.apple.com/us/app/mouth-mover/id564033673?ls=1&mt=8",
+							@"https://itunes.apple.com/us/app/rodents-revenge/id587603072?ls=1&mt=8",
+							@"https://itunes.apple.com/us/app/skifree/id588839086?ls=1&mt=8",
+							@"https://itunes.apple.com/us/app/symmetry-hd/id590932479?ls=1&mt=12",
+							@"https://itunes.apple.com/us/app/tunepad/id556683901?ls=1&mt=8",
+							nil];
 		
 		for (int i = 0; i < [apps count]; i++)
 		{
@@ -920,7 +930,9 @@
 			
 			appMenuItem = [CCMenuItemSprite itemWithNormalSprite: appIcon selectedSprite: appIconSelected block:^(id sender)
 			{
-				
+				NSString *pageURL =[appURLs objectAtIndex: i];
+				NSString *escaped = [pageURL stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+				[[UIApplication sharedApplication] openURL: [NSURL URLWithString: escaped]];
 			}];
 			[appMenuItem setScale: (backgroundWidth * 0.115) / appIcon.contentSize.width];
 			[appMenuItem setPosition: ccp(background.position.x - backgroundWidth * 0.225 + (i * (appMenuItem.contentSize.width * appMenuItem.scale)), background.position.y + backgroundHeight * 0.225)];
@@ -948,6 +960,26 @@
 		[self addChild: creditsLabel];
 		
 		//Credits body label
+		UIScrollView *creditsScrollView = [[UIScrollView alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, backgroundHeight * 0.45)];
+		[creditsScrollView setIndicatorStyle: UIScrollViewIndicatorStyleWhite];
+		 
+		UITextView *creditsTextView = [[UITextView alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, backgroundHeight * 0.45)];
+		[creditsTextView setText: @"Developed By: GearSprout, LLC\nTommy Tornroos & Marshall Miller\n\nHead Developer: Marshall Miller\n\nGraphics and Testing: Tommy Tornroos\n\n\n\n\nMusic: \"Toy of Fury\" by Thiaz Itch\n(http://thiazitch.prootrecords.com)\n\n\"Air Hockey Saloon\" by Chris Zabriskie\n(http://chriszabriskie.com)\n\n\"Robot Anthem Part II\" by Learning Music\n(http://www.learningmusicmonthly.com/)\n\n\"FB-01 2\" by Christian Bjoerklund\n(http://freemusicarchive.org/music/Christian_Bjoerklund/Skapmat/)\n\nSound Effects: Tommy Tornroos & Marshall Miller"];
+		[creditsTextView setBackgroundColor: [UIColor clearColor]];
+		[creditsTextView setTextColor: [UIColor whiteColor]];
+		[creditsTextView setFont: [UIFont fontWithName: [Director shared].globalFont size: 12]];
+		[UIScrollView beginAnimations:@"scrollAnimation" context:nil];
+		[UIScrollView setAnimationDuration: 24.0f];
+		[creditsTextView setContentOffset:CGPointMake(0, backgroundHeight * 2)];
+		[UIScrollView commitAnimations];
+		[creditsScrollView addSubview: creditsTextView];
+		 
+		CCUIViewWrapper *creditsWrapper = [CCUIViewWrapper wrapperForUIView: creditsScrollView];
+		[creditsWrapper setContentSize: CGSizeMake(backgroundWidth * 0.8, backgroundHeight)];
+		[creditsWrapper setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.45)];
+		[creditsWrapper setAnchorPoint: ccp(0.5, 0.5)];
+		[self addChild: creditsWrapper];
+		
 		CCLabelTTF *creditsBodyLabel = [DialogLayer createShadowHeaderWithString: @"Developed By: GearSprout, LLC\nTommy Tornroos & Marshall Miller\n\nHead Developer: Marshall Miller\n\nGraphics and Testing: Tommy Tornroos\n\n\n\n\nMusic: \"Toy of Fury\" by Thiaz Itch\n(http://thiazitch.prootrecords.com)\n\n\"Air Hockey Saloon\" by Chris Zabriskie\n(http://chriszabriskie.com)\n\n\"Robot Anthem Part II\" by Learning Music\n(http://www.learningmusicmonthly.com/)\n\n\"FB-01 2\" by Christian Bjoerklund\n(http://freemusicarchive.org/music/Christian_Bjoerklund/Skapmat/)\n\nSound Effects: Tommy Tornroos & Marshall Miller"
 																  position: ccp(background.position.x, background.position.y + backgroundHeight * 0.05)
 															  shadowOffset: CGSizeMake(1, -1)
@@ -959,8 +991,8 @@
 															 lineBreakMode: kCCLineBreakModeWordWrap
 																  fontSize: DIALOG_FONT_SIZE * 0.8 * [Director shared].scaleFactor.width
 								  ];
-		[creditsBodyLabel setAnchorPoint: ccp(0.5, 1)];		
-		[self addChild: creditsBodyLabel];
+		[creditsBodyLabel setAnchorPoint: ccp(0.5, 1)];
+		//[self addChild: creditsBodyLabel];
 	}
 	
 	return self;
@@ -1478,11 +1510,7 @@
 		UIResponder *nextResponder = [textField.superview viewWithTag: nextTag];
 		
 		if (nextResponder)
-		{
-			CCMoveTo *keyboardMovementTween;
-			keyboardMovementTween = [CCMoveTo actionWithDuration: 0.2 position: ccp(self.position.x, self.position.y + 25)];
-			[self runAction: keyboardMovementTween];
-			
+		{			
 			[nextResponder becomeFirstResponder];
 		}
 		else

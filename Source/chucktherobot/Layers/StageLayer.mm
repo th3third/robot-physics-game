@@ -185,17 +185,9 @@ enum
 		}
 		else if (![Director shared].online)
 		{
-			if (![Director shared].paused)
-			{
-				[Director shared].paused = YES;
-				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: [NSString stringWithFormat: @"You are playing level %d.\nAre you sure you wish to go back to level selection?", [Director shared].localLevelIndex + 1] callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
-				[self addChild: mainMenuConfirmDialog z: 9000];
-			}
-			else
-			{
-				DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: [NSString stringWithFormat: @"You are playing level %d.\nAre you sure you wish to go back to level selection?", [Director shared].localLevelIndex + 1] callback: self selector: @selector(quitConfirm)];
-				[self addChild: mainMenuConfirmDialog z: 9000];
-			}
+			[Director shared].paused = YES;
+			DialogLayer *mainMenuConfirmDialog = [[DialogLayer alloc] initChoiceWithMessage: [NSString stringWithFormat: @"You are playing level %d.\nAre you sure you wish to go back to level selection?", [Director shared].localLevelIndex + 1] callback: self selector: @selector(quitConfirm) selectorCancel: @selector(resumePlaying)];
+			[self addChild: mainMenuConfirmDialog z: 9000];
 		}
 		else
 		{
@@ -957,7 +949,7 @@ enum
 			{
 				score = 1;
 			}
-			
+
 			NSMutableDictionary *levelProgress = [NSMutableDictionary dictionaryWithDictionary: [MToolsAppSettings getValueWithName: @"levelProgress"]];
 			if (score > [[levelProgress objectForKey: [NSString stringWithFormat: @"%@.ctr", [Director shared].stage.name]] intValue])
 			{

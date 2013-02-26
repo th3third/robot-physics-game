@@ -40,7 +40,6 @@
 	if ([CCDirector sharedDirector].isWidescreen)
 	{
 		//MOVE THE VIEW, PLEASE
-		NSLog(@"Adjusting view for iPhone 5");
 		UIView *glView = [CCDirector sharedDirector].view;
 		CGRect newFrame = CGRectMake(44, 0, glView.frame.size.width, glView.frame.size.height);
 		[UIView animateWithDuration: 0 animations:^{

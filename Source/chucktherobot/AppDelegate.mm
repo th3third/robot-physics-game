@@ -149,6 +149,13 @@
 {
 	if( [navController_ visibleViewController] == director_ )
 		[director_ startAnimation];
+	
+	//MOVE THE VIEW, PLEASE
+	UIView *glView = [CCDirector sharedDirector].view;
+	CGRect newFrame = CGRectMake(44, 0, glView.frame.size.width, glView.frame.size.height);
+	[UIView animateWithDuration: 0 animations:^{
+		glView.frame = newFrame;
+	}];
 }
 
 // application will be killed
@@ -170,6 +177,8 @@
 {
 	[[CCDirector sharedDirector] setNextDeltaTimeZero:YES];
 }
+
+
 
 @end
 
