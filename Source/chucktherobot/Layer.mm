@@ -14,6 +14,9 @@
 
 - (void) logInWith: (NSArray *) loginInfo
 {
+	if (!loginInfo || ![loginInfo isKindOfClass: [NSArray class]])
+		return;
+	
 	if ([loginInfo count] < 2)
 	{
 		DialogLayer *errorLoggingInDialog = [[DialogLayer alloc] initNotificationWithMessage: @"You must enter a username and password."];

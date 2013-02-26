@@ -771,11 +771,11 @@
 		CCSprite *purchaseFullGameSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_full_game_purchase.png"];
 		CCSprite *purchaseFullGameSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_full_game_purchase.png"];
 		
-		if (!PREPAID)
+		if (!PREPAID_VERSION)
 			[purchaseFullGameSelectedSprite setScale: 0.95];
 		
 		CCMenuItemSprite *purchaseFullGameMenuItem = [CCMenuItemSprite itemWithNormalSprite: purchaseFullGameSprite selectedSprite: purchaseFullGameSelectedSprite block:^(id sender) {
-			if (!PREPAID)
+			if (!PREPAID_VERSION)
 				[[MToolsPurchaseManager sharedManager] purchaseProductByName: @"fullversion"];
 		}];
 		[purchaseFullGameMenuItem setScale: (backgroundWidth * 0.33) / purchaseFullGameMenuItem.contentSize.width];
@@ -787,7 +787,7 @@
 		[self addChild: purchaseMenu];
 		
 		//Icon to overlay on the purchase button if we've already got the full version.
-		if ([[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"] || PREPAID)
+		if ([[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"] || PREPAID_VERSION)
 		{
 			CCSprite *purchasedIcon = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_icon.png"];
 			[purchasedIcon setScale: (purchaseFullGameMenuItem.contentSize.width * purchaseFullGameMenuItem.scaleX) / purchasedIcon.contentSize.width];
@@ -1269,11 +1269,42 @@
     return self;
 }
 
+- (id) initAllLevelsCompletedWithStars: (bool) allStars
+{
+	if (self = [self init])
+	{
+		CCSprite *background = [self createBackground];
+		
+		if (!allStars)
+		{
+			CCSprite *winAllLevels = [CCSprite spriteWithFile: @"Media/Backgrounds/general/win_no_stars.png"];
+			[winAllLevels setScaleX: (background.contentSize.width * background.scaleX) / winAllLevels.contentSize.width];
+			[winAllLevels setScaleY: (background.contentSize.height * background.scaleY) / winAllLevels.contentSize.height];
+			[winAllLevels setPosition: background.position];
+			[self addChild: winAllLevels];
+			
+			[MToolsAppSettings setValue: [NSNumber numberWithBool: YES] withName: @"completedAllLevels"];
+		}
+		else
+		{
+			CCSprite *winAllLevels = [CCSprite spriteWithFile: @"Media/Backgrounds/general/win_all_stars.png"];
+			[winAllLevels setScaleX: (background.contentSize.width * background.scaleX) / winAllLevels.contentSize.width];
+			[winAllLevels setScaleY: (background.contentSize.height * background.scaleY) / winAllLevels.contentSize.height];
+			[winAllLevels setPosition: background.position];
+			[self addChild: winAllLevels];
+			
+			[MToolsAppSettings setValue: [NSNumber numberWithBool: YES] withName: @"completedAllLevelsWithStars"];
+		}
+	}
+	
+	return self;
+}
+
 #pragma mark UITextField Delegate Methods
 
 - (BOOL)textField:(UITextField *)field shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)characters
 {
-	if (field.tag != 1)
+	if (field.tag == 0)
 	{
 		NSCharacterSet *blockedCharacters = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
 	
@@ -1481,6 +1512,7 @@
 	[self.textField2 removeFromSuperview];
 	[self.textField3 removeFromSuperview];
     [self removeFromParentAndCleanup: YES];
+	[[CCTextureCache sharedTextureCache] removeUnusedTextures];
 }
 
 - (void) resign
@@ -1510,8 +1542,10 @@
 		id parent = self.parent;
 		[self remove];
 		
-		DialogLayer *successDialog = [[DialogLayer alloc] initNotificationWithMessage: @"Your account has been successfully created." callback: callbackObj selector: selector];
-		[parent addChild: successDialog z: 9000];
+		NSArray *retArray = [NSArray arrayWithObjects: self.textField.text, [Director sha: self.textField2.text], nil];
+		[callbackObj performSelector: selector withObject: retArray];
+		
+		return;
 	}
 	else
 	{

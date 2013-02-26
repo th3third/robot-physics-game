@@ -9,9 +9,11 @@
 #import "cocos2d.h"
 
 #import "AppDelegate.h"
-#import "IntroLayer.h"
+#import "SetupLayer.h"
 #import "Director.h"
 #import "DialogLayer.h"
+
+#define IS_IPHONE5() ([[CCDirector sharedDirector] winSize].width == 568 || [[CCDirector sharedDirector] winSize].height == 568)
 
 @implementation AppController
 
@@ -23,10 +25,15 @@
     #ifdef DEBUG
     [[MToolsDebug sharedManager] setEnableLog: YES];
     #endif
-    
-	// Create the main window
-	window_ = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
+	// Create the main window	
+
+	if ([[UIScreen mainScreen] bounds].size.height == 568)
+	{
+		window_ = [[UIWindow alloc] initWithFrame: CGRectMake(0, 0, 320, 568)];
+	}
+	else
+		window_ = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
 	// Create an CCGLView with a RGB565 color buffer, and a depth buffer of 0-bits
 	CCGLView *glView = [CCGLView viewWithFrame:[window_ bounds]
@@ -36,7 +43,7 @@
 									sharegroup:nil
 								 multiSampling:NO
 							   numberOfSamples:0];
-
+	
 	// Enable multiple touches
 	[glView setMultipleTouchEnabled:YES];
 
@@ -83,8 +90,7 @@
 	[CCTexture2D PVRImagesHavePremultipliedAlpha:YES];
 	
 	// and add the scene to the stack. The director will run it when it automatically when the view is displayed.
-	[director_ pushScene: [IntroLayer scene]]; 
-	
+	[director_ pushScene: [SetupLayer scene]];
 	
 	// Create a Navigation Controller with the Director
 	navController_ = [[UINavigationController alloc] initWithRootViewController:director_];
@@ -96,6 +102,18 @@
 	
 	// make main window visible
 	[window_ makeKeyAndVisible];
+	
+	//Create the letterbox background if on iPhone 5.
+	if ([[UIScreen mainScreen] bounds].size.height == 568)
+	{
+		AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
+		UIImage *letterboxImage = [UIImage imageNamed: @"Media/Backgrounds/general/iphone5_overlay.png"];
+		UIImageView *letterboxView = [[UIImageView alloc] initWithFrame: CGRectMake(0, 0, 568, 320)];
+		[letterboxView setUserInteractionEnabled: NO];
+		letterboxView.image = letterboxImage;
+		[app.navController.view addSubview: letterboxView];
+		//[app.navController.view exchangeSubviewAtIndex: 0 withSubviewAtIndex: 1];
+	}
 	
 	return YES;
 }

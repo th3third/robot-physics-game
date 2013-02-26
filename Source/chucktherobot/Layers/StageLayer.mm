@@ -218,7 +218,22 @@ enum
 		[pause setScale: buttonSize / pause.contentSize.height];
 	[pause setPosition: ccp(topRightBackground.position.x - buttonSize * 1.1, topRightBackground.position.y - 5)];
 
-	CCMenuMT *menu = [CCMenuMT menuWithItems: sound, reset, pause, nil];
+	//Sound
+	CCSprite *cheatNormalImage;
+	CCSprite *cheatSelectedImage;
+	cheatNormalImage = [CCSprite spriteWithFile: @"Media/Buttons/general/button_sound_toggle.png"];
+	cheatSelectedImage = [CCSprite spriteWithFile: @"Media/Buttons/general/button_sound_toggle_off.png"];
+	
+	CCMenuItemSprite *cheat = [CCMenuItemSprite itemWithNormalSprite: cheatNormalImage  selectedSprite: cheatSelectedImage block:^(id sender) {
+        [self winStage];
+    }];
+	if (cheat.contentSize.width > cheat.contentSize.height)
+		[cheat setScale: buttonSize / cheat.contentSize.width];
+	else
+		[cheat setScale: buttonSize / cheat.contentSize.height];
+	[cheat setPosition: ccp(topRightBackground.position.x - buttonSize * 2.2, topRightBackground.position.y - 5)];
+	
+	CCMenuMT *menu = [CCMenuMT menuWithItems: sound, reset, pause, cheat, nil];
 	[menu setOpacity: 200];
 	[menu setPosition: ccp(0, 0)];
 	
@@ -277,6 +292,8 @@ enum
 	//Put in the background - this is taken from the stage.
 	//Background
 	[self createBackground];
+	
+	[[CCTextureCache sharedTextureCache] removeUnusedTextures];
 }
 
 //Saves the current stage to the documents folder.
@@ -902,7 +919,7 @@ enum
         float yPos = chuck.body->GetTransform().p.y;
         float xPos = chuck.body->GetTransform().p.x;
         
-        if (!levelCompleted && (yPos <= 0 || yPos > ([CCDirector sharedDirector].winSize.height + chuck->height) / PTM_RATIO || xPos <= 0 - chuck->height / PTM_RATIO || xPos >= ([CCDirector sharedDirector].winSize.width + chuck->height) / PTM_RATIO))
+        if (!levelCompleted && (yPos <= 0 || yPos > ([CCDirector sharedDirector].winSize.height + chuck->height)  / (PTM_RATIO * [Director shared].scaleFactor.width) || xPos <= 0 - (chuck->height / (PTM_RATIO * [Director shared].scaleFactor.width)) || xPos >= ([CCDirector sharedDirector].winSize.width + chuck->height) / (PTM_RATIO * [Director shared].scaleFactor.width)))
         {
             [self winStage];
         }
@@ -922,6 +939,8 @@ enum
 	}
 	else
 	{
+		[[SimpleAudioEngine sharedEngine] playEffect: @"Media/Audio/general/music/level_complete.mp3"];
+		
 		if (![Director shared].online)
 		{
 			float maxTime = [[Director shared] getScoreForLevel: [NSString stringWithFormat: @"%@.ctr", [Director shared].stage.name]];
@@ -986,8 +1005,15 @@ enum
 		}
 		else
 		{
-			[[Director shared] nextLocalLevel];
-			[self scheduleOnce: @selector(goToStageLoading) delay: 0.0];
+			if ([Director shared].localLevelIndex >= 59)
+			{
+				[self scheduleOnce: @selector(goToStageSelect) delay: 0.0];
+			}
+			else
+			{
+				[[Director shared] nextLocalLevel];
+				[self scheduleOnce: @selector(goToStageLoading) delay: 0.0];
+			}
 		}
 	}
 	else

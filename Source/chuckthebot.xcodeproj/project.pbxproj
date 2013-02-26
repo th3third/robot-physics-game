@@ -171,6 +171,10 @@
 		CE7BC02816A5E7950049F4AA /* Weld.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7BC02716A5E7940049F4AA /* Weld.mm */; };
 		CE7C1A0216C95721002BE715 /* BotSelectLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7C1A0116C95721002BE715 /* BotSelectLayer.mm */; };
 		CE7DA19B16CC1F2B00DDCC7A /* CustomTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7DA19A16CC1F2B00DDCC7A /* CustomTextField.mm */; };
+		CE7DDD6E16DBCF4C00627133 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CE87524C16C4545000FB0879 /* Default-568h@2x.png */; };
+		CE7DDD6F16DBCF5100627133 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CE87524C16C4545000FB0879 /* Default-568h@2x.png */; };
+		CE7DDD7616DC1D7F00627133 /* SetupLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7DDD7516DC1D7F00627133 /* SetupLayer.mm */; };
+		CE7DDD7716DC1D7F00627133 /* SetupLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7DDD7516DC1D7F00627133 /* SetupLayer.mm */; };
 		CE7E2E7616D568500094A4CF /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEE02DF3169640C500264586 /* main.mm */; };
 		CE7E2E7716D568500094A4CF /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEE02DF6169640C500264586 /* AppDelegate.mm */; };
 		CE7E2E7816D568500094A4CF /* IntroLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEE02DFC169640C500264586 /* IntroLayer.mm */; };
@@ -481,14 +485,12 @@
 		CEA1E1351696479800835AAA /* Rectangle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E1321696479800835AAA /* Rectangle.mm */; };
 		CEA1E139169647E900835AAA /* StageLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E138169647E900835AAA /* StageLayer.mm */; };
 		CEA1E13E16964B6200835AAA /* Graphics in Resources */ = {isa = PBXBuildFile; fileRef = CEA1E13B16964B6200835AAA /* Graphics */; };
-		CEC089D416D6CEEB0064465D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CE87524C16C4545000FB0879 /* Default-568h@2x.png */; };
 		CEC089D716D6CEF80064465D /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = CEC089D616D6CEF80064465D /* Default-Landscape~ipad.png */; };
 		CEC089D916D6CF190064465D /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = CEC089D816D6CF190064465D /* Default-Portrait@2x~ipad.png */; };
 		CEC089DB16D6CF1C0064465D /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = CEC089DA16D6CF1C0064465D /* Default-Portrait~ipad.png */; };
 		CEC089DC16D6CF420064465D /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = CEC089D616D6CEF80064465D /* Default-Landscape~ipad.png */; };
 		CEC089DD16D6CF450064465D /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = CEC089DA16D6CF1C0064465D /* Default-Portrait~ipad.png */; };
 		CEC089DE16D6CF470064465D /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = CEC089D816D6CF190064465D /* Default-Portrait@2x~ipad.png */; };
-		CEC089DF16D6CF4C0064465D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CE87524C16C4545000FB0879 /* Default-568h@2x.png */; };
 		CEE012A116D5752700791964 /* CCUIViewWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = CEE012A016D5752700791964 /* CCUIViewWrapper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CEE012A216D5752700791964 /* CCUIViewWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = CEE012A016D5752700791964 /* CCUIViewWrapper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CEE02BD9169640BA00264586 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEE02BD8169640BA00264586 /* QuartzCore.framework */; };
@@ -867,6 +869,8 @@
 		CE7C1A0116C95721002BE715 /* BotSelectLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BotSelectLayer.mm; path = Layers/BotSelectLayer.mm; sourceTree = "<group>"; };
 		CE7DA19916CC1F2B00DDCC7A /* CustomTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTextField.h; sourceTree = "<group>"; };
 		CE7DA19A16CC1F2B00DDCC7A /* CustomTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomTextField.mm; sourceTree = "<group>"; };
+		CE7DDD7416DC1D7F00627133 /* SetupLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetupLayer.h; path = Layers/SetupLayer.h; sourceTree = "<group>"; };
+		CE7DDD7516DC1D7F00627133 /* SetupLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SetupLayer.mm; path = Layers/SetupLayer.mm; sourceTree = "<group>"; };
 		CE7E2F7716D568500094A4CF /* Chuck the Bot (iOS) copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chuck the Bot (iOS) copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE7E2F7916D568510094A4CF /* Chuck the Bot (iOS) copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Chuck the Bot (iOS) copy-Info.plist"; path = "/Users/User/Desktop/XCode Projects/Chuck the Robot (Universal)/Source/Chuck the Bot (iOS) copy-Info.plist"; sourceTree = "<absolute>"; };
 		CE7E9A4E16D2EC1B0021A76C /* fire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fire.png; path = ../../Media/Particles/fire.png; sourceTree = "<group>"; };
@@ -1881,6 +1885,8 @@
 		CEE02E131696460100264586 /* Layers */ = {
 			isa = PBXGroup;
 			children = (
+				CE7DDD7416DC1D7F00627133 /* SetupLayer.h */,
+				CE7DDD7516DC1D7F00627133 /* SetupLayer.mm */,
 				CEE02DFB169640C500264586 /* IntroLayer.h */,
 				CEE02DFC169640C500264586 /* IntroLayer.mm */,
 				CEE02E0F1696457B00264586 /* MainMenuLayer.h */,
@@ -2056,7 +2062,7 @@
 				CEC089DC16D6CF420064465D /* Default-Landscape~ipad.png in Resources */,
 				CEC089DD16D6CF450064465D /* Default-Portrait~ipad.png in Resources */,
 				CEC089DE16D6CF470064465D /* Default-Portrait@2x~ipad.png in Resources */,
-				CEC089DF16D6CF4C0064465D /* Default-568h@2x.png in Resources */,
+				CE7DDD6F16DBCF5100627133 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2091,10 +2097,10 @@
 				CE87525216C4545400FB0879 /* Default.png in Resources */,
 				CE87525416C4545C00FB0879 /* Default-Landscape@2x~ipad.png in Resources */,
 				CE7E9A4F16D2EC1B0021A76C /* fire.png in Resources */,
-				CEC089D416D6CEEB0064465D /* Default-568h@2x.png in Resources */,
 				CEC089D716D6CEF80064465D /* Default-Landscape~ipad.png in Resources */,
 				CEC089D916D6CF190064465D /* Default-Portrait@2x~ipad.png in Resources */,
 				CEC089DB16D6CF1C0064465D /* Default-Portrait~ipad.png in Resources */,
+				CE7DDD6E16DBCF4C00627133 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2317,6 +2323,7 @@
 				CE7E2F4716D568500094A4CF /* BotSelectLayer.mm in Sources */,
 				CE7E2F4816D568500094A4CF /* CustomTextField.mm in Sources */,
 				CEE012A216D5752700791964 /* CCUIViewWrapper.m in Sources */,
+				CE7DDD7716DC1D7F00627133 /* SetupLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2536,6 +2543,7 @@
 				CE7C1A0216C95721002BE715 /* BotSelectLayer.mm in Sources */,
 				CE7DA19B16CC1F2B00DDCC7A /* CustomTextField.mm in Sources */,
 				CEE012A116D5752700791964 /* CCUIViewWrapper.m in Sources */,
+				CE7DDD7616DC1D7F00627133 /* SetupLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2561,6 +2569,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					DEBUG,
 					"COCOS2D_DEBUG=1",
+					CC_ENABLE_GL_STATE_CACHE,
 				);
 				HEADER_SEARCH_PATHS = (
 					"\"chucktherobot/libs/kazmath/include\"",
@@ -2601,6 +2610,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
 					"NS_BLOCK_ASSERTIONS=1",
+					CC_ENABLE_GL_STATE_CACHE,
 				);
 				HEADER_SEARCH_PATHS = (
 					"\"chucktherobot/libs/kazmath/include\"",
@@ -2684,6 +2694,7 @@
 					DEBUG,
 					"COCOS2D_DEBUG=1",
 					"PREPAID=1",
+					CC_ENABLE_GL_STATE_CACHE,
 				);
 				HEADER_SEARCH_PATHS = (
 					"\"chucktherobot/libs/kazmath/include\"",
@@ -2725,6 +2736,7 @@
 					NDEBUG,
 					"NS_BLOCK_ASSERTIONS=1",
 					"PREPAID=1",
+					CC_ENABLE_GL_STATE_CACHE,
 				);
 				HEADER_SEARCH_PATHS = (
 					"\"chucktherobot/libs/kazmath/include\"",

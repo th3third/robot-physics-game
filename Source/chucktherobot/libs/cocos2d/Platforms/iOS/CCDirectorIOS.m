@@ -178,7 +178,7 @@ CGFloat	__ccContentScaleFactor = 1;
 {
 	CGSize size = winSizeInPixels_;
 	CGSize sizePoint = winSizeInPoints_;
-
+	
 	glViewport(0, 0, size.width, size.height );
 
 	switch (projection) {
@@ -315,7 +315,10 @@ CGFloat	__ccContentScaleFactor = 1;
 	
 	//THIS MEANS WE'RE ON AN IPHONE 5
 	if (winSizeInPoints_.width == 568 && winSizeInPoints_.height == 320)
+	{
+		winSizeInPoints_ = CGSizeMake(480, 320);
 		isWidescreen_ = YES;
+	}
 	
 	winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * __ccContentScaleFactor, winSizeInPoints_.height *__ccContentScaleFactor);
 
@@ -358,7 +361,7 @@ CGFloat	__ccContentScaleFactor = 1;
 		[super setView:view];
 
 		if( view ) {
-			// set size
+			// set size			
 			winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * __ccContentScaleFactor, winSizeInPoints_.height *__ccContentScaleFactor);
 
 			if( __ccContentScaleFactor != 1 )

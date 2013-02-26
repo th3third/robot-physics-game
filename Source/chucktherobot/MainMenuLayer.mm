@@ -35,7 +35,7 @@
 -(id) init
 {
 	if( (self=[super init]))
-    {
+    {		
 		[[CCTextureCache sharedTextureCache] removeUnusedTextures];
 		
 		// enable events
@@ -316,20 +316,33 @@
 {
 	AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
 	[app.navController dismissModalViewControllerAnimated: YES];
+	
+	if ([CCDirector sharedDirector].isWidescreen)
+	{
+		//MOVE THE VIEW, PLEASE
+		UIView *glView = [CCDirector sharedDirector].view;
+		CGRect newFrame = CGRectMake(44, 0, glView.frame.size.width, glView.frame.size.height);
+		[UIView animateWithDuration: 0 animations:^{
+			glView.frame = newFrame;
+		}];
+	}
 }
 
 - (void) mail
 {
+	//TODO: Remove the comment out before live.
+	//if (![MFMailComposeViewController canSendMail])
+	//	return;
 	AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
 	
 	MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
 	picker.mailComposeDelegate = self;
 	[picker setSubject:@"Playing Chuck the Bot"];
 	
-	NSString *emailBody = @"I've been playing Chuck the Bot and I'd like you to check it out too so we can share levels! \n\n http://gearsprout.com/chuck_the_bot.html";
+	NSString *emailBody = @"I've been playing Chuck the Bot and I'd like you to get it out too so we can share levels! \n\n http://gearsprout.com/chuck_the_bot.html";
 	[picker setMessageBody:emailBody isHTML:YES];
 	
-	[app.navController presentModalViewController:picker animated:YES];
+	[app.navController presentModalViewController: picker animated: YES];
 }
 
 #pragma mark GameKit delegate

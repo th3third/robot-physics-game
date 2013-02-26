@@ -47,6 +47,7 @@
 - (id) initSaveWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew;
 - (id) initPurchaseWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew;
 - (id) initCreditsWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew;
+- (id) initAllLevelsCompletedWithStars: (bool) allStars;
 
 - (void) okButtonPressed:(id) sender;
 - (void) remove;

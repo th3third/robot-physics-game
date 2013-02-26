@@ -78,6 +78,9 @@ enum DataState
 @property NSDictionary *presetScores;
 @property DialogLayer *currentDialog;
 
+//Scaling
+@property float ip5Scale;
+
 //Chuck stuff.
 @property NSString *botType;
 

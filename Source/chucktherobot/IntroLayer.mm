@@ -37,7 +37,7 @@
 -(void) onEnter
 {
 	[super onEnter];
-
+	
 	// enable events
 	self.isTouchEnabled = YES;
 	
@@ -93,10 +93,10 @@
 	{
 		[fm copyItemAtPath: defaultPath toPath: [NSString stringWithFormat: @"%@/defaults/%@", [Director levelsPath], [defaultPath lastPathComponent]] error: &error];
 	}
-    
-	//TODO: Increment the times run by one or set it up if it hasn't been set up already.
-	
-	
+}
+
+- (void) onEnterTransitionDidFinish
+{
 	// In one second transition to the new scene
 	[self scheduleOnce:@selector(makeTransition:) delay: 0];
 }

@@ -494,15 +494,15 @@
 	if (soundCooldown > 0)
 		return;
 	
-	float randomPitch = 0.75f + (arc4random() % 2) * .5;
+	float randomPitch = 0.75f + (arc4random() % 6) * .1;
 	
 	if (self.restitution > 0.2f)
-	{
+	{	
 		[[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit_bouncy/hit_bouncy%d.mp3", arc4random() % self.hitSounds] pitch: randomPitch pan: 1.0 gain:volume];
 	}
 	else
 	{
-		[[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit/hit%d.mp3", arc4random() % self.hitSounds] pitch: randomPitch pan: 1.0 gain:volume];
+		[[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/hit/hit%d.aiff", arc4random() % self.hitSounds] pitch: randomPitch pan: 1.0 gain:volume];
 	}
 	
 	soundCooldown = 1.0f;

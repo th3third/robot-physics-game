@@ -13,6 +13,7 @@
 
 @interface MainMenuLayer : Layer <GKAchievementViewControllerDelegate, GKLeaderboardViewControllerDelegate, MFMailComposeViewControllerDelegate>
 {
+	UIViewController *mailController;
     CCTexture2D *spriteTexture_;
 	DialogLayer *purchaseDialog;
 	DialogLayer *loadingDialog;

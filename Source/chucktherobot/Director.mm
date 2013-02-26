@@ -34,7 +34,7 @@ static Director *shared = nil;
 - (id) init
 {
 	if (self = [super init])
-	{
+	{		
 		//Set up the preset scores.
 		presetScores = [NSDictionary dictionaryWithObjectsAndKeys:
 						[NSNumber numberWithFloat: 5.0f], @"Level 01.ctr",
@@ -226,7 +226,7 @@ static Director *shared = nil;
 {	
 	if (!username || !password)
 		return NO;
-	NSLog(@"Creating user: %@, password: %@, email: %@", username, password, email);
+
 	self.dataState = DATA_STATE_CREATING_USERNAME;
 	
 	NSString *encryptedPassword = [Director sha: password];

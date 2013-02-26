@@ -146,10 +146,12 @@
 	
 	int enabledMenuItems = 0;
 	int highestLevel = 0;
+	int totalStars = 0;
 	for (id key in [MToolsAppSettings getValueWithName: @"levelProgress"])
 	{
 		if ([[[MToolsAppSettings getValueWithName: @"levelProgress"] objectForKey: key] intValue] > 0)
 		{
+			totalStars += [[[MToolsAppSettings getValueWithName: @"levelProgress"] objectForKey: key] intValue];
 			NSString *keyName = [key stringByDeletingPathExtension];
 			int levelNum = [[keyName substringFromIndex: [keyName length] - 2] intValue];
 			if (levelNum > highestLevel)
@@ -158,6 +160,9 @@
 			}
 		}
 	}
+	
+	//TODO: CHEAT FOR DEV PURPOSES
+	highestLevel = 60;
 	
 	enabledMenuItems = MIN(totalMenuItems, highestLevel + 2);
 	
@@ -295,7 +300,7 @@
 			}*/
 		}
 		
-		[menu setPosition:ccp( s.width/2 + (s.width * j), s.height/2)];
+		[menu setPosition:ccp( s.width/2 + (s.width * j), (s.height / 2))];
 		
 		[self.selectionNode addChild: menu z:-1];
 	}
@@ -332,6 +337,23 @@
 	if (![Director shared].fullVersion && enabledMenuItems >= 15)
 	{
 		[self openPurchaseAd];
+	}
+	else
+	{
+		if (enabledMenuItems >= 60)
+		{
+			if (![MToolsAppSettings getValueWithName: @"completedAllLevels"])
+			{
+				DialogLayer *winnerDialog = [[DialogLayer alloc] initAllLevelsCompletedWithStars: NO];
+				[self addChild: winnerDialog z: 9000];
+			}
+			
+			if (![MToolsAppSettings getValueWithName: @"completedAllLevelsWithStars"] && totalStars >= 180)
+			{
+				DialogLayer *winnerDialog = [[DialogLayer alloc] initAllLevelsCompletedWithStars: YES];
+				[self addChild: winnerDialog z: 9000];
+			}
+		}
 	}
 }
 
