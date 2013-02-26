@@ -27,7 +27,7 @@
     //MOVE THE VIEW, PLEASE
 	UIView *glView = [CCDirector sharedDirector].view;
 	
-	if ([CCDirector sharedDirector].isWidescreen && glView.frame.origin.x != 44)
+	if (glView.frame.size.width == 568 && glView.frame.origin.x != 44)
 	{
 		CGRect newFrame = CGRectMake(44, 0, glView.frame.size.width, glView.frame.size.height);
 		[UIView animateWithDuration: 0 animations:^{

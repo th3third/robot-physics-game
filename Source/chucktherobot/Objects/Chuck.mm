@@ -167,7 +167,8 @@
 	if (self.hitSoundPlaying)
 		[[SimpleAudioEngine sharedEngine] stopEffect: self.hitSoundPlaying];
 	
-	self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: [NSString stringWithFormat: @"Media/Audio/general/chuck_hit/chuck_hit%.caf", arc4random() % self.hitSounds]];
+	float randomPitch = 0.75f + (arc4random() % 6) * .1;
+	self.hitSoundPlaying = [[SimpleAudioEngine sharedEngine] playEffect: @"Media/Audio/general/chuck_hit/hit.mp3" pitch: randomPitch pan: 1.0 gain: 1.0];
 }
 
 - (void) moveToPoint: (CGPoint) point

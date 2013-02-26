@@ -338,7 +338,6 @@ static Director *shared = nil;
 	[MToolsAppSettings setValue: @"" withName: @"password"];
 }
 
-//TODO: Strip out the | character in the level name. You can't do that!
 - (bool) saveLevelToServer
 {
 	self.dataState = DATA_STATE_SAVING_LEVEL;
@@ -441,7 +440,6 @@ static Director *shared = nil;
 	}
 	else
 	{
-		//TODO: Default to local level if we can't contact the server.
 		return false;
 	}
 	
@@ -786,7 +784,6 @@ static Director *shared = nil;
 
 	[self cleanupConnection];
 	
-	//TODO: Parse out the listing returned.
 	NSMutableArray *finalLevelsList = [NSMutableArray array];
 	if (![responseString isEqualToString: @""])
 	{

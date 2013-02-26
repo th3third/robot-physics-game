@@ -31,6 +31,7 @@
 @property CCUIViewWrapper *textFieldWrapper;
 @property CCUIViewWrapper *textFieldWrapper2;
 @property CCUIViewWrapper *textFieldWrapper3;
+@property CCUIViewWrapper *scrollViewWrapper;
 @property int buttonPressedIndex;
 @property int dialogType;
 

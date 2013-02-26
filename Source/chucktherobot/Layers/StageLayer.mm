@@ -262,7 +262,6 @@ enum
 	
     //Set the local chuck var that we check for the position.
 	//This should ALWAYS be the first object. If it isn't, the map was saved wrongly.
-	//TODO: Put in a check for the class? Maybe cycle through all the objects?
 	if ([[[Director shared].stage objects] count] > 0)
 	{
 		chuck = [[[Director shared].stage objects] objectAtIndex: 0];

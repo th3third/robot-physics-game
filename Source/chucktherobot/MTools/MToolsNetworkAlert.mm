@@ -139,7 +139,6 @@ static MToolsNetworkAlert *sharedManager = nil;
     [debug log: [NSString stringWithFormat: @"An error occured during parsing: %@", parseError]];
 }
 
-//TODO: The XML file needs to have the following fields: name of alert, date of alert, apps that are alerted (put in a "all" value), message of alert, buttons for alert (okay or okay & cancel), testing switch, and the URL to go to if they hit okay with a two-button alert.
 - (void) parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {
     //[debug log: [NSString stringWithFormat: @"Started element: %@", elementName]];

@@ -265,7 +265,6 @@
 - (void) remove
 {
 	//Check and make sure we didn't have any joints/ropes/etc attached to it. If we did, we need to remove those.
-	//TODO: Weld cleanups.
 	NSMutableArray *objectsToRemove = [NSMutableArray array];
 	for (Object *object in [[Director shared].stage objects])
     {

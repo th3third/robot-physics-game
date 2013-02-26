@@ -198,13 +198,11 @@
 
 - (void) parserDidStartDocument:(NSXMLParser *)parser
 {
-	//TODO: Put in a loading notification for this.
 	[debug log: @"Parser started."];
 }
 
 - (void) parserDidEndDocument:(NSXMLParser *)parser
 {
-	//TODO: Clear the loading notification.
     [debug log: @"Finished parsing"];
 }
 
@@ -371,7 +369,6 @@
     NSString *filePath = [NSString stringWithFormat: @"%@/levels/%@.ctr", [MToolsFileManager applicationDocumentsDirectory], name];
     [debug log: [NSString stringWithFormat: @"Level is being saved as %@", filePath]];
     
-    //TODO: Put in file overwrite confirmation.
     if ([fm fileExistsAtPath: filePath])
     {
         [debug log: @"File exists at path. Attempting to overwrite."];

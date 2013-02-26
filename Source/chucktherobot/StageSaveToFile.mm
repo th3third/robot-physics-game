@@ -81,16 +81,22 @@
 	{
 		CGSize s = [CCDirector sharedDirector].winSize;
 		
-		statusLabel = [CCLabelTTF labelWithString: message fontName: [Director shared].globalFont fontSize: 24];
-        [statusLabel setColor:ccc3(255, 255, 255)];
-        [statusLabel setPosition: ccp(s.width / 2, 50)];
-        [self addChild:statusLabel z: 0];
-	}
-	else
-	{
-		[statusLabel setString: message];
+		[statusLabel removeFromParentAndCleanup:YES];
+		statusLabel = [DialogLayer createShadowHeaderWithString: message
+													   position: ccp(s.width * 0.5, s.height * 0.1)
+												   shadowOffset: CGSizeMake(1, -1)
+														  color: ccWHITE
+													shadowColor: ccBLACK
+													 dimensions: CGSizeMake(s.width, s.height * 0.5)
+													 hAlignment: kCCTextAlignmentCenter
+													 vAlignment: kCCVerticalTextAlignmentCenter
+												  lineBreakMode: kCCLineBreakModeMiddleTruncation
+													   fontSize: 22 * [Director shared].scaleFactor.width
+					   ];
+		[self addChild: statusLabel];
 	}
 }
+
 
 - (void) createSpinner
 {

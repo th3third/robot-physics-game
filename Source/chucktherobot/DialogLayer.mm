@@ -962,23 +962,20 @@
 		//Credits body label
 		UIScrollView *creditsScrollView = [[UIScrollView alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, backgroundHeight * 0.45)];
 		[creditsScrollView setIndicatorStyle: UIScrollViewIndicatorStyleWhite];
+		[creditsScrollView flashScrollIndicators];
 		 
 		UITextView *creditsTextView = [[UITextView alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, backgroundHeight * 0.45)];
 		[creditsTextView setText: @"Developed By: GearSprout, LLC\nTommy Tornroos & Marshall Miller\n\nHead Developer: Marshall Miller\n\nGraphics and Testing: Tommy Tornroos\n\n\n\n\nMusic: \"Toy of Fury\" by Thiaz Itch\n(http://thiazitch.prootrecords.com)\n\n\"Air Hockey Saloon\" by Chris Zabriskie\n(http://chriszabriskie.com)\n\n\"Robot Anthem Part II\" by Learning Music\n(http://www.learningmusicmonthly.com/)\n\n\"FB-01 2\" by Christian Bjoerklund\n(http://freemusicarchive.org/music/Christian_Bjoerklund/Skapmat/)\n\nSound Effects: Tommy Tornroos & Marshall Miller"];
 		[creditsTextView setBackgroundColor: [UIColor clearColor]];
 		[creditsTextView setTextColor: [UIColor whiteColor]];
 		[creditsTextView setFont: [UIFont fontWithName: [Director shared].globalFont size: 12 * [Director shared].scaleFactor.width]];
-		[UIScrollView beginAnimations:@"scrollAnimation" context:nil];
-		[UIScrollView setAnimationDuration: 24.0f];
-		[creditsTextView setContentOffset:CGPointMake(0, backgroundHeight * 2)];
-		[UIScrollView commitAnimations];
 		[creditsScrollView addSubview: creditsTextView];
 		 
-		CCUIViewWrapper *creditsWrapper = [CCUIViewWrapper wrapperForUIView: creditsScrollView];
-		[creditsWrapper setContentSize: CGSizeMake(backgroundWidth * 0.8, backgroundHeight)];
-		[creditsWrapper setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.45)];
-		[creditsWrapper setAnchorPoint: ccp(0.5, 0.5)];
-		[self addChild: creditsWrapper];
+		self.scrollViewWrapper = [CCUIViewWrapper wrapperForUIView: creditsScrollView];
+		[self.scrollViewWrapper setContentSize: CGSizeMake(backgroundWidth * 0.8, backgroundHeight)];
+		[self.scrollViewWrapper setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.45)];
+		[self.scrollViewWrapper setAnchorPoint: ccp(0.5, 0.5)];
+		[self addChild: self.scrollViewWrapper];
 		
 		CCLabelTTF *creditsBodyLabel = [DialogLayer createShadowHeaderWithString: @"Developed By: GearSprout, LLC\nTommy Tornroos & Marshall Miller\n\nHead Developer: Marshall Miller\n\nGraphics and Testing: Tommy Tornroos\n\n\n\n\nMusic: \"Toy of Fury\" by Thiaz Itch\n(http://thiazitch.prootrecords.com)\n\n\"Air Hockey Saloon\" by Chris Zabriskie\n(http://chriszabriskie.com)\n\n\"Robot Anthem Part II\" by Learning Music\n(http://www.learningmusicmonthly.com/)\n\n\"FB-01 2\" by Christian Bjoerklund\n(http://freemusicarchive.org/music/Christian_Bjoerklund/Skapmat/)\n\nSound Effects: Tommy Tornroos & Marshall Miller"
 																  position: ccp(background.position.x, background.position.y + backgroundHeight * 0.05)
@@ -1008,7 +1005,7 @@
         selector = selectorNew;
         
         CCSprite *background = [self createBackgroundStatic];
-		background.position = ccp(background.position.x, background.position.y + 70);
+		background.position = ccp(background.position.x, background.position.y + 70 * [Director shared].scaleFactor.height);
 		
 		CGSize s = [CCDirector sharedDirector].winSize;
 		NSMutableArray *buttons = [NSMutableArray array];
@@ -1092,7 +1089,7 @@
 		self.textField3.returnKeyType = UIReturnKeyDone;
 		self.textField3.autocorrectionType = UITextAutocapitalizationTypeNone;
 		self.textField3.autocapitalizationType = UITextAutocapitalizationTypeNone;
-		self.textField3.secureTextEntry = YES;
+		self.textField3.secureTextEntry = NO;
 		self.textField3.tag = 2;
 		
 		self.textFieldWrapper3 = [CCUIViewWrapper wrapperForUIView: self.textField3];
@@ -1539,6 +1536,7 @@
 	[self.textField removeFromSuperview];
 	[self.textField2 removeFromSuperview];
 	[self.textField3 removeFromSuperview];
+	[self.scrollViewWrapper removeFromParentAndCleanup: YES];
     [self removeFromParentAndCleanup: YES];
 	[[CCTextureCache sharedTextureCache] removeUnusedTextures];
 }

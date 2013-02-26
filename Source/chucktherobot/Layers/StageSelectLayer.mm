@@ -161,9 +161,6 @@
 		}
 	}
 	
-	//TODO: CHEAT FOR DEV PURPOSES
-	highestLevel = 60;
-	
 	enabledMenuItems = MIN(totalMenuItems, highestLevel + 2);
 	
 	if (![Director shared].fullVersion)

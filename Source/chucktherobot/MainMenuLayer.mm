@@ -330,9 +330,9 @@
 
 - (void) mail
 {
-	//TODO: Remove the comment out before live.
-	//if (![MFMailComposeViewController canSendMail])
-	//	return;
+	if (![MFMailComposeViewController canSendMail])
+		return;
+	
 	AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
 	
 	MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
