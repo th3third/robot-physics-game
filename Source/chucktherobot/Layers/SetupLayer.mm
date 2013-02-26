@@ -8,6 +8,7 @@
 
 #import "SetupLayer.h"
 #import "IntroLayer.h"
+#import "DialogLayer.h"
 
 @implementation SetupLayer
 
@@ -30,7 +31,7 @@
 -(void) onEnter
 {
 	[super onEnter];
-	
+
 	// In one second transition to the new scene
 	[self scheduleOnce:@selector(makeTransition:) delay: 0];
 }
@@ -47,7 +48,7 @@
 		}];
 	}
 	
-	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration: 1.0 scene:[IntroLayer scene] withColor: ccBLACK]];
+	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration: 0.5 scene:[IntroLayer scene] withColor: ccBLACK]];
 }
 
 

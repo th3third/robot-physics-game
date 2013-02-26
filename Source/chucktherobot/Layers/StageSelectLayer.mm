@@ -276,7 +276,7 @@
 										   (j * s.width) + menuItem.position.x - (menuItem.contentSize.width * menuItem.scaleX) / 3 + ((stars - 1) * ((menuItem.contentSize.width * menuItem.scaleX) / 3)),
 										   menuItem.position.y - (menuItem.contentSize.height * menuItem.scaleY) / 3
 										   )];
-					[star setPosition: ccp(star.position.x + s.width / 2, star.position.y + s.height / 2)];
+					[star setPosition: ccp(star.position.x + s.width / 2, star.position.y + s.height * 0.4)];
 					[star setScale: ((menuItem.contentSize.width / 2.5) * menuItem.scaleX) / star.contentSize.width];
 					
 					[self.selectionNode addChild: star z: 66];
@@ -297,7 +297,7 @@
 			}*/
 		}
 		
-		[menu setPosition:ccp( s.width/2 + (s.width * j), (s.height / 2))];
+		[menu setPosition:ccp( s.width/2 + (s.width * j), (s.height * 0.4))];
 		
 		[self.selectionNode addChild: menu z:-1];
 	}
