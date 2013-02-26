@@ -210,8 +210,8 @@ enum
 		[pause setScale: buttonSize / pause.contentSize.height];
 	[pause setPosition: ccp(topRightBackground.position.x - buttonSize * 1.1, topRightBackground.position.y - 5)];
 
-	//Sound
-	CCSprite *cheatNormalImage;
+	//CHEAT
+	/*CCSprite *cheatNormalImage;
 	CCSprite *cheatSelectedImage;
 	cheatNormalImage = [CCSprite spriteWithFile: @"Media/Buttons/general/button_sound_toggle.png"];
 	cheatSelectedImage = [CCSprite spriteWithFile: @"Media/Buttons/general/button_sound_toggle_off.png"];
@@ -223,9 +223,9 @@ enum
 		[cheat setScale: buttonSize / cheat.contentSize.width];
 	else
 		[cheat setScale: buttonSize / cheat.contentSize.height];
-	[cheat setPosition: ccp(topRightBackground.position.x - buttonSize * 2.2, topRightBackground.position.y - 5)];
+	[cheat setPosition: ccp(topRightBackground.position.x - buttonSize * 2.2, topRightBackground.position.y - 5)];*/
 	
-	CCMenuMT *menu = [CCMenuMT menuWithItems: sound, reset, pause, cheat, nil];
+	CCMenuMT *menu = [CCMenuMT menuWithItems: sound, reset, pause, nil];
 	[menu setOpacity: 200];
 	[menu setPosition: ccp(0, 0)];
 	

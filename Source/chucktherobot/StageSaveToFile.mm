@@ -43,7 +43,7 @@
 		[self addChild: background z: -2];
 		
 		[self scheduleUpdate];
-		[self setStatusLabel: @"Saving to your device..."];
+		[self setStatusLabel: @"Saving and sharing level..."];
 		[self createSpinner];
 		[self saveCurrentStage];
 	}
@@ -121,7 +121,7 @@
 	
 	if (finishedLocalSave)
 	{
-		[self setStatusLabel: @"Sharing your level..."];
+		[self setStatusLabel: @"Sending to server..."];
 		finishedLocalSave = NO;
 	}
 	

@@ -324,7 +324,28 @@
 	[backToMainLabel setAnchorPoint: ccp(0.5, 0.5)];
 	[self addChild: backToMainLabel z: 101];
 	
-	CCMenu *botMenu = [CCMenu menuWithItems: backToMainMenuItem, nil];
+	//INTRO BUTTON
+	CCSprite *introSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	CCSprite *introSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	CCMenuItemSprite *introMenuItem = [CCMenuItemSprite itemWithNormalSprite: introSprite selectedSprite: introSpriteSelected block:^(id sender) {
+		[self startStoryboard];
+	}];
+	[introMenuItem setScale: ((botBounds.size.width * .25) / backToMainMenuItem.contentSize.width)];
+	[introMenuItem setPosition: ccp(botButtonStart.x + (botBounds.size.width * .90), 0)];
+	CCLabelTTF *introLabel = [DialogLayer createShadowHeaderWithString: @"INTRO"
+																   position: ccp(introMenuItem.position.x, - ((introMenuItem.contentSize.height * introMenuItem.scale) * 0.15))
+															   shadowOffset: CGSizeMake(1, -1)
+																	  color: ccWHITE
+																shadowColor: ccBLACK
+																 dimensions: CGSizeMake(introMenuItem.contentSize.width * introMenuItem.scaleX, introMenuItem.contentSize.height * introMenuItem.scaleY)
+																 hAlignment: kCCTextAlignmentCenter
+															  lineBreakMode: kCCLineBreakModeMiddleTruncation
+																   fontSize: FONT_SIZE_FILTER * [Director shared].scaleFactor.width
+								   ];
+	[introLabel setAnchorPoint: ccp(0.5, 0.5)];
+	[self addChild: introLabel z: 101];
+	
+	CCMenu *botMenu = [CCMenu menuWithItems: backToMainMenuItem, introMenuItem, nil];
 	[botMenu setAnchorPoint: ccp(0, 0)];
 	[botMenu setPosition: CGPointZero];
 	[self addChild: botMenu];
