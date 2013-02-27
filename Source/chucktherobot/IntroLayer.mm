@@ -12,6 +12,7 @@
 #import "Director.h"
 #import "MToolsPurchaseManager.h"
 #import "MToolsAppSettings.h"
+#import "MToolsFileManager.h"
 
 #pragma mark - IntroLayer
 
@@ -53,7 +54,7 @@
 	[self setStatusLabel: @"Loading..."];
 	
 	//Init the purchase stuff.
-	[[MToolsPurchaseManager sharedManager] setVocal: NO];
+	[[MToolsPurchaseManager sharedManager] setVocal: YES];
 	[[MToolsPurchaseManager sharedManager] loadStore];
 	
 	//Init the standard keys and increment anything that needs to be done.
@@ -64,7 +65,8 @@
     NSFileManager *fm = [NSFileManager defaultManager];
     NSError *error;
     [fm createDirectoryAtPath: [NSString stringWithFormat: @"%@/levels", [MToolsFileManager applicationDocumentsDirectory]] withIntermediateDirectories: YES attributes: nil error: &error];
-    
+    [MToolsFileManager addSkipBackupAttributeToItemAtString: [NSString stringWithFormat: @"%@/levels", [MToolsFileManager applicationDocumentsDirectory]]];
+	
     if (error)
     {
         NSLog(@"CRITICAL ERROR: There was a problem creating the levels directory. The game will NOT be able to run like this!");
@@ -77,6 +79,7 @@
 	//Create and populate the default levels folder if it doesn't exist already.
 	//Create the levels folder if it doesn't exist already.
     [fm createDirectoryAtPath: [NSString stringWithFormat: @"%@/levels/defaults", [MToolsFileManager applicationDocumentsDirectory]] withIntermediateDirectories: YES attributes: nil error: &error];
+	[MToolsFileManager addSkipBackupAttributeToItemAtString: [NSString stringWithFormat: @"%@/levels/defaults", [MToolsFileManager applicationDocumentsDirectory]]];
     
     if (error)
     {
@@ -91,6 +94,7 @@
 	for (NSString *defaultPath in defaultsPaths)
 	{
 		[fm copyItemAtPath: defaultPath toPath: [NSString stringWithFormat: @"%@/defaults/%@", [Director levelsPath], [defaultPath lastPathComponent]] error: &error];
+		[MToolsFileManager addSkipBackupAttributeToItemAtString: [NSString stringWithFormat: @"%@/defaults/%@", [Director levelsPath], [defaultPath lastPathComponent]]];
 	}
 }
 

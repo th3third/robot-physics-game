@@ -376,6 +376,7 @@ static MToolsPurchaseManager *sharedManager = nil;
 	NSData* updateData = [NSData dataWithContentsOfURL: [NSURL URLWithString: updateURL] ];
     
 	[[NSFileManager defaultManager] createFileAtPath:filePath contents:updateData attributes:nil];
+	[MToolsFileManager addSkipBackupAttributeToItemAtString: filePath];
     
 	ZipArchive *zipArchive = [[ZipArchive alloc] init];
     
