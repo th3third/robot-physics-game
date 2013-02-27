@@ -133,9 +133,9 @@ static Director *shared = nil;
 		
 		//The default bot type.
 		//Set the first skin to on since it will always be available.
-		[MToolsAppSettings setValue: @"purchased" withName: @"botskin1Receipt"];
-		[MToolsAppSettings setValue: @"purchased" withName: @"botskin1proReceipt"];
-		self.botType = @"1";
+		[MToolsAppSettings setValue: @"purchased" withName: @"botskin0Receipt"];
+		[MToolsAppSettings setValue: @"purchased" withName: @"botskin0proReceipt"];
+		self.botType = @"0";
 		
 		//Set up the scaling factor.
 		CGSize winSize = [CCDirector sharedDirector].winSize;

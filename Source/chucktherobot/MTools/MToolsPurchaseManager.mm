@@ -106,6 +106,9 @@ static MToolsPurchaseManager *sharedManager = nil;
 //Finds the product by name in the products array and then attempts to purchase it.
 - (void) purchaseProductByName: (NSString *) name
 {
+	if (vocal)
+        NSLog(@"Attempting to purchase %@.", name);
+	
 	for (int i = 0; i < [products count]; i++)
 	{
 		SKProduct *producti = [products objectAtIndex: i];

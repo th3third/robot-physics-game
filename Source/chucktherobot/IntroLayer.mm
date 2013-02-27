@@ -55,7 +55,6 @@
 	//Init the purchase stuff.
 	[[MToolsPurchaseManager sharedManager] setVocal: NO];
 	[[MToolsPurchaseManager sharedManager] loadStore];
-	[MToolsPurchaseManager sharedManager].appID = @"com.gearsprout.chuckthebot"; //override the default app ID because we're running the free version on this ID for content.
 	
 	//Init the standard keys and increment anything that needs to be done.
 	[[MToolsAppSettings sharedManager] standardKeys];

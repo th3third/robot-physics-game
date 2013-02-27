@@ -874,7 +874,10 @@
 		
 		CCMenuItemSprite *purchaseFullGameMenuItem = [CCMenuItemSprite itemWithNormalSprite: purchaseFullGameSprite selectedSprite: purchaseFullGameSelectedSprite block:^(id sender) {
 			if (!PREPAID_VERSION)
+			{
+				[DialogLayer playButtonSound];
 				[[MToolsPurchaseManager sharedManager] purchaseProductByName: @"fullversion"];
+			}
 		}];
 		[purchaseFullGameMenuItem setScale: (backgroundWidth * 0.33) / purchaseFullGameMenuItem.contentSize.width];
 		[purchaseFullGameMenuItem setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y + backgroundHeight * 0.2)];
@@ -911,7 +914,7 @@
 		
 		//See how many bots are available for purchase.
 		NSMutableArray *botMenuItems = [NSMutableArray array];
-		NSArray *botsForPurchase = [NSArray arrayWithObjects: @"1", @"2", @"3", @"4", @"5", nil];
+		NSArray *botsForPurchase = [NSArray arrayWithObjects: @"0", @"1", @"2", @"3", @"4", nil];
 		CCSprite *selectionIcons = [[CCSprite alloc] init];
 		[selectionIcons setAnchorPoint: ccp(0, 0)];
 		[selectionIcons setPosition: CGPointZero];
@@ -953,6 +956,8 @@
 			
 			botMenuItem = [CCMenuItemSprite itemWithNormalSprite: botSprite selectedSprite: botSelectedSprite block:^(id sender) {
 
+				[DialogLayer playButtonSound];
+				
 				if (!PREPAID_VERSION)
 				{
 					if (![[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@", [botsForPurchase objectAtIndex: i]]])
@@ -1061,6 +1066,7 @@
 			
 			appMenuItem = [CCMenuItemSprite itemWithNormalSprite: appIcon selectedSprite: appIconSelected block:^(id sender)
 			{
+				[DialogLayer playButtonSound];
 				NSString *pageURL =[appURLs objectAtIndex: i];
 				NSString *escaped = [pageURL stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 				[[UIApplication sharedApplication] openURL: [NSURL URLWithString: escaped]];

@@ -10,6 +10,7 @@
 #import "Layers.h"
 #import "MToolsAppSettings.h"
 #import "MToolsPurchaseManager.h"
+#import "MToolsAlertViewManager.h"
 
 @interface MainMenuLayer()
 -(void) createMenu;
@@ -154,6 +155,7 @@
 	[menuItemSpriteSelected setScale: 0.95];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender)
 	{
+		[DialogLayer playButtonSound];
 		[self openPurchaseDialog];
 	}];
 	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.50) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
@@ -166,8 +168,9 @@
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_question_mark.png"];
 	[menuItemSpriteSelected setScale: 0.95];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
-	DialogLayer *creditsDialog = [[DialogLayer alloc] initCreditsWithCallbackObj: self selector: @selector(madePurchase:)];
-	[self addChild: creditsDialog z: 9000];
+		[DialogLayer playButtonSound];
+		DialogLayer *creditsDialog = [[DialogLayer alloc] initCreditsWithCallbackObj: self selector: @selector(madePurchase:)];
+		[self addChild: creditsDialog z: 9000];
 	}];
 	[menuItem setScale: ((lowerLeftMenuBackground.contentSize.height * 0.50) * lowerLeftMenuBackground.scale) / menuItem.contentSize.height];
 	[menuItem setAnchorPoint: ccp(0.5, 0.5)];
@@ -179,6 +182,7 @@
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_logout.png"];
 	[menuItemSpriteSelected setScale: 0.95];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[DialogLayer playButtonSound];
 		[[Director shared] logout];
 		DialogLayer *logoutDialog = [[DialogLayer alloc] initNotificationWithMessage: @"You have been logged out."];
 		[self addChild: logoutDialog z: 9000];
@@ -218,6 +222,7 @@
 	[menuItemSpriteSelected setScale: 0.95];
 	scale = (s.width * 0.06) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[DialogLayer playButtonSound];
 		NSString *pageURL = @"http://www.facebook.com/sharer.php?u=https://www.facebook.com/gearsprout?fref=ts&t=Playing Chuck the Bot by GearSprout!";
 		NSString *escaped = [pageURL stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 		[[UIApplication sharedApplication] openURL: [NSURL URLWithString: escaped]];
@@ -230,6 +235,7 @@
 	[menuItemSpriteSelected setScale: 0.95];
 	scale = (s.width * 0.06) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[DialogLayer playButtonSound];
 		NSString *pageURL = @"http://twitter.com/home?status=RT @GearSprout – Having fun playing Chuck the Bot on my iOS device!";
 		NSString *escaped = [pageURL stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 		[[UIApplication sharedApplication] openURL: [NSURL URLWithString: escaped]];
@@ -242,6 +248,7 @@
 	[menuItemSpriteSelected setScale: 0.95];
 	scale = (s.width * 0.06) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
+		[DialogLayer playButtonSound];
 		[self mail];
 	}];
 	[menuItem setScale: scale];
@@ -256,6 +263,12 @@
 
 - (void) openPurchaseDialog
 {
+	if ([[MToolsPurchaseManager sharedManager] retrievingProductList])
+	{
+		[[MToolsAlertViewManager sharedManager] alertWithMessage: @"The store is communicating with the server, please try again in a moment."];
+		return;
+	}
+	
 	DialogLayer *purchaseDialog = [[DialogLayer alloc] initPurchaseWithCallbackObj: self selector: @selector(madePurchase:)];
 	[self addChild: purchaseDialog z: 9000];
 }
