@@ -85,6 +85,7 @@
 	
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_play.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_play.png"];
+	[menuItemSpriteSelected setScale: 0.95];
 	scale = (s.width * 0.40) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		[Director shared].online = NO;
@@ -95,6 +96,7 @@
     
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_create.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_create.png"];
+	[menuItemSpriteSelected setScale: 0.95];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		[Director shared].editing = YES;
 		[self goToStage];
@@ -104,6 +106,7 @@
     
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_online_levels.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_online_levels.png"];
+	[menuItemSpriteSelected setScale: 0.95];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		
 		[Director shared].fullVersion = [[MToolsPurchaseManager sharedManager] productPurchased: @"fullversion"];
@@ -148,6 +151,7 @@
 	//Purchases
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_cart.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_cart.png"];
+	[menuItemSpriteSelected setScale: 0.95];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender)
 	{
 		[self openPurchaseDialog];
@@ -160,6 +164,7 @@
 	//Credits
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_question_mark.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_question_mark.png"];
+	[menuItemSpriteSelected setScale: 0.95];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 	DialogLayer *creditsDialog = [[DialogLayer alloc] initCreditsWithCallbackObj: self selector: @selector(madePurchase:)];
 	[self addChild: creditsDialog z: 9000];
@@ -172,6 +177,7 @@
 	//Logout
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_logout.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/main_menu/button_logout.png"];
+	[menuItemSpriteSelected setScale: 0.95];
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		[[Director shared] logout];
 		DialogLayer *logoutDialog = [[DialogLayer alloc] initNotificationWithMessage: @"You have been logged out."];
@@ -209,6 +215,7 @@
 	
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_facebook.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_facebook.png"];
+	[menuItemSpriteSelected setScale: 0.95];
 	scale = (s.width * 0.06) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		NSString *pageURL = @"http://www.facebook.com/sharer.php?u=https://www.facebook.com/gearsprout?fref=ts&t=Playing Chuck the Bot by GearSprout!";
@@ -220,6 +227,7 @@
     
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_twitter.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_twitter.png"];
+	[menuItemSpriteSelected setScale: 0.95];
 	scale = (s.width * 0.06) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		NSString *pageURL = @"http://twitter.com/home?status=RT @GearSprout – Having fun playing Chuck the Bot on my iOS device!";
@@ -231,6 +239,7 @@
     
 	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_email.png"];
 	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_main_email.png"];
+	[menuItemSpriteSelected setScale: 0.95];
 	scale = (s.width * 0.06) / menuItemSpriteNormal.contentSize.width;
     menuItem = [CCMenuItemImage itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 		[self mail];

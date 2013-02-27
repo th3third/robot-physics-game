@@ -39,9 +39,9 @@
 	return self;
 }
 
-- (id) initWithHeader:(NSString *)header andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField
+- (id) initWithHeader:(NSString *)headerIn andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField
 {
-	return [self initWithHeader: header andLine1: line1 target: callbackObjNew selector: selectorNew textField: doTextField andExistingText: @"" andCancelButton: NO];
+	return [self initWithHeader: headerIn andLine1: line1 target: callbackObjNew selector: selectorNew textField: doTextField andExistingText: @"" andCancelButton: NO];
 }
 
 - (id) initWithHeader:(NSString *)headerIn andLine1:(NSString *)line1 target:(id)callbackObjNew selector:(SEL)selectorNew textField: (bool) doTextField andExistingText: (NSString *) existingText andCancelButton: (bool) addCancelButton
@@ -63,18 +63,29 @@
         [line1Label setPosition:ccp(background.position.x, background.position.y + DIALOG_FONT_OFFSET)];
         [self addChild:line1Label];
         
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
 		NSMutableArray *buttons = [NSMutableArray array];
 		float okButtonPosX = background.position.x;
 		if (addCancelButton)
 		{
 			okButtonPosX += backgroundWidth / 4;
-			CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
+			CCMenuItemSprite *cancelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(cancelButtonPressed:)];
 			cancelButton.scale = (backgroundWidth * 0.2) / cancelButton.contentSize.width;
 			[cancelButton setPosition: ccp(background.position.x - backgroundWidth / 4, background.position.y - backgroundHeight / 5)];
 			[buttons addObject: cancelButton];
 		}
 		
-		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(okButtonPressed:)];
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_ok.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_ok.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *okButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(okButtonPressed:)];
 		okButton.scale = (backgroundWidth * 0.2) / okButton.contentSize.width;
         [okButton setPosition: ccp(okButtonPosX, background.position.y - backgroundHeight / 5)];
 		[buttons addObject: okButton];
@@ -85,7 +96,7 @@
 		
         if (doTextField)
         {
-            self.textField = [[UITextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24 * [Director shared].scaleFactor.height)];
+            self.textField = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, backgroundWidth * 0.8, 24 * [Director shared].scaleFactor.height)];
             self.textField.borderStyle = UITextBorderStyleRoundedRect;
             self.textField.center = ccp([[CCDirector sharedDirector] view].center.x , [[CCDirector sharedDirector] view].center.y - backgroundHeight / 4);
             self.textField.delegate = self;
@@ -113,7 +124,6 @@
 		selector = selectorNew;
 		
 		CCSprite *background = [self createBackgroundStatic];
-		CGSize s = [CCDirector sharedDirector].winSize;
 		
 		CCLabelTTF *messageLabel = [DialogLayer createShadowHeaderWithString: message
 																	position: ccp(background.position.x, background.position.y + backgroundHeight * 0.1)
@@ -129,12 +139,21 @@
 		[self addChild: messageLabel];
 		
 		//Cancel
-		CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		CCMenuItemSprite *cancelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(cancelButtonPressed:)];
 		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
 		//Okay
-		CCMenuItemImage *okButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(okButtonPressed:)];
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_ok.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_ok.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		CCMenuItemSprite *okButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(okButtonPressed:)];
 		okButton.scale = (backgroundWidth * 0.225) / okButton.contentSize.width;
 		[okButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
@@ -155,7 +174,6 @@
 		selector = selectorNew;
 		
 		CCSprite *background = [self createBackgroundStatic];
-		CGSize s = [CCDirector sharedDirector].winSize;
 		
 		CCLabelTTF *messageLabel = [DialogLayer createShadowHeaderWithString: message
 																	position: ccp(background.position.x, background.position.y + backgroundHeight * 0.1)
@@ -171,7 +189,13 @@
 		[self addChild: messageLabel];
 		
 		//Cancel
-		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_dialog_cancel.png" selectedImage: @"Media/Buttons/general/button_dialog_cancel.png" block:^(id sender) {			
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		CCMenuItemSprite *cancelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 			if ((callbackObj && selectorCancel) && [callbackObj respondsToSelector: selectorCancel])
 			{
 				[callbackObj performSelector: selectorCancel];
@@ -182,7 +206,10 @@
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
 		//Okay
-		CCMenuItemImage *okButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_dialog_ok.png" selectedImage: @"Media/Buttons/general/button_dialog_ok.png" block:^(id sender) {
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_ok.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_ok.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		CCMenuItemSprite *okButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 			[self okButtonPressed: nil];
 		}];
 		okButton.scale = (backgroundWidth * 0.225) / okButton.contentSize.width;
@@ -205,7 +232,6 @@
 		selector = selectorNew;
 		
 		CCSprite *background = [self createBackground];
-		CGSize s = [CCDirector sharedDirector].winSize;
 		
 		CCLabelTTF *messageLabel = [DialogLayer createShadowHeaderWithString: message
 																	position: ccp(background.position.x, background.position.y + backgroundHeight * 0.1)
@@ -221,14 +247,21 @@
 		[self addChild: messageLabel];
 		
 		//Okay
-		CCMenuItemImage *okayButton;
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_ok.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_ok.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *okayButton;
 		if (!callbackObj || !selector)
 		{
-			okayButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(cancelButtonPressed:)];
+			okayButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(cancelButtonPressed:)];
 		}
 		else
 		{
-			okayButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_ok.png" selectedImage:@"Media/Buttons/general/button_dialog_ok.png" target:self selector:@selector(okButtonPressed:)];
+			okayButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(okButtonPressed:)];
 		}
 		
 		okayButton.scale = (backgroundWidth * 0.225) / okayButton.contentSize.width;
@@ -265,14 +298,24 @@
 		[self addChild: levelCompletedSprite];
 		
 		//Play again button.
-		CCMenuItemImage *retryButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_back.png" selectedImage:@"Media/Buttons/general/button_dialog_back.png" target:self selector:@selector(retryButtonPressed:)];
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_back.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_back.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *retryButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(retryButtonPressed:)];
 		retryButton.scale = levelCompletedSprite.scale;
 		[retryButton setPosition: ccp(background.position.x - (backgroundWidth / 2) * 0.35, background.position.y + (backgroundHeight / 2) * 0.425)];
 		[buttons addObject: retryButton];
 		
 		if ([Director shared].online)
 		{
-			CCMenuItemImage *resumeButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/button_dialog_resume.png" selectedImage: @"Media/Buttons/general/button_dialog_resume.png" block:^(id sender) {
+			menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_resume.png"];
+			menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_resume.png"];
+			[menuItemSpriteSelected setScale: 0.95];
+			CCMenuItemSprite *resumeButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 				[self remove];
 				[callbackObj performSelector: @selector(resumePlaying)];
 			}];
@@ -282,12 +325,20 @@
 			
 			if (![[Director shared].stage.creator isEqualToString: [Director shared].username])
 			{
-				likeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_thumbs_up.png" selectedImage:@"Media/Buttons/general/button_thumbs_up.png" target:self selector:@selector(likeButtonPressed:)];
+				menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_thumbs_up.png"];
+				menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_thumbs_up.png"];
+				[menuItemSpriteSelected setScale: 0.95];
+				
+				likeButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(likeButtonPressed:)];
 				likeButton.scale = (backgroundWidth * 0.125) / likeButton.contentSize.width;
 				[likeButton setPosition: ccp(background.position.x + backgroundWidth * 0.1, background.position.y - backgroundHeight * 0.075)];
 				[buttons addObject: likeButton];
 				
-				dislikeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_thumbs_down.png" selectedImage:@"Media/Buttons/general/button_thumbs_down.png" target:self selector:@selector(dislikeButtonPressed:)];
+				menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_thumbs_down.png"];
+				menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_thumbs_down.png"];
+				[menuItemSpriteSelected setScale: 0.95];
+				
+				dislikeButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(dislikeButtonPressed:)];
 				dislikeButton.scale = (backgroundWidth * 0.125) / dislikeButton.contentSize.width;
 				[dislikeButton setPosition: ccp(background.position.x - backgroundWidth * 0.1, background.position.y - backgroundHeight * 0.075)];
 				[buttons addObject: dislikeButton];
@@ -296,7 +347,11 @@
 		else
 		{
 			//Resume button.
-			CCMenuItemImage *nextLevelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" selectedImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" target:self selector:@selector(nextStageButtonPressed:)];
+			menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_next_level.png"];
+			menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_next_level.png"];
+			[menuItemSpriteSelected setScale: 0.95];
+			
+			CCMenuItemSprite *nextLevelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(nextStageButtonPressed:)];
 			nextLevelButton.scale = retryButton.scale;
 			[nextLevelButton setPosition: ccp(background.position.x + (backgroundWidth / 2) * 0.55, background.position.y + (backgroundHeight / 2) * 0.425)];
 			[buttons addObject: nextLevelButton];
@@ -305,17 +360,25 @@
 		//Flag and edit buttons.
 		if ([Director shared].online)
 		{
-			NSLog(@"Comparing %@ to %@", [[Director shared].stage.creator lowercaseString], [[Director shared].username lowercaseString]);
+			
 			if ([[[Director shared].stage.creator lowercaseString] isEqualToString: [[Director shared].username lowercaseString]])
 			{
-				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_edit.png" selectedImage:@"Media/Buttons/general/button_dialog_edit.png" target:self selector:@selector(editButtonPressed:)];
+				menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_edit.png"];
+				menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_edit.png"];
+				[menuItemSpriteSelected setScale: 0.95];
+				
+				CCMenuItemSprite *flagButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(editButtonPressed:)];
 				flagButton.scale = (backgroundWidth * 0.2) / flagButton.contentSize.width;
 				[flagButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.125)];
 				[buttons addObject: flagButton];
 			}
 			else
 			{
-				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_flag.png" selectedImage:@"Media/Buttons/general/button_dialog_flag.png" target: callbackObj selector:@selector(flagButtonPressed)];
+				menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_flag.png"];
+				menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_flag.png"];
+				[menuItemSpriteSelected setScale: 0.95];
+				
+				CCMenuItemSprite *flagButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target: callbackObj selector:@selector(flagButtonPressed)];
 				flagButton.scale = (backgroundWidth * 0.2) / flagButton.contentSize.width;
 				[flagButton setPosition: ccp(background.position.x - backgroundWidth * 0.35, background.position.y - backgroundHeight * 0.175)];
 				[buttons addObject: flagButton];
@@ -360,26 +423,45 @@
 		[self addChild: levelCompletedSprite];
 		
 		//Play again button.
-		CCMenuItemImage *retryButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_complete/button_dialog_play_again.png" selectedImage:@"Media/Buttons/general/level_complete/button_dialog_play_again.png" target:self selector:@selector(retryButtonPressed:)];
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_play_again.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_play_again.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *retryButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(retryButtonPressed:)];
 		retryButton.scale = levelCompletedSprite.scale;
 		[retryButton setPosition: ccp(background.position.x - (backgroundWidth / 2) * 0.35, background.position.y + (backgroundHeight / 2) * 0.425)];
 		[buttons addObject: retryButton];
 		
 		if ([Director shared].online)
 		{
-			CCMenuItemImage *nextLevelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_complete/button_dialog_list.png" selectedImage:@"Media/Buttons/general/level_complete/button_dialog_list.png" target:self selector:@selector(nextStageButtonPressed:)];
+			menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_list.png"];
+			menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_list.png"];
+			[menuItemSpriteSelected setScale: 0.95];
+			
+			CCMenuItemSprite *nextLevelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(nextStageButtonPressed:)];
 			nextLevelButton.scale = retryButton.scale;
 			[nextLevelButton setPosition: ccp(background.position.x + (backgroundWidth / 2) * 0.55, background.position.y + (backgroundHeight / 2) * 0.425)];
 			[buttons addObject: nextLevelButton];
 			
 			if (![[Director shared].stage.creator isEqualToString: [Director shared].username])
 			{
-				likeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_thumbs_up.png" selectedImage:@"Media/Buttons/general/button_thumbs_up.png" target:self selector:@selector(likeButtonPressed:)];
+				menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_thumbs_up.png"];
+				menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_thumbs_up.png"];
+				[menuItemSpriteSelected setScale: 0.95];
+				
+				likeButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(likeButtonPressed:)];
 				likeButton.scale = (backgroundWidth * 0.125) / likeButton.contentSize.width;
 				[likeButton setPosition: ccp(background.position.x + backgroundWidth * 0.1, background.position.y - backgroundHeight * 0.125)];
 				[buttons addObject: likeButton];
 				
-				dislikeButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_thumbs_down.png" selectedImage:@"Media/Buttons/general/button_thumbs_down.png" target:self selector:@selector(dislikeButtonPressed:)];
+				menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_thumbs_down.png"];
+				menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_thumbs_down.png"];
+				[menuItemSpriteSelected setScale: 0.95];
+				
+				dislikeButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(dislikeButtonPressed:)];
 				dislikeButton.scale = (backgroundWidth * 0.125) / dislikeButton.contentSize.width;
 				[dislikeButton setPosition: ccp(background.position.x - backgroundWidth * 0.1, background.position.y - backgroundHeight * 0.125)];
 				[buttons addObject: dislikeButton];
@@ -388,7 +470,11 @@
 		else
 		{
 			//Next level button.
-			CCMenuItemImage *nextLevelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" selectedImage:@"Media/Buttons/general/level_complete/button_dialog_next_level.png" target:self selector:@selector(nextStageButtonPressed:)];
+			menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_next_level.png"];
+			menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_complete/button_dialog_next_level.png"];
+			[menuItemSpriteSelected setScale: 0.95];
+			
+			CCMenuItemSprite *nextLevelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(nextStageButtonPressed:)];
 			nextLevelButton.scale = retryButton.scale;
 			[nextLevelButton setPosition: ccp(background.position.x + (backgroundWidth / 2) * 0.55, background.position.y + (backgroundHeight / 2) * 0.425)];
 			[buttons addObject: nextLevelButton];
@@ -399,14 +485,22 @@
 		{
 			if ([[Director shared].stage.creator isEqualToString: [Director shared].username])
 			{
-				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_edit.png" selectedImage:@"Media/Buttons/general/button_dialog_edit.png" target:self selector:@selector(editButtonPressed:)];
+				menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_edit.png"];
+				menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_edit.png"];
+				[menuItemSpriteSelected setScale: 0.95];
+				
+				CCMenuItemSprite *flagButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(editButtonPressed:)];
 				flagButton.scale = (backgroundWidth * 0.2) / flagButton.contentSize.width;
 				[flagButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.125)];
 				[buttons addObject: flagButton];
 			}
 			else
 			{
-				CCMenuItemImage *flagButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_flag.png" selectedImage:@"Media/Buttons/general/button_dialog_flag.png" target: callbackObj selector:@selector(flagButtonPressed)];
+				menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_flag.png"];
+				menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_flag.png"];
+				[menuItemSpriteSelected setScale: 0.95];
+				
+				CCMenuItemSprite *flagButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target: callbackObj selector:@selector(flagButtonPressed)];
 				flagButton.scale = (backgroundWidth * 0.2) / flagButton.contentSize.width;
 				[flagButton setPosition: ccp(background.position.x - backgroundWidth * 0.35, background.position.y - backgroundHeight * 0.175)];
 				[buttons addObject: flagButton];
@@ -471,16 +565,6 @@
     return self;
 }
 
-- (id) initOnlineMenuWithCallbackObj: (id) callbackObjNew selector: (SEL) selectorNew
-{
-	self.dialogType = 1;
-	
-	if (self = [self init])
-	{
-		
-	}
-}
-
 - (id) initFlaggerWithHeader: (NSString *) headerIn target: (id) callbackObjNew selector: (SEL) selectorNew andLevelName: (NSString *) levelName
 {
 	self.dialogType = 2;
@@ -537,7 +621,7 @@
 		self.textField.returnKeyType = UIReturnKeyDone;
 		self.textField.autocorrectionType = UITextAutocapitalizationTypeNone;
 		self.textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
-		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField];
+		[[[CCDirector sharedDirector] view] addSubview: self.textField];
 		
 		//Name of creator (filled in with default logged in user.
 		CCSprite *creatorNameBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_creator_background.png"];
@@ -704,12 +788,23 @@
 		[self addChild: menu];
 		
 		//Cancel
-		CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_save/button_cancel_level.png" selectedImage:@"Media/Buttons/general/level_save/button_cancel_level.png" target:self selector:@selector(cancelButtonPressed:)];
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_cancel_level.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_cancel_level.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *cancelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(cancelButtonPressed:)];
 		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
 		//Save
-		CCMenuItemImage *saveButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/level_save/button_save_level.png" selectedImage:@"Media/Buttons/general/level_save/button_save_level.png" target:self selector:@selector(saveButtonPressed:)];
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_save_level.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_save_level.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *saveButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(saveButtonPressed:)];
 		saveButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
 		[saveButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
@@ -826,15 +921,31 @@
 			CCSprite *botSelectedSprite = [CCSprite spriteWithFile: [NSString stringWithFormat: @"Media/Buttons/general/purchase/button_purchase_bot_%@.png", [botsForPurchase objectAtIndex: i]]];
 			[botSelectedSprite setScale: 0.95];
 			
-			if ([[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@", [botsForPurchase objectAtIndex: i]]])
+			if (!PREPAID_VERSION)
 			{
-				CCSprite *boughtOverlaySprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_overlay.png"];
-				CCSprite *boughtOverlaySelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_overlay.png"];
-				[boughtOverlaySprite setAnchorPoint: ccp(0, 0)];
-				[boughtOverlaySelectedSprite setAnchorPoint: ccp(0, 0)];
-				
-				[botSprite addChild: boughtOverlaySprite];
-				[botSelectedSprite addChild: boughtOverlaySelectedSprite];
+				if ([[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@", [botsForPurchase objectAtIndex: i]]])
+				{
+					CCSprite *boughtOverlaySprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_overlay.png"];
+					CCSprite *boughtOverlaySelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_overlay.png"];
+					[boughtOverlaySprite setAnchorPoint: ccp(0, 0)];
+					[boughtOverlaySelectedSprite setAnchorPoint: ccp(0, 0)];
+					
+					[botSprite addChild: boughtOverlaySprite];
+					[botSelectedSprite addChild: boughtOverlaySelectedSprite];
+				}
+			}
+			else
+			{
+				if ([[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@pro", [botsForPurchase objectAtIndex: i]]])
+				{
+					CCSprite *boughtOverlaySprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_overlay.png"];
+					CCSprite *boughtOverlaySelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/purchase/button_bought_overlay.png"];
+					[boughtOverlaySprite setAnchorPoint: ccp(0, 0)];
+					[boughtOverlaySelectedSprite setAnchorPoint: ccp(0, 0)];
+					
+					[botSprite addChild: boughtOverlaySprite];
+					[botSelectedSprite addChild: boughtOverlaySelectedSprite];
+				}
 			}
 			
 			CCMenuItemSprite *botMenuItem;
@@ -842,19 +953,39 @@
 			
 			botMenuItem = [CCMenuItemSprite itemWithNormalSprite: botSprite selectedSprite: botSelectedSprite block:^(id sender) {
 
-				if (![[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@", [botsForPurchase objectAtIndex: i]]])
+				if (!PREPAID_VERSION)
 				{
-					[[MToolsPurchaseManager sharedManager] purchaseProductByName: [NSString stringWithFormat:@"botskin%@", [botsForPurchase objectAtIndex: i]]];
+					if (![[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@", [botsForPurchase objectAtIndex: i]]])
+					{
+						[[MToolsPurchaseManager sharedManager] purchaseProductByName: [NSString stringWithFormat:@"botskin%@", [botsForPurchase objectAtIndex: i]]];
+					}
+					else
+					{
+						[Director shared].botType = [botsForPurchase objectAtIndex: i];
+						
+						for (int j = 0; j < [botsForPurchase count]; j++)
+						{
+							[[selectionIcons getChildByTag: j] setVisible: NO];
+						}
+						[[selectionIcons getChildByTag: i] setVisible: YES];
+					}
 				}
 				else
 				{
-					[Director shared].botType = [botsForPurchase objectAtIndex: i];
-					
-					for (int j = 0; j < [botsForPurchase count]; j++)
+					if (![[MToolsPurchaseManager sharedManager] productPurchased: [NSString stringWithFormat: @"botskin%@pro", [botsForPurchase objectAtIndex: i]]])
 					{
-						[[selectionIcons getChildByTag: j] setVisible: NO];
+						[[MToolsPurchaseManager sharedManager] purchaseProductByName: [NSString stringWithFormat:@"botskin%@pro", [botsForPurchase objectAtIndex: i]]];
 					}
-					[[selectionIcons getChildByTag: i] setVisible: YES];
+					else
+					{
+						[Director shared].botType = [botsForPurchase objectAtIndex: i];
+						
+						for (int j = 0; j < [botsForPurchase count]; j++)
+						{
+							[[selectionIcons getChildByTag: j] setVisible: NO];
+						}
+						[[selectionIcons getChildByTag: i] setVisible: YES];
+					}
 				}
 			}];
 
@@ -1099,12 +1230,23 @@
 		[self addChild: self.textFieldWrapper3];
 		
 		//Cancel
-		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *cancelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(cancelButtonPressed:)];
 		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
 		//Next
-		CCMenuItemImage *nextButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(sendNewAccountInfoButtonPressed)];
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *nextButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(sendNewAccountInfoButtonPressed)];
 		nextButton.scale = (backgroundWidth * 0.225) / nextButton.contentSize.width;
 		[nextButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
@@ -1160,7 +1302,7 @@
 		self.textField.autocorrectionType = UITextAutocapitalizationTypeNone;
 		self.textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
 		self.textField.tag = 0;
-		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField];
+		[[[CCDirector sharedDirector] view] addSubview: self.textField];
 		
 		//Password input background
 		CCSprite *passwordInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_creator_background.png"];
@@ -1186,12 +1328,23 @@
 		[[[CCDirector sharedDirector] view] addSubview: self.textField2];
 		
 		//Cancel
-		CCMenuItemImage *cancelButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *cancelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(cancelButtonPressed:)];
 		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.325, background.position.y - backgroundHeight * 0.35)];
 		
 		//Create account
-		CCMenuItemImage *createAccountButton = [CCMenuItemImage itemWithNormalImage: @"Media/Buttons/general/login/button_create_account.png" selectedImage: @"Media/Buttons/general/login/button_create_account.png" block:^(id sender) {
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/login/button_create_account.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/login/button_create_account.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *createAccountButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
 			[self createAccountButtonPressed];
 			
 		}];
@@ -1199,7 +1352,11 @@
 		[createAccountButton setPosition: ccp(background.position.x, background.position.y - backgroundHeight * 0.35)];
 		
 		//Next
-		CCMenuItemImage *nextButton = [CCMenuItemImage itemWithNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(loginButtonPressed:)];
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *nextButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(loginButtonPressed:)];
 		nextButton.scale = (backgroundWidth * 0.225) / nextButton.contentSize.width;
 		[nextButton setPosition: ccp(background.position.x + backgroundWidth * 0.325, background.position.y - backgroundHeight * 0.35)];
 		
@@ -1223,8 +1380,6 @@
         
         CCSprite *background = [self createBackground];
 		
-		CGSize s = [CCDirector sharedDirector].winSize;
-		NSMutableArray *buttons = [NSMutableArray array];
 		float okButtonPosX = background.position.x;
 		okButtonPosX += backgroundWidth / 4;
 		
@@ -1254,7 +1409,7 @@
 		self.textField.autocorrectionType = UITextAutocapitalizationTypeNone;
 		self.textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
 		self.textField.tag = 0;
-		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField];
+		[[[CCDirector sharedDirector] view] addSubview: self.textField];
 		
 		//Password input background
 		CCSprite *passwordInputBackground = [CCSprite spriteWithFile: @"Media/Buttons/general/level_save/button_level_creator_background.png"];
@@ -1277,15 +1432,26 @@
 		self.textField2.autocapitalizationType = UITextAutocapitalizationTypeNone;
 		self.textField2.secureTextEntry = YES;
 		self.textField2.tag = 1;
-		[[[CCDirector sharedDirector] openGLView] addSubview: self.textField2];
+		[[[CCDirector sharedDirector] view] addSubview: self.textField2];
 		
 		//Cancel
-		CCMenuItemImage *cancelButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_cancel.png" selectedImage:@"Media/Buttons/general/button_dialog_cancel.png" target:self selector:@selector(cancelButtonPressed:)];
+		CCSprite *menuItemSpriteNormal;
+		CCSprite *menuItemSpriteSelected;
+		
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_cancel.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *cancelButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(cancelButtonPressed:)];
 		cancelButton.scale = (backgroundWidth * 0.225) / cancelButton.contentSize.width;
 		[cancelButton setPosition: ccp(background.position.x - backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
 		//Next
-		CCMenuItemImage *nextButton = [CCMenuItemImage itemFromNormalImage:@"Media/Buttons/general/button_dialog_next.png" selectedImage:@"Media/Buttons/general/button_dialog_next.png" target:self selector:@selector(loginButtonPressed:)];
+		menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+		menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_next.png"];
+		[menuItemSpriteSelected setScale: 0.95];
+		
+		CCMenuItemSprite *nextButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target:self selector:@selector(loginButtonPressed:)];
 		nextButton.scale = (backgroundWidth * 0.225) / nextButton.contentSize.width;
 		[nextButton setPosition: ccp(background.position.x + backgroundWidth * 0.25, background.position.y - backgroundHeight * 0.35)];
 		
@@ -1374,7 +1540,13 @@
 	CGSize s = [CCDirector sharedDirector].winSize;
 	
 	//This is the invisible closing background which will remove the notification window if hit.
-	CCMenuItemImage *closeMenuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Backgrounds/blank.jpg" selectedImage: @"Media/Backgrounds/blank.jpg" target: self selector: @selector(remove)];
+	CCSprite *menuItemSpriteNormal;
+	CCSprite *menuItemSpriteSelected;
+	
+	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
+	
+	CCMenuItemSprite *closeMenuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target: self selector: @selector(remove)];
 	[closeMenuItem setScaleX: (s.width / closeMenuItem.contentSize.width)];
 	[closeMenuItem setScaleY: (s.height / closeMenuItem.contentSize.height)];
 	[closeMenuItem setOpacity: 100];
@@ -1400,7 +1572,13 @@
 	CGSize s = [CCDirector sharedDirector].winSize;
 	
 	//This is the invisible closing background which will remove the notification window if hit.
-	CCMenuItemImage *closeMenuItem = [CCMenuItemImage itemWithNormalImage: @"Media/Backgrounds/blank.jpg" selectedImage: @"Media/Backgrounds/blank.jpg" target: self selector: @selector(resign)];
+	CCSprite *menuItemSpriteNormal;
+	CCSprite *menuItemSpriteSelected;
+	
+	menuItemSpriteNormal = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
+	menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
+	
+	CCMenuItemSprite *closeMenuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected target: self selector: @selector(resign)];
 	[closeMenuItem setScaleX: (s.width / closeMenuItem.contentSize.width)];
 	[closeMenuItem setScaleY: (s.height / closeMenuItem.contentSize.height)];
 	[closeMenuItem setOpacity: 100];
@@ -1712,7 +1890,7 @@
 
 + (void) playButtonSound
 {
-	[[SimpleAudioEngine sharedEngine] playEffect: @"Media/Audio/general/button_press.mp3"];
+	[[SimpleAudioEngine sharedEngine] playEffect: @"Media/Audio/general/button_press.aiff"];
 }
 
 @end

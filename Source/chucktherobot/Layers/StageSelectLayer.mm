@@ -61,6 +61,7 @@
 		//Show the storyboard if this is the first time going to this screen.
 		if (![[MToolsAppSettings getValueWithName: @"storyboardPlayed"] boolValue])
 		{
+			[self showLevelList];
 			[self startStoryboard];
 			[MToolsAppSettings setValue: [NSNumber numberWithBool: YES] withName: @"storyboardPlayed"];
 		}
@@ -175,19 +176,36 @@
 		
 		CCSprite *menuItemSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
 		CCSprite *menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_levelselect_background.png"];
+		[menuItemSpriteSelected setScale: 0.95];
 		
 		int fontSize = menuItemSprite.contentSize.width * 0.5;
-		CCLabelTTF *label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: fontSize];
-		[label setColor: ccBLACK];
-		[label setAnchorPoint: ccp(0.5, 0.5)];
-		[label setPosition: ccp((menuItemSprite.contentSize.width / 2 + 3) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2 - 3) * menuItemSprite.scale)];
+		CCLabelTTF *label = [DialogLayer createShadowHeaderWithString: [NSString stringWithFormat: @"%d", i + 1]
+												 position: ccp((menuItemSprite.contentSize.width / 2) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2) * menuItemSprite.scale)
+											 shadowOffset: CGSizeMake(1, -1)
+													color: ccWHITE
+											  shadowColor: ccBLACK
+											   dimensions: CGSizeMake(menuItemSprite.contentSize.width, menuItemSprite.contentSize.height)
+											   hAlignment: kCCTextAlignmentCenter
+											   vAlignment: kCCVerticalTextAlignmentTop
+											lineBreakMode: kCCLineBreakModeWordWrap
+												 fontSize: fontSize
+				 ];
+		
 		[menuItemSprite addChild: label];
 		
-		label = [CCLabelTTF labelWithString: [NSString stringWithFormat: @"%d", i + 1] fontName: [Director shared].globalFont fontSize: fontSize];
-		[label setColor: ccWHITE];
-		[label setAnchorPoint: ccp(0.5, 0.5)];
-		[label setPosition: ccp((menuItemSprite.contentSize.width / 2) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2) * menuItemSprite.scale)];
-		[menuItemSprite addChild: label];
+		label = [DialogLayer createShadowHeaderWithString: [NSString stringWithFormat: @"%d", i + 1]
+												 position: ccp((menuItemSprite.contentSize.width / 2) * menuItemSprite.scale, (menuItemSprite.contentSize.height / 2) * menuItemSprite.scale)
+											 shadowOffset: CGSizeMake(1, -1)
+													color: ccWHITE
+											  shadowColor: ccBLACK
+											   dimensions: CGSizeMake(menuItemSprite.contentSize.width, menuItemSprite.contentSize.height)
+											   hAlignment: kCCTextAlignmentCenter
+											   vAlignment: kCCVerticalTextAlignmentTop
+											lineBreakMode: kCCLineBreakModeWordWrap
+												 fontSize: fontSize
+				 ];
+		
+		[menuItemSpriteSelected addChild: label];
 		
 		menuItem = [CCMenuItemSprite itemWithNormalSprite: menuItemSprite selectedSprite: menuItemSpriteSelected block:^(id sender)
 		{
@@ -306,6 +324,8 @@
 	//BACK BUTTON (ON SAME BOUNDS AS FILTERING BUTTONS)
 	CCSprite *backToMainSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
 	CCSprite *backToMainSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	[backToMainSpriteSelected setScale: 0.95];
+	
 	CCMenuItemSprite *backToMainMenuItem = [CCMenuItemSprite itemWithNormalSprite: backToMainSprite selectedSprite: backToMainSpriteSelected block:^(id sender) {
 		[self goToMainMenu];
 	}];
@@ -327,6 +347,8 @@
 	//INTRO BUTTON
 	CCSprite *introSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
 	CCSprite *introSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	[introSpriteSelected setScale: 0.95];
+	
 	CCMenuItemSprite *introMenuItem = [CCMenuItemSprite itemWithNormalSprite: introSprite selectedSprite: introSpriteSelected block:^(id sender) {
 		[self startStoryboard];
 	}];
@@ -518,6 +540,8 @@
 	//ARROWS FOR PAGE SELECTION	
 	CCSprite *arrowLeftSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_left_arrow.png"];
 	CCSprite *arrowLeftSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_left_arrow.png"];
+	[arrowLeftSelectedSprite setScale: 0.95];
+	
 	CCMenuItemSprite *arrowLeftMenuItem = [CCMenuItemSprite itemWithNormalSprite: arrowLeftSprite selectedSprite: arrowLeftSelectedSprite block:^(id sender) {
 		[self goToPreviousPage: nil];
 	}];
@@ -528,6 +552,8 @@
 	
 	CCSprite *arrowRightSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_right_arrow.png"];
 	CCSprite *arrowRightSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/button_right_arrow.png"];
+	[arrowRightSelectedSprite setScale: 0.95];
+	
 	CCMenuItemSprite *arrowRightMenuItem = [CCMenuItemSprite itemWithNormalSprite: arrowRightSprite selectedSprite: arrowRightSelectedSprite block:^(id sender) {
 		[self goToNextPage: nil];
 	}];
@@ -545,6 +571,8 @@
 	//BACK BUTTON (ON SAME BOUNDS AS FILTERING BUTTONS)
 	CCSprite *backToMainSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
 	CCSprite *backToMainSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	[backToMainSpriteSelected setScale: 0.95];
+	
 	CCMenuItemSprite *backToMainMenuItem = [CCMenuItemSprite itemWithNormalSprite: backToMainSprite selectedSprite: backToMainSpriteSelected block:^(id sender) {
 		[self goToMainMenu];
 	}];
@@ -566,6 +594,8 @@
 	//Newest levels filter (default)
 	CCSprite *newestLevelsSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
 	CCSprite *newestLevelsSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	[newestLevelsSelectedSprite setScale: 0.95];
+	
 	CCMenuItemSprite *newestLevelsMenuItem = [CCMenuItemSprite itemWithNormalSprite: newestLevelsSprite selectedSprite: newestLevelsSelectedSprite block:^(id sender) {
 		[self setFilter: 0];
 	}];
@@ -587,6 +617,8 @@
 	//Popular levels filter
 	CCSprite *popularLevelsSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
 	CCSprite *popularLevelsSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_1.png"];
+	[popularLevelsSelectedSprite setScale: 0.95];
+	
 	CCMenuItemSprite *popularLevelsMenuItem = [CCMenuItemSprite itemWithNormalSprite: popularLevelsSprite selectedSprite: popularLevelsSelectedSprite block:^(id sender) {
 		[self setFilter: 1];
 	}];
@@ -608,6 +640,8 @@
 	//Best rated
 	CCSprite *bestRatedLevelsSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
 	CCSprite *bestRatedLevelsSelectedSprite = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_bot_background_2.png"];
+	[bestRatedLevelsSelectedSprite setScale: 0.95];
+	
 	CCMenuItemSprite *bestRatedLevelsMenuItem = [CCMenuItemSprite itemWithNormalSprite: bestRatedLevelsSprite selectedSprite: bestRatedLevelsSelectedSprite block:^(id sender) {
 		[self setFilter: 2];
 	}];
@@ -832,7 +866,7 @@
 			[onlineLevelDetailsSprite addChild: tagSprite];
 			
 			CCLabelTTF *tagLabel = [DialogLayer createShadowHeaderWithString: tag
-																	position: ccp(tagSprite.position.x, tagSprite.position.y - topBounds.size.height * 0.09)
+																	position: ccp(tagSprite.position.x, tagSprite.position.y - topBounds.size.height * 0.11)
 																shadowOffset: CGSizeMake(1, -1)
 																	   color: ccWHITE
 																 shadowColor: ccBLACK
@@ -871,6 +905,7 @@
 	//Play button and menu.
 	CCSprite *playButton = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_play.png"];
 	CCSprite *playButtonSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/level_select/button_online_play.png"];
+	[playButtonSelected setScale: 0.95];
 	
 	CCMenuItemSprite *playButtonMenuItem = [CCMenuItemSprite itemWithNormalSprite: playButton selectedSprite: playButtonSelected block:^(id sender) {
 		[Director shared].online = YES;
@@ -962,8 +997,8 @@
 	
 	if (!newLevels || [newLevels count] <= 0)
 	{
-		DialogLayer *noLevelsDialog = [[DialogLayer alloc] initNotificationWithMessage: @"No levels were obtained from the server. There may be issues right now, sorry!"];
-		[self addChild: noLevelsDialog z: 9000];
+		//DialogLayer *noLevelsDialog = [[DialogLayer alloc] initNotificationWithMessage: @"No levels were obtained from the server. There may be issues right now, sorry!"];
+		//[self addChild: noLevelsDialog z: 9000];
 		return nil;
 	}
 	

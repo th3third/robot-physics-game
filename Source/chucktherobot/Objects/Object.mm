@@ -43,7 +43,7 @@
         self.alive = YES;
 		self.movable = YES;
 		self.minimumSize = 4;
-		self.hitSounds = 5;
+		self.hitSounds = 6;
 		self.hitBouncySounds = 4;
 		self.popSounds = 4;
 		soundCooldown = 0.0f;

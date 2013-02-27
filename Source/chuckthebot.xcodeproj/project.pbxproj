@@ -978,7 +978,7 @@
 		CEC089DA16D6CF1C0064465D /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		CEE0129F16D5752700791964 /* CCUIViewWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCUIViewWrapper.h; sourceTree = "<group>"; };
 		CEE012A016D5752700791964 /* CCUIViewWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCUIViewWrapper.m; sourceTree = "<group>"; };
-		CEE02BD4169640BA00264586 /* Chuck the Bot (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chuck the Bot (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEE02BD4169640BA00264586 /* Chuck the Bot (iOS) (Pro).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chuck the Bot (iOS) (Pro).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEE02BD8169640BA00264586 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CEE02BDA169640BA00264586 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		CEE02BDC169640BA00264586 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
@@ -1817,7 +1817,7 @@
 		CEE02BD5169640BA00264586 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CEE02BD4169640BA00264586 /* Chuck the Bot (iOS).app */,
+				CEE02BD4169640BA00264586 /* Chuck the Bot (iOS) (Pro).app */,
 				CE7E2F7716D568500094A4CF /* Chuck the Bot (iOS) copy.app */,
 			);
 			name = Products;
@@ -1967,9 +1967,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CE7E2E7416D568500094A4CF /* Chuck the Bot (iOS) (free) */ = {
+		CE7E2E7416D568500094A4CF /* Chuck the Bot (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CE7E2F7416D568500094A4CF /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS) (free)" */;
+			buildConfigurationList = CE7E2F7416D568500094A4CF /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS)" */;
 			buildPhases = (
 				CE7E2E7516D568500094A4CF /* Sources */,
 				CE7E2F4916D568500094A4CF /* Frameworks */,
@@ -1979,14 +1979,14 @@
 			);
 			dependencies = (
 			);
-			name = "Chuck the Bot (iOS) (free)";
+			name = "Chuck the Bot (iOS)";
 			productName = chucktherobot;
 			productReference = CE7E2F7716D568500094A4CF /* Chuck the Bot (iOS) copy.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CEE02BD3169640BA00264586 /* Chuck the Bot (iOS) */ = {
+		CEE02BD3169640BA00264586 /* Chuck the Bot (iOS) (Pro) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CEE02E08169640C500264586 /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS)" */;
+			buildConfigurationList = CEE02E08169640C500264586 /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS) (Pro)" */;
 			buildPhases = (
 				CEE02BD0169640BA00264586 /* Sources */,
 				CEE02BD1169640BA00264586 /* Frameworks */,
@@ -1996,9 +1996,9 @@
 			);
 			dependencies = (
 			);
-			name = "Chuck the Bot (iOS)";
+			name = "Chuck the Bot (iOS) (Pro)";
 			productName = chucktherobot;
-			productReference = CEE02BD4169640BA00264586 /* Chuck the Bot (iOS).app */;
+			productReference = CEE02BD4169640BA00264586 /* Chuck the Bot (iOS) (Pro).app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -2021,8 +2021,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CEE02BD3169640BA00264586 /* Chuck the Bot (iOS) */,
-				CE7E2E7416D568500094A4CF /* Chuck the Bot (iOS) (free) */,
+				CEE02BD3169640BA00264586 /* Chuck the Bot (iOS) (Pro) */,
+				CE7E2E7416D568500094A4CF /* Chuck the Bot (iOS) */,
 			);
 		};
 /* End PBXProject section */
@@ -2763,7 +2763,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CE7E2F7416D568500094A4CF /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS) (free)" */ = {
+		CE7E2F7416D568500094A4CF /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CE7E2F7516D568500094A4CF /* Debug */,
@@ -2781,7 +2781,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CEE02E08169640C500264586 /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS)" */ = {
+		CEE02E08169640C500264586 /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS) (Pro)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CEE02E09169640C500264586 /* Debug */,

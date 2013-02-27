@@ -134,6 +134,7 @@ static Director *shared = nil;
 		//The default bot type.
 		//Set the first skin to on since it will always be available.
 		[MToolsAppSettings setValue: @"purchased" withName: @"botskin1Receipt"];
+		[MToolsAppSettings setValue: @"purchased" withName: @"botskin1proReceipt"];
 		self.botType = @"1";
 		
 		//Set up the scaling factor.
@@ -141,7 +142,6 @@ static Director *shared = nil;
 		scaleFactor = CGSizeMake((PTM_RATIO / 32), (PTM_RATIO / 32));
 		//scaleFactor = CGSizeMake((winSize.width / designSize.width), (winSize.height / designSize.height));
 		//scaleFactor = CGSizeMake(1, 1);
-		NSLog(@"SCALING FACTOR: %f x %f", scaleFactor.width, scaleFactor.height);
 		
 		if ([MToolsAppSettings getValueWithName: @"username"])
 		{

@@ -362,7 +362,7 @@ enum
 	scale = (s.height * 0.90) / leftEditorBackground.contentSize.height;
 	[leftEditorBackground setScale: scale];
 	[leftEditorBackground setAnchorPoint: ccp(0.5, 0)];
-	[leftEditorBackground setPosition: ccp(gear.position.x + 9 * [Director shared].scaleFactor.width, gear.position.y)];
+	[leftEditorBackground setPosition: ccp(gear.position.x + 7 * [Director shared].scaleFactor.width, gear.position.y)];
 	[editorBarLeft addChild: leftEditorBackground z: 1];
 	
 	startingPoint = ccp(-(s.width / 2) + leftEditorBackground.position.x, -(s.height / 2) + botEditorBackground.position.y + 2);
@@ -2045,6 +2045,7 @@ enum
 	if ([Director shared].editing)
 	{
 		[[CCDirector sharedDirector] replaceScene: [CCTransitionFade transitionWithDuration: 0.5 scene: [MainMenuLayer scene]]];
+		[Director shared].editing = NO;
 	}
 	else
 	{
