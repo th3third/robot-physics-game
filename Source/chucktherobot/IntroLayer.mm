@@ -54,7 +54,8 @@
 	[self setStatusLabel: @"Loading..."];
 	
 	//Init the purchase stuff.
-	[[MToolsPurchaseManager sharedManager] setVocal: YES];
+	[[debug sharedManager] setEnableLog: NO];
+	[[MToolsPurchaseManager sharedManager] setVocal: NO];
 	[[MToolsPurchaseManager sharedManager] loadStore];
 	
 	//Init the standard keys and increment anything that needs to be done.

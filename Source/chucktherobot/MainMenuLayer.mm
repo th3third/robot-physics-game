@@ -263,11 +263,11 @@
 
 - (void) openPurchaseDialog
 {
-	if ([[MToolsPurchaseManager sharedManager] retrievingProductList])
+	/*if ([[MToolsPurchaseManager sharedManager] retrievingProductList])
 	{
 		[[MToolsAlertViewManager sharedManager] alertWithMessage: @"The store is communicating with the server, please try again in a moment."];
 		return;
-	}
+	}*/
 	
 	DialogLayer *purchaseDialog = [[DialogLayer alloc] initPurchaseWithCallbackObj: self selector: @selector(madePurchase:)];
 	[self addChild: purchaseDialog z: 9000];

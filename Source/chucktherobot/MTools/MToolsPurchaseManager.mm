@@ -124,7 +124,7 @@ static MToolsPurchaseManager *sharedManager = nil;
 //Checks to see if a product has already been purchased.
 - (bool) productPurchased:(NSString *)name
 {
-	return [MToolsAppSettings getValueWithName: [NSString stringWithFormat: @"%@Receipt", name]];
+	return ([MToolsAppSettings getValueWithName: [NSString stringWithFormat: @"%@Receipt", name]] || [MToolsAppSettings getValueWithName: [NSString stringWithFormat: @"is%@Purchased", name]]);
 }
 
 //Restores all previous purchases.
@@ -157,10 +157,11 @@ static MToolsPurchaseManager *sharedManager = nil;
 	if (self.downloadableMode)
 		[[MToolsAlertViewManager sharedManager] alertWithMessage: @"Thank you for your purchase! Your item is now being downloaded and activated. For large files, this may take a few minutes depending on your connection speed"];
 	else
-		[[MToolsAlertViewManager sharedManager] alertWithMessage: @"Thank you for your purchase! Your item has been activated and are ready to use."];
+		[[MToolsAlertViewManager sharedManager] alertWithMessage: @"Thank you for your purchase! Your item has been activated and is ready to use."];
 	
     if (vocal)
         NSLog(@"%@ was purchased.", productID);
+	
     [[NSUserDefaults standardUserDefaults] setBool: YES forKey:[NSString stringWithFormat:@"is%@Purchased", productID]];
     [[NSUserDefaults standardUserDefaults] synchronize];
     

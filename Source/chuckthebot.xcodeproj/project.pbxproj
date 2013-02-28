@@ -480,6 +480,16 @@
 		CE91209716B6E1960032186E /* TMXGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = CE91207716B6E1960032186E /* TMXGenerator.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CE91209B16B6E2D10032186E /* Motor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE91209A16B6E2D10032186E /* Motor.mm */; };
 		CE91209D16B6E6BE0032186E /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE91209C16B6E6BE0032186E /* MediaPlayer.framework */; };
+		CEA13C8216DED2B600883E51 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C8116DED2B600883E51 /* Icon.png */; };
+		CEA13C8416DED32C00883E51 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C8316DED32C00883E51 /* Icon@2x.png */; };
+		CEA13C8516DED34000883E51 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C8116DED2B600883E51 /* Icon.png */; };
+		CEA13C8616DED34400883E51 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C8316DED32C00883E51 /* Icon@2x.png */; };
+		CEA13C8816DED36D00883E51 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C8716DED36D00883E51 /* Icon-72.png */; };
+		CEA13C8A16DED36F00883E51 /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C8916DED36F00883E51 /* Icon-72@2x.png */; };
+		CEA13C8C16DED38A00883E51 /* Icon-72@2x pro.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C8B16DED38A00883E51 /* Icon-72@2x pro.png */; };
+		CEA13C8E16DED38C00883E51 /* Icon-72 pro.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C8D16DED38C00883E51 /* Icon-72 pro.png */; };
+		CEA13C9016DED39400883E51 /* Icon pro.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C8F16DED39300883E51 /* Icon pro.png */; };
+		CEA13C9216DED39600883E51 /* Icon@2x pro.png in Resources */ = {isa = PBXBuildFile; fileRef = CEA13C9116DED39600883E51 /* Icon@2x pro.png */; };
 		CEA1E1331696479800835AAA /* Chuck.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E12E1696479800835AAA /* Chuck.mm */; };
 		CEA1E1341696479800835AAA /* Object.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E1301696479800835AAA /* Object.mm */; };
 		CEA1E1351696479800835AAA /* Rectangle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA1E1321696479800835AAA /* Rectangle.mm */; };
@@ -871,7 +881,7 @@
 		CE7DA19A16CC1F2B00DDCC7A /* CustomTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomTextField.mm; sourceTree = "<group>"; };
 		CE7DDD7416DC1D7F00627133 /* SetupLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetupLayer.h; path = Layers/SetupLayer.h; sourceTree = "<group>"; };
 		CE7DDD7516DC1D7F00627133 /* SetupLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SetupLayer.mm; path = Layers/SetupLayer.mm; sourceTree = "<group>"; };
-		CE7E2F7716D568500094A4CF /* Chuck the Bot (iOS) copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chuck the Bot (iOS) copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE7E2F7716D568500094A4CF /* Chuck the Bot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chuck the Bot.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE7E2F7916D568510094A4CF /* Chuck the Bot (iOS) copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Chuck the Bot (iOS) copy-Info.plist"; path = "/Users/User/Desktop/XCode Projects/Chuck the Robot (Universal)/Source/Chuck the Bot (iOS) copy-Info.plist"; sourceTree = "<absolute>"; };
 		CE7E9A4E16D2EC1B0021A76C /* fire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fire.png; path = ../../Media/Particles/fire.png; sourceTree = "<group>"; };
 		CE7F6CC716B9A3C80025A3E3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -964,6 +974,14 @@
 		CE91209916B6E2D10032186E /* Motor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Motor.h; sourceTree = "<group>"; };
 		CE91209A16B6E2D10032186E /* Motor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Motor.mm; sourceTree = "<group>"; };
 		CE91209C16B6E6BE0032186E /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		CEA13C8116DED2B600883E51 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		CEA13C8316DED32C00883E51 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		CEA13C8716DED36D00883E51 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		CEA13C8916DED36F00883E51 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
+		CEA13C8B16DED38A00883E51 /* Icon-72@2x pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x pro.png"; sourceTree = "<group>"; };
+		CEA13C8D16DED38C00883E51 /* Icon-72 pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72 pro.png"; sourceTree = "<group>"; };
+		CEA13C8F16DED39300883E51 /* Icon pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon pro.png"; sourceTree = "<group>"; };
+		CEA13C9116DED39600883E51 /* Icon@2x pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x pro.png"; sourceTree = "<group>"; };
 		CEA1E12D1696479800835AAA /* Chuck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chuck.h; sourceTree = "<group>"; };
 		CEA1E12E1696479800835AAA /* Chuck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Chuck.mm; sourceTree = "<group>"; };
 		CEA1E12F1696479800835AAA /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
@@ -978,7 +996,7 @@
 		CEC089DA16D6CF1C0064465D /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		CEE0129F16D5752700791964 /* CCUIViewWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCUIViewWrapper.h; sourceTree = "<group>"; };
 		CEE012A016D5752700791964 /* CCUIViewWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCUIViewWrapper.m; sourceTree = "<group>"; };
-		CEE02BD4169640BA00264586 /* Chuck the Bot (iOS) (Pro).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chuck the Bot (iOS) (Pro).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEE02BD4169640BA00264586 /* Chuck the Bot Pro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chuck the Bot Pro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEE02BD8169640BA00264586 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CEE02BDA169640BA00264586 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		CEE02BDC169640BA00264586 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
@@ -1791,6 +1809,14 @@
 		CEE02BC9169640BA00264586 = {
 			isa = PBXGroup;
 			children = (
+				CEA13C9116DED39600883E51 /* Icon@2x pro.png */,
+				CEA13C8F16DED39300883E51 /* Icon pro.png */,
+				CEA13C8D16DED38C00883E51 /* Icon-72 pro.png */,
+				CEA13C8B16DED38A00883E51 /* Icon-72@2x pro.png */,
+				CEA13C8916DED36F00883E51 /* Icon-72@2x.png */,
+				CEA13C8716DED36D00883E51 /* Icon-72.png */,
+				CEA13C8316DED32C00883E51 /* Icon@2x.png */,
+				CEA13C8116DED2B600883E51 /* Icon.png */,
 				CEC089DA16D6CF1C0064465D /* Default-Portrait~ipad.png */,
 				CEC089D816D6CF190064465D /* Default-Portrait@2x~ipad.png */,
 				CEC089D616D6CEF80064465D /* Default-Landscape~ipad.png */,
@@ -1817,8 +1843,8 @@
 		CEE02BD5169640BA00264586 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CEE02BD4169640BA00264586 /* Chuck the Bot (iOS) (Pro).app */,
-				CE7E2F7716D568500094A4CF /* Chuck the Bot (iOS) copy.app */,
+				CEE02BD4169640BA00264586 /* Chuck the Bot Pro.app */,
+				CE7E2F7716D568500094A4CF /* Chuck the Bot.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1967,9 +1993,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CE7E2E7416D568500094A4CF /* Chuck the Bot (iOS) */ = {
+		CE7E2E7416D568500094A4CF /* Chuck the Bot */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CE7E2F7416D568500094A4CF /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS)" */;
+			buildConfigurationList = CE7E2F7416D568500094A4CF /* Build configuration list for PBXNativeTarget "Chuck the Bot" */;
 			buildPhases = (
 				CE7E2E7516D568500094A4CF /* Sources */,
 				CE7E2F4916D568500094A4CF /* Frameworks */,
@@ -1979,14 +2005,14 @@
 			);
 			dependencies = (
 			);
-			name = "Chuck the Bot (iOS)";
+			name = "Chuck the Bot";
 			productName = chucktherobot;
-			productReference = CE7E2F7716D568500094A4CF /* Chuck the Bot (iOS) copy.app */;
+			productReference = CE7E2F7716D568500094A4CF /* Chuck the Bot.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CEE02BD3169640BA00264586 /* Chuck the Bot (iOS) (Pro) */ = {
+		CEE02BD3169640BA00264586 /* Chuck the Bot Pro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CEE02E08169640C500264586 /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS) (Pro)" */;
+			buildConfigurationList = CEE02E08169640C500264586 /* Build configuration list for PBXNativeTarget "Chuck the Bot Pro" */;
 			buildPhases = (
 				CEE02BD0169640BA00264586 /* Sources */,
 				CEE02BD1169640BA00264586 /* Frameworks */,
@@ -1996,9 +2022,9 @@
 			);
 			dependencies = (
 			);
-			name = "Chuck the Bot (iOS) (Pro)";
+			name = "Chuck the Bot Pro";
 			productName = chucktherobot;
-			productReference = CEE02BD4169640BA00264586 /* Chuck the Bot (iOS) (Pro).app */;
+			productReference = CEE02BD4169640BA00264586 /* Chuck the Bot Pro.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -2021,8 +2047,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CEE02BD3169640BA00264586 /* Chuck the Bot (iOS) (Pro) */,
-				CE7E2E7416D568500094A4CF /* Chuck the Bot (iOS) */,
+				CEE02BD3169640BA00264586 /* Chuck the Bot Pro */,
+				CE7E2E7416D568500094A4CF /* Chuck the Bot */,
 			);
 		};
 /* End PBXProject section */
@@ -2063,6 +2089,10 @@
 				CEC089DD16D6CF450064465D /* Default-Portrait~ipad.png in Resources */,
 				CEC089DE16D6CF470064465D /* Default-Portrait@2x~ipad.png in Resources */,
 				CE7DDD6F16DBCF5100627133 /* Default-568h@2x.png in Resources */,
+				CEA13C8516DED34000883E51 /* Icon.png in Resources */,
+				CEA13C8616DED34400883E51 /* Icon@2x.png in Resources */,
+				CEA13C8816DED36D00883E51 /* Icon-72.png in Resources */,
+				CEA13C8A16DED36F00883E51 /* Icon-72@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2101,6 +2131,12 @@
 				CEC089D916D6CF190064465D /* Default-Portrait@2x~ipad.png in Resources */,
 				CEC089DB16D6CF1C0064465D /* Default-Portrait~ipad.png in Resources */,
 				CE7DDD6E16DBCF4C00627133 /* Default-568h@2x.png in Resources */,
+				CEA13C8216DED2B600883E51 /* Icon.png in Resources */,
+				CEA13C8416DED32C00883E51 /* Icon@2x.png in Resources */,
+				CEA13C8C16DED38A00883E51 /* Icon-72@2x pro.png in Resources */,
+				CEA13C8E16DED38C00883E51 /* Icon-72 pro.png in Resources */,
+				CEA13C9016DED39400883E51 /* Icon pro.png in Resources */,
+				CEA13C9216DED39600883E51 /* Icon@2x pro.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2586,7 +2622,7 @@
 					"-lz",
 					"-ObjC",
 				);
-				PRODUCT_NAME = "Chuck the Bot (iOS) copy";
+				PRODUCT_NAME = "Chuck the Bot";
 				USER_HEADER_SEARCH_PATHS = "\"chucktherobot/libs\"";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2627,7 +2663,7 @@
 					"-lz",
 					"-ObjC",
 				);
-				PRODUCT_NAME = "Chuck the Bot (iOS) copy";
+				PRODUCT_NAME = "Chuck the Bot";
 				USER_HEADER_SEARCH_PATHS = "\"chucktherobot/libs\"";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
@@ -2763,7 +2799,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CE7E2F7416D568500094A4CF /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS)" */ = {
+		CE7E2F7416D568500094A4CF /* Build configuration list for PBXNativeTarget "Chuck the Bot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CE7E2F7516D568500094A4CF /* Debug */,
@@ -2781,7 +2817,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CEE02E08169640C500264586 /* Build configuration list for PBXNativeTarget "Chuck the Bot (iOS) (Pro)" */ = {
+		CEE02E08169640C500264586 /* Build configuration list for PBXNativeTarget "Chuck the Bot Pro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CEE02E09169640C500264586 /* Debug */,
