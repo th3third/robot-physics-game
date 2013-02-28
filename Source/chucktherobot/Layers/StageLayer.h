@@ -13,6 +13,12 @@
 
 @interface StageLayer : Layer <CCStandardTouchDelegate, CCTargetedTouchDelegate>
 {
+	//Timestep.
+	double t;
+	double preset_dt;
+	double currentTime;
+	double accumulator;
+	
     NSMutableArray *stageObjects;
     id selectedObject;
     id selectedObject2;

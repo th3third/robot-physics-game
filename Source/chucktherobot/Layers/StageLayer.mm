@@ -51,6 +51,12 @@ enum
     {
 		[[CCTextureCache sharedTextureCache] removeUnusedTextures];
 		
+		//Timestep init.
+		t = 0.0;
+		preset_dt = 1.0f / 60.0f;
+		currentTime = CFAbsoluteTimeGetCurrent();
+		accumulator = 0.0;
+		
 		// enable events
 		self.isTouchEnabled = YES;
 		self.isAccelerometerEnabled = NO;
@@ -884,16 +890,30 @@ enum
 {
     if (![Director shared].paused)
     {		
-		timeElapsedSinceStart += dt;
-        dt = 1.0 / 60.0;
+		double newTime = CFAbsoluteTimeGetCurrent();
+		double frameTime = newTime - currentTime;
 		
-		for (Object *object in [[Director shared].stage objects])
+		if (frameTime > 0.25)
+			frameTime = 0.25;
+		
+		currentTime = newTime;
+		accumulator += frameTime;
+		
+		while (accumulator >= preset_dt)
 		{
-			if (object.alive)
-				[object tick: dt];
+			timeElapsedSinceStart += preset_dt;
+			
+			for (Object *object in [[Director shared].stage objects])
+			{
+				if (object.alive)
+					[object tick: preset_dt];
+			}
+			
+			[self worldTick: preset_dt];
+			
+			t += preset_dt;
+			accumulator -= preset_dt;
 		}
-		
-        [self worldTick: dt];
     }
 }
 
