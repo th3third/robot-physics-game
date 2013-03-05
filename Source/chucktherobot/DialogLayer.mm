@@ -677,6 +677,7 @@
 		[tagNames addObject: @"puzzle"];
 		[tagNames addObject: @"artistic"];
 		[tagNames addObject: @"timing"];
+		
 		//Togglable tags.
 		CCMenuItemToggle *menuItem;
 		CCMenu *menu;
@@ -774,7 +775,6 @@
 				row++;
 				col = 0;
 			}
-			
 			
 			[menuItem setPosition: ccp(startingPos.x + ((menuItem.contentSize.width * menuItem.scale + 9.5) * col), startingPos.y - ((menuItem.contentSize.height * menuItem.scale) * row))];
 			[menuItems addObject: menuItem];
@@ -1747,6 +1747,22 @@
 
 - (void) sendNewAccountInfoButtonPressed
 {
+	if (!self.textField.text || [trimEnds(self.textField.text) isEqualToString: @""])
+	{
+		DialogLayer *enterNameDialog = [[DialogLayer alloc] initNotificationWithMessage:  @"Please enter a username."];
+		[[CCDirector sharedDirector].runningScene addChild: enterNameDialog z: 9100];
+		
+		return;
+	}
+	
+	if (!self.textField2.text || [trimEnds(self.textField2.text) isEqualToString: @""])
+	{
+		DialogLayer *enterNameDialog = [[DialogLayer alloc] initNotificationWithMessage:  @"Please enter a password."];
+		[[CCDirector sharedDirector].runningScene addChild: enterNameDialog z: 9100];
+		
+		return;
+	}
+	
 	if ([[Director shared] createUsername: self.textField.text andPassword: self.textField2.text andEmail: self.textField3.text])
 	{
 		id parent = self.parent;
@@ -1882,9 +1898,18 @@
 - (void) saveButtonPressed: (id) sender
 {
 	[DialogLayer playButtonSound];
+
+	if (!self.textField.text || [trimEnds(self.textField.text) isEqualToString: @""])
+	{
+		DialogLayer *enterNameDialog = [[DialogLayer alloc] initNotificationWithMessage:  @"Please enter a name for your level."];
+		[[CCDirector sharedDirector].runningScene addChild: enterNameDialog z: 9100];
+		
+		[self remove];
+		return;
+	}
 	
 	[Director shared].stage.name = self.textField.text;
-	
+
 	[self.textField removeFromSuperview];
 	[self.textField2 removeFromSuperview];
     [self removeFromParentAndCleanup:YES];
