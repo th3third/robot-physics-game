@@ -316,8 +316,8 @@
 			menuItemSpriteSelected = [CCSprite spriteWithFile: @"Media/Buttons/general/button_dialog_resume.png"];
 			[menuItemSpriteSelected setScale: 0.95];
 			CCMenuItemSprite *resumeButton = [CCMenuItemSprite itemWithNormalSprite: menuItemSpriteNormal selectedSprite: menuItemSpriteSelected block:^(id sender) {
-				[self remove];
 				[callbackObj performSelector: @selector(resumePlaying)];
+				[self remove];
 			}];
 			resumeButton.scale = retryButton.scale;
 			[resumeButton setPosition: ccp(background.position.x + (backgroundWidth / 2) * 0.55, background.position.y + (backgroundHeight / 2) * 0.425)];
@@ -609,7 +609,7 @@
 		
 		//Input text box
 		self.textField = [[CustomTextField alloc] initWithFrame: CGRectMake(0, 0, (nameLevelInputBackground.contentSize.width * nameLevelInputBackground.scale * 0.9), (nameLevelInputBackground.contentSize.height * nameLevelInputBackground.scale) * 0.75)];
-		self.textField.center = ccp([[CCDirector sharedDirector] view].center.x, [[CCDirector sharedDirector] view].center.y - backgroundHeight * 0.3);
+		self.textField.center = ccp(background.position.x, (background.position.y - backgroundHeight * 0.305));
 		self.textField.borderStyle = UITextBorderStyleNone;
 		[self.textField setBackgroundColor: [UIColor clearColor]];
 		[self.textField setFont: [UIFont fontWithName: [Director shared].globalFont size: DIALOG_FONT_SIZE_TITLE * [Director shared].scaleFactor.width]];
@@ -708,7 +708,7 @@
 																  dimensions: CGSizeMake(tagOnSprite.contentSize.width, tagOnSprite.contentSize.height)
 																  hAlignment: kCCTextAlignmentCenter
 															   lineBreakMode: kCCLineBreakModeMiddleTruncation
-																	fontSize: DIALOG_FONT_SIZE_TAG
+																	fontSize: ((tagOnSprite.contentSize.width * tagOnSprite.scaleX)) * 0.15
 									];
 			[tagOnSprite addChild: tagLabel];
 			
@@ -720,7 +720,7 @@
 													  dimensions: CGSizeMake(tagOnSelectedSprite.contentSize.width, tagOnSelectedSprite.contentSize.height)
 													  hAlignment: kCCTextAlignmentCenter
 												   lineBreakMode: kCCLineBreakModeMiddleTruncation
-														fontSize: DIALOG_FONT_SIZE_TAG
+														fontSize: ((tagOnSprite.contentSize.width * tagOnSprite.scaleX)) * 0.15
 						];
 			[tagOnSelectedSprite addChild: tagLabel];
 			
@@ -733,7 +733,7 @@
 													  dimensions: CGSizeMake(tagOffSprite.contentSize.width, tagOffSprite.contentSize.height)
 													  hAlignment: kCCTextAlignmentCenter
 												   lineBreakMode: kCCLineBreakModeMiddleTruncation
-														fontSize: DIALOG_FONT_SIZE_TAG
+														fontSize: ((tagOnSprite.contentSize.width * tagOnSprite.scaleX)) * 0.15
 						];
 			[tagLabel setOpacity: offOpacity];
 			[tagOffSprite addChild: tagLabel];
@@ -746,7 +746,7 @@
 													  dimensions: CGSizeMake(tagOffSelectedSprite.contentSize.width, tagOffSelectedSprite.contentSize.height)
 													  hAlignment: kCCTextAlignmentCenter
 												   lineBreakMode: kCCLineBreakModeMiddleTruncation
-														fontSize: DIALOG_FONT_SIZE_TAG
+														fontSize: ((tagOnSprite.contentSize.width * tagOnSprite.scaleX)) * 0.15
 						];
 			[tagLabel setOpacity: offOpacity];
 			[tagOffSelectedSprite addChild: tagLabel];
@@ -1750,30 +1750,33 @@
 	if ([[Director shared] createUsername: self.textField.text andPassword: self.textField2.text andEmail: self.textField3.text])
 	{
 		id parent = self.parent;
-		[self remove];
 		
 		NSArray *retArray = [NSArray arrayWithObjects: self.textField.text, [Director sha: self.textField2.text], nil];
 		[callbackObj performSelector: selector withObject: retArray];
+		
+		[self remove];
 		
 		return;
 	}
 	else
 	{
 		id parent = self.parent;
-		[self remove];
 		
 		DialogLayer *successDialog = [[DialogLayer alloc] initNotificationWithMessage: @"That username already exists." callback: callbackObj selector: selector];
 		[parent addChild: successDialog z: 9000];
+		
+		[self remove];
 	}
 }
 
 - (void) createAccountButtonPressed
 {
 	id parent = self.parent;
-	[self remove];
 	
 	DialogLayer *createAccountDialog = [[DialogLayer alloc] initCreateAccountWithCallbackObj: callbackObj selector: selector];
 	[parent addChild: createAccountDialog z: 9000];
+	
+	[self remove];
 }
 
 - (void) likeButtonPressed: (id) sender

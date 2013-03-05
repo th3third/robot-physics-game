@@ -55,7 +55,7 @@
 	
 	//Init the purchase stuff.
 	[[debug sharedManager] setEnableLog: NO];
-	[[MToolsPurchaseManager sharedManager] setVocal: YES];
+	[[MToolsPurchaseManager sharedManager] setVocal: NO];
 	[[MToolsPurchaseManager sharedManager] loadStore];
 	
 	//Init the standard keys and increment anything that needs to be done.

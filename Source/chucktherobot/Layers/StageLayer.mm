@@ -619,7 +619,7 @@ enum
 			}
 			else
 			{
-				DialogLayer *loginDialog = [[DialogLayer alloc] initLoginWithCallbackObj: self selector: @selector(logInWithUsername:andPassword:)];
+				DialogLayer *loginDialog = [[DialogLayer alloc] initLoginWithCallbackObj: self selector: @selector(logInWith:)];
 				[self addChild: loginDialog z: 9000];
 			}
 		}

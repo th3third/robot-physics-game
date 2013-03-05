@@ -1089,7 +1089,6 @@
 				[DialogLayer playButtonSound];
 				playingStoryboard = NO;
 				[container removeFromParentAndCleanup: YES];
-				[self showLevelList];
 				
 				return;
 			}
