@@ -77,7 +77,10 @@ enum
 		// create reset button
 		[self createMenu];
 		
+		
 		[self scheduleUpdate];
+		[Director shared].paused = YES;
+		[self performSelector: @selector(resumePlaying) withObject: nil afterDelay: 0.5];
 	}
 	return self;
 }
@@ -919,7 +922,7 @@ enum
 
 - (void) worldTick: (ccTime) dt
 {
-    int32 velocityIterations = 8;
+    int32 velocityIterations = 2;
     int32 positionIterations = 1;
     
     [Director shared].world->Step(dt, velocityIterations, positionIterations);

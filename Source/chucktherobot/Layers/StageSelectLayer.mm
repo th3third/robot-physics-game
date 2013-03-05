@@ -1015,7 +1015,7 @@
 {
 	playingStoryboard = YES;
 	
-	CCSprite *container = [[CCSprite alloc] init];
+	container = [[CCSprite alloc] init];
 	
 	CGSize s = [CCDirector sharedDirector].winSize;
 
@@ -1070,29 +1070,7 @@
 	CCSprite *itemSprite = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
 	CCSprite *itemSpriteSelected = [CCSprite spriteWithFile: @"Media/Backgrounds/blank.jpg"];
 	CCMenuItemSprite *containerMenuItem = [CCMenuItemSprite itemWithNormalSprite: itemSprite selectedSprite: itemSpriteSelected block:^(id sender) {
-		for (int i = 0; i < [[container children] count]; i++)
-		{			
-			CCSprite *child = (CCSprite *)[container getChildByTag: i];
-			if (child.tag != 0 && child.opacity <= 0)
-			{
-				[DialogLayer playButtonSound];
-				CCSprite *prevChild = (CCSprite *)[container getChildByTag: i - 1];
-				[prevChild setOpacity: 255];
-				
-				[self fadeInSprite: child duration: 1.0f];
-				
-				return;
-			}
-			
-			if (i == [[container children] count] - 1)
-			{
-				[DialogLayer playButtonSound];
-				playingStoryboard = NO;
-				[container removeFromParentAndCleanup: YES];
-				
-				return;
-			}
-		}
+		[self advanceStoryboard];
 	}];
 	[containerMenuItem setScaleX: (s.width / containerMenuItem.contentSize.width)];
 	[containerMenuItem setScaleY: (s.height / containerMenuItem.contentSize.height)];
@@ -1107,6 +1085,36 @@
 	[self performSelector: @selector(fadeInSprite:duration:) withObject: panel1 afterDelay: 1.0f];
 	
 	[container addChild: menu z: 9000];
+}
+
+- (void) advanceStoryboard
+{
+	if (!container)
+		return;
+	
+	for (int i = 0; i < [[container children] count]; i++)
+	{
+		CCSprite *child = (CCSprite *)[container getChildByTag: i];
+		if (child.tag != 0 && child.opacity <= 0)
+		{
+			[DialogLayer playButtonSound];
+			CCSprite *prevChild = (CCSprite *)[container getChildByTag: i - 1];
+			[prevChild setOpacity: 255];
+			
+			[self fadeInSprite: child duration: 1.0f];
+			
+			return;
+		}
+		
+		if (i == [[container children] count] - 1)
+		{
+			[DialogLayer playButtonSound];
+			playingStoryboard = NO;
+			[container removeFromParentAndCleanup: YES];
+			
+			return;
+		}
+	}
 }
 
 - (void) fadeInSprite: (CCSprite *) sprite duration: (float) duration
@@ -1209,6 +1217,13 @@
 
 - (void) goToNextPage: (id) caller
 {
+	if (playingStoryboard)
+	{
+		[self advanceStoryboard];
+		
+		return;
+	}
+	
 	if (pageTurning || [Director shared].levelSelectPageNum >= (totalMenuItems - 1) / menuItemsPerPage || playingStoryboard)
 		return;
 	

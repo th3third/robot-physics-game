@@ -40,6 +40,9 @@
 	int selectedLevelIndex;
 	CCSprite *spinner;
 	CCActionTween *spinnerTween;
+	
+	//Storyboard
+	CCSprite *container;
 }
 
 typedef enum
