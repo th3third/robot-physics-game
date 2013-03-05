@@ -174,9 +174,9 @@ static Director *shared = nil;
     self.world = new b2World(gravity);
     
 	// Do we want to let bodies sleep?
-	self.world->SetAllowSleeping(false);
+	self.world->SetAllowSleeping(true);
 	
-	self.world->SetContinuousPhysics(true);
+	self.world->SetContinuousPhysics(false);
 	
 	//Set up the contact listener.
 	_contactListener = new MyContactListener();

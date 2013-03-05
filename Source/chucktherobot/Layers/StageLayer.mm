@@ -79,8 +79,6 @@ enum
 		
 		
 		[self scheduleUpdate];
-		[Director shared].paused = YES;
-		[self performSelector: @selector(resumePlaying) withObject: nil afterDelay: 0.5];
 	}
 	return self;
 }
@@ -900,9 +898,9 @@ enum
 			frameTime = 0.25;
 		
 		currentTime = newTime;
-		accumulator += frameTime;
+		//accumulator += frameTime;
 		
-		while (accumulator >= preset_dt)
+		//while (accumulator >= preset_dt)
 		{
 			timeElapsedSinceStart += preset_dt;
 			
@@ -915,14 +913,14 @@ enum
 			[self worldTick: preset_dt];
 			
 			t += preset_dt;
-			accumulator -= preset_dt;
+			//accumulator -= preset_dt;
 		}
     }
 }
 
 - (void) worldTick: (ccTime) dt
 {
-    int32 velocityIterations = 2;
+    int32 velocityIterations = 8;
     int32 positionIterations = 1;
     
     [Director shared].world->Step(dt, velocityIterations, positionIterations);

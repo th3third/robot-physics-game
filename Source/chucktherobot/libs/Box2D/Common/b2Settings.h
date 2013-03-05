@@ -116,7 +116,7 @@ typedef double float64;
 // Sleep
 
 /// The time that a body must be still before it will go to sleep.
-#define b2_timeToSleep				0.5f
+#define b2_timeToSleep				0.1f
 
 /// A body cannot sleep if its linear velocity is above this tolerance.
 #define b2_linearSleepTolerance		0.01f
