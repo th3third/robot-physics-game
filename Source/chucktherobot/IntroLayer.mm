@@ -13,6 +13,7 @@
 #import "MToolsPurchaseManager.h"
 #import "MToolsAppSettings.h"
 #import "MToolsFileManager.h"
+#import "MToolsNetworkAlert.h"
 
 #pragma mark - IntroLayer
 
@@ -61,6 +62,8 @@
 	//Init the standard keys and increment anything that needs to be done.
 	[[MToolsAppSettings sharedManager] standardKeys];
 	
+	//Network alerts.
+	[[MToolsNetworkAlert sharedManager] checkForNewAlerts];
 	
     //Create the levels folder if it doesn't exist already.
     NSFileManager *fm = [NSFileManager defaultManager];

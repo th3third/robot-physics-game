@@ -1197,6 +1197,13 @@
 #pragma mark PAGE CONTROLS
 - (void) goToPreviousPage: (id) caller
 {
+	if (playingStoryboard)
+	{
+		[self advanceStoryboard];
+		
+		return;
+	}
+	
 	if (pageTurning || [Director shared].levelSelectPageNum <= 0 || playingStoryboard)
 		return;
 	
@@ -1292,6 +1299,18 @@
 			else if (translation.x < -1000)
 			{
 				[self goToPreviousPage: nil];
+			}
+			
+			if (playingStoryboard)
+			{
+				if (translation.y > 500)
+				{
+					[self goToNextPage: nil];
+				}
+				else if (translation.y < -500)
+				{
+					[self goToPreviousPage: nil];
+				}
 			}
 			
 			//self.selectionNode.position = ccp(self.selectionNode.position.x - translation.x, self.selectionNode.position.y);
